@@ -1,0 +1,14 @@
+LIWC (Linguistic Inquiry and Word Count) dictionary for Dutch
+Based on LIWC2001 English dictionary by James Pennebaker
+http://liwc.net
+
+Primary contact person:
+Henriët van Middendorp, 
+Radboud University Nijmegen Medical Center
+Email: H.vanMiddendorp@mps.umcn.nl
+
+Differences between Dutch and English dictionaries:
+There are no differences between the Dutch LIWC 2001 dictionary and the English 2001 dictionary.
+
+REFERENCE (see doc/):
+Zijlstra, H., van Meerveld, T., van Middendorp, H., Pennebaker, J.W., & Geenen R. (2004). De Nederlandse versie van de Linguistic Inquiry and Word Count (LIWC), een gecomputeriseerd tekstanalyseprogramma [Dutch version of the Linguistic Inquiry and Word Count (LIWC), a computerized text analysis program]. Gedrag & Gezondheid, 32, 273-283.

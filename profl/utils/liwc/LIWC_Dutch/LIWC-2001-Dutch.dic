@@ -1,0 +1,6622 @@
+%
+01	Pronoun
+02	I
+03	We
+04	Self
+05	You
+06	Other
+07	Negate
+08	Assent
+09	Article
+10	Preps
+11	Number
+12	Affect
+13	Posemo
+14	Posfeel
+15	Optim
+16	Negemo
+17	Anx
+18	Anger
+19	Sad
+20	Cogmech
+21	Cause
+22	Insight
+23	Discrep
+24	Inhib
+25	Tentat
+26	Certain
+27	Senses
+28	See
+29	Hear
+30	Feel
+31	Social
+32	Comm
+33	Othref
+34	Friends
+35	Family
+36	Humans
+37	Time
+38	Past
+39	Present
+40	Future
+41	Space
+42	Up
+43	Down
+44	Incl
+45	Excl
+46	Motion
+47	Occup
+48	School
+49	Job
+50	Achieve
+51	Leisure
+52	Home
+53	Sports
+54	TV
+55	Music
+56	Money
+57	Metaph
+58	Relig
+59	Death
+60	Physcal
+61	Body
+62	Sexual
+63	Eating
+64	Sleep
+65	Groom
+66	Swear
+67	Nonfl
+68	Fillers
+%
+aaien	12	13	39
+aan	10
+aanbad	12	13	14	57	58	38
+aanbaden	12	13	14	57	58	38
+aanbeden	12	13	14	57	58	38
+aanbid 	12	13	14	57	58	39
+aanbidden	12	13	14	57	58	39
+aanbidt	12	13	14	57	58	39
+aanblik	27	28
+aanbreken	39
+aanduiding	31	32
+aaneengesloten	41
+aangaande	10
+aangebroken	38
+aangekeken	27	28	38
+aangekomen	38	46
+aangelegenheid	31	32
+aangemoedigd	12	13	15	31	32	38
+aangenaam	12	13
+aangenomen	20	22	31	32	38
+aangepakt	38
+aangepast	20	22	38
+aangeraakt	27	30	38
+aangeraden	31	32	38
+aangerand	12	16	18	38	60	62
+aangericht	12	16	20	21	38
+aangeschaft	56	38
+aangesproken	27	29	31	32	38
+aangevoerd	31	32	38
+aangewend	38
+aangewezen	27	28	38
+aanhankelijk	12	13	14
+aanhankelijkheid	12	13	14
+aanhouden	37
+aanhoudend	37
+aankijken	27	28	39
+aanklacht	31	32
+aankomen	39	46
+aankoop	56
+aanleiding	20	21
+aanmelding	47	48
+aanmoedigen	12	13	15	31	32	39
+aanmoediging	12	13	15	31	32
+aannemelijk	8	25
+aannemen	20	22	31	32	39
+aanpakken	39
+aanpassen	20	22	39
+aanraden	31	32	39
+aanraken	27	30	39
+aanraking	27	30
+aanranden	12	16	18	39	60	62
+aanranding	12	16	18	60	62
+aanrichten	12	16	20	21	39
+aanschaffen	56	39
+aansporing	12	13	15	31	32
+aanspreken	27	29	31	32	39
+aanstaand	37
+aanstaande	37
+aanstonds	37
+aantrekkelijk	12	13
+aanvaard	8	20	22	39
+aanvaardde	8	20	22	38
+aanvaardden	8	20	22	38
+aanvaarden	8	20	22	39
+aanvaardt	8	20	22	39
+aanval	12	16	18
+aanvallend	12	16	18
+aanvang	37
+aanvangen	37	39
+aanvoeren	31	32	39
+aanwenden	39
+aanwijzen	27	28	39
+aardig	12	13
+aarzel 	20	24	25	38
+aarzelde	20	24	25	38
+aarzelden	20	24	25	38
+aarzelen	20	24	25	39
+aarzelend	20	24	25
+aarzeling	20	24	25
+aarzelt	20	24	25	39
+abnormaal	12	16
+abortus	60	61	62
+abrupt	37
+absoluut	20	22	26
+academicus	47	48
+academie	47	48
+academisch	47	48
+academische	47	48
+acceptabel	8
+acceptatie	8	12	13	20	22
+accepteer	8	12	13	20	22	39
+accepteerde	8	12	13	20	22	38
+accepteerden	8	12	13	20	22	38
+accepteert	8	12	13	20	22	39
+accepteren	8	12	13	20	22	39
+acht	11
+achten*	11
+achter	10
+achterdochtig	12	16
+achtergelaten	38
+achterkleinzonen	31	35
+achterkleinzoon	31	35
+achterlaten	39
+achterste	41
+achtervolg 	39	46
+achtervolgd	38	46
+achtervolgde	38	46
+achtervolgden	38	46
+achtervolgen	39	46
+achtervolgt	39	46
+achtmaal	11
+achtste	11
+achttal	11
+achttien	11
+achttiende	11
+achtvoud	11
+achtvoudig	11
+acteur	51	54
+actie	46
+actief	12	13	15
+actrice	51	54
+actueel	37
+adem	60	61
+ademen	60	61	39
+ademhalen	60	61	39
+aderverkalking	60	61
+administratie	47	49
+advies	31	32
+adviseur	31	32	47	49
+advocaat	31	32	47	49
+advocaten	31	32	47	49
+aerobic	51	53
+aerobics	51	53
+afbreken	39
+afdalen	39	46
+afdeling	47	49
+afdingen	56	39
+affectief	12
+afgang	12	16	19	47	50
+afgebroken	38
+afgedaald	38	46
+afgegeven	38	46
+afgehouden	20	24	38
+afgekeurd	12	16	31	32	38
+afgekraakt	12	16	18	38
+afgeleerd	38
+afgelegd	38	46
+afgelegen	41
+afgeleid	20	21	38
+afgeleverd	38	46
+afgelopen	37	 
+afgelost	38
+afgeluisterd	27	29	31	32	38
+afgemat	12	16	38	60	61	64
+afgerond	20	22
+afgeschrikt	12	16	17	38
+afgeslagen	38
+afgesloten	20	22	38
+afgesproken	31	32	38
+afgestompt	12	16	19
+afgestraft	12	16	18	38
+afgetast	27	30	38
+afgeven	39	46
+afgevraagd	20	22	25	38
+afgewacht	20	24	38
+afgeweken	38
+afgewend	38
+afgewezen	12	16	31	32	38
+afgezien	20	24	38
+
+afgezonderd	12	16	19	38
+afgrijselijk	12	16	17
+afgunst	12	16	18
+afgunstig	12	16	18
+afhankelijk	20	21	25
+afhouden	20	24	39
+afkeer	12	16
+afkeuren	12	16	31	32	39
+afkeuring	12	16	31	32
+afkraken	12	16	18	39
+afleggen	39	46
+afleiden	20	21	39
+afleren	39
+afleveren	39	46
+afloop	20	37
+aflossen	39
+afluisteren	27	29	31	32	39
+afmatten	12	16	39	60	61	64
+afnemer	56
+afronding	20	22
+afschrikken	12	16	17	39
+afschuw	12	16	17	
+afschuwelijk	12	16	17
+afslaan	39
+afsluiten	20	22	39
+afspreken	31	32	39
+afstand	41
+afstraffen	12	16	18	39
+afstraffing	12	16	18
+aftakeling	12	16	57	59
+aftasten	27	30	39
+afvragen	20	22	25	39
+afwachten	20	24	39
+afwachtend	20	24
+afwas	60	63
+afwenden	39
+afwijken	39
+afwijzen	12	16	31	32	39
+afwijzing	12	16	31	32
+afzien	20	24	39
+afzonderen	12	16	19	39
+afzondering	12	16	19
+ageer	12	16	18	39
+ageerde	12	16	18	38
+ageerden	12	16	18	38
+ageert	12	16	18	39
+agent	47	49
+ageren	12	16	18	39
+agressie	12	16	18
+agressief	12	16	18
+AIDS	60	61
+aids-test	60	61
+akkoord	8
+al	37
+alcohol	60	63
+aldoor	37
+aldus	20	21
+alhoewel	25
+alle	26
+alleen	12	16	19
+alleraardigst	12	13
+allergie	60	61
+allergisch	60	61
+allergische	60	61
+allerliefst	12	13
+alles	44
+althans	25
+altijd	26	37
+amandelen	60	61
+amandelontsteking	60	61
+ambt	47	49
+ambtenaar	47	49
+amicaal	12	13
+amusant	12	13
+amuseer	12	13	39
+amuseerde	12	13	38
+amuseerden	12	13	38
+amuseert	12	13	39
+amuseren	12	13	39
+analyseer	20	22	39
+analyseerde	20	22	38
+analyseerden	20	22	38
+analyseert	20	22	39
+analyseren	20	22	39
+angina	60	61
+angst	12	16	17
+angstaanval	12	16	17
+angstaanvallen	12	16	17
+angsten	12	16	17
+angstig	12	16	17
+anorexia	60	61	63
+antipathie	12	16	18
+antwoord	31	32	39
+antwoordde	31	32	38
+antwoordden	31	32	38
+antwoorden	31	32	39
+antwoordt	31	32	39
+aperitief	60	63
+appartement	51	52
+april	37
+arbeid	47	49
+arbeidsbureau	47	49
+arbeidsconflict	47	49
+arbeidsintensief	47	49
+arbeidskrachten	47	49
+arbeidsmarkt	47	49
+argument	31	32
+argumentatie	31	32
+argwanend	12	16	17
+arm	60	61
+armen	60	61
+armoede	56
+armoedig	56
+armzalig	56
+arriveer	39	46
+arriveerde	38	46
+arriveerden	38	46
+arriveert	39	46
+arriveren	39	46
+arrogant	12	16
+arrogantie	12	16
+artritis	60	61
+astma	60	61
+astmatisch	60	61
+at	38	60	63
+aten	38	60	63
+attent	12	13
+augustus	37
+aversie	12	16	17
+avond	37
+avondeten	60	63
+avondje	37
+avondmaal	57	58
+avonds	37
+avontuur	12	13	15
+avontuurlijk	12	13	15
+baan	47	49
+baarmoeder	60	61	 
+baas	47	49
+baat	12	13
+baatzucht	12	16
+baatzuchtig	12	16
+babbelen	27	29	31	32	39
+baby	31	36
+baby's	31	36
+bad	51	52	60	65
+bad	57	58	38
+baden	57	58	38
+badjas	51	52	60	65
+badkamer	51	52	60	65
+badpak	51
+badplaats	51
+bah	12	16
+balie	47	49	 
+balkon	51	52
+band	12	13	14
+banenmarkt	47	49
+bang	12	16	17
+bank	56
+bankbiljet	56
+bankpas	56
+bankrekening	56
+bankroet	56
+banksaldo	56
+bankwezen	56
+bankzaken	56
+bar	51	60	63
+barrière	20	24
+basis	20	21
+basisonderwijs	47	48
+basisschool	47	48
+basketbal	51	53
+beaam	8	20	39
+beaamd	8	20	38
+beaamde	8	20	38
+beaamden	8	20	38
+beaamt	8	20	39
+beamen	8	20	39
+beangstig 	12	16	17	39
+beangstigd	12	16	17	38
+beangstigde	12	16	17	38
+beangstigden	12	16	17	38
+beangstigen	12	16	17	39
+beangstigt	12	16	17	39
+beantwoord 	31	32	39
+beantwoordde	31	32	38
+beantwoordden	31	32	38
+beantwoorden	31	32	39
+beantwoordt	31	32	39
+bed	51	52	64
+bedaard	12	13
+bedacht 	20	22	38
+bedachten	20	22	38
+bedachtzaam	12	13
+bedank 	12	13	39
+bedanken	12	13	39
+bedankje	12	13
+bedankt	12	13	39
+bedankte	12	13	38
+bedankten	12	13	38
+bede	57	58
+bedelen	31	32	39
+bedenk	20	22	39
+bedenkelijk	12	16	20	25
+bedenken	20	22	39	
+bedenkt	20	22	39
+bederft	12	16	18	39
+bederven	12	16	18	39
+bedoel 	20	22	39
+bedoeld	20	22	38
+bedoelde	20	22	38
+bedoelden	20	22	38
+bedoelen	20	22	39
+bedoeling	20	22
+bedoelt	20	22	39
+bedorven	12	16	18	38
+bedreig 	12	16	18	39
+bedreigd	12	16	18	38
+bedreigde	12	16	18	38
+bedreigden	12	16	18	38
+bedreigen	12	16	18	39
+bedreigend	12	16	18
+bedreigt	12	16	18	39
+bedremmeld	12	16	19
+bedreven	12	13
+bedrieg	12	16	18	31	32	39
+bedriegen	12	16	18	31	32	39
+bedrieger	12	16	18	31	32
+bedrieglijk	12	16	18
+bedriegt	12	16	18	31	32	39
+bedrijf	47	49
+bedrijfskunde	47	49
+bedrijfsleiding	47	49
+bedrijfsleven	47	49
+bedrijfstak	47	49
+bedroefd	12	16	19
+bedroevend	12	16	19
+bedrog	12	16	18
+bedrogen	12	16	18	31	32	38
+bedroog	12	16	18	31	32	38
+bedrukt	12	16	19
+bedruktheid	12	16	19
+bedwang	12	16	20	24
+bedwang	20	24
+bedwing 	12	16	20	24	39
+bedwingen	12	16	20	24	39
+bedwingt	12	16	20	24	39
+bedwong	12	16	20	24	38
+bedwongen	12	16	20	24	38
+beef	12	16	17	60	61	39
+beefde	12	16	17	60	61	38
+beefden	12	16	17	60	61	38
+beeft	12	16	17	60	61	39
+beëindig	20	22	39
+beëindigd	20	22	38
+beëindigde	20	22	38
+beëindigden	20	22	38
+beëindigen	20	22	39
+beëindigt	20	22	39
+been	60	61
+beetje	25
+begaafd	12	13
+begaf	12	16	38
+begaven	12	16	38
+begeef	12	16	39
+begeeft	12	16	39
+begeerte	60	62
+begeleider	47	48
+begeleiding	31	32	47	48
+begeven	12	16	39
+begin	20	21	37
+beginnen	37	39
+beginstadium	37
+begraafplaats	57	59
+begrafenis	57	59
+begrafenisonderneming	57	59
+begraven	57	59	39
+begreep	12	13	20	22	38
+begrens	20	24	39
+begrensd	20	24	38
+begrensde	20	24	38
+begrensden	20	24	38
+begrenst	20	24	39
+begrenzen	20	24	39
+begrenzing	20	24
+begrepen	12	13	20	22	38
+begrijp	12	13	20	22	39
+begrijpelijk	12	13	20	22
+begrijpen	12	13	20	22	39
+begrijpt	12	13	20	22	39
+begrip	12	13	20	22
+begripvol	12	13	20	22
+behaaglijk	12	13
+behaal	12	13	15	39	47	50
+behaald	12	13	15	38	47	50
+behaalde	12	13	15	38	47	50
+behaalden	12	13	15	38	47	50
+behaalt	12	13	15	39	47	50
+behagen	12	13	39
+behalen	12	13	15	39	47	50
+behalve	20	23	45
+behandel 	39
+behandeld	38
+behandelde	38
+behandelden	38
+behandelen	39
+behandelt	39
+beheer	47	49
+beheers 	20	24	39
+beheersen	20	24	39
+beheersing	20	24
+beheerst	20	24	39
+beheerste	20	24	38
+beheersten	20	24	38
+behield	38
+behielden	38
+behoed 	39
+behoedde	38
+behoedden	38
+behoeden	39
+behoedt	39
+behoor	20	23	39
+behoord	20	23	38
+behoorde	20	23	38
+behoorden	20	23	38
+behoort	20	23	39
+behoren	20	23	39
+behoud 	39
+behouden	39
+behoudt	39
+behulpzaam	31	12	13
+beïnvloed	20	21	39
+beïnvloedde	20	21	38
+beïnvloedden	20	21	38
+beïnvloeden	20	21	39
+beïnvloedt	20	21	39
+bekeek	27	28	38
+bekeken	27	28	38
+beken	20	22	31	32	39
+bekend	20	22	31	32	38
+bekende	20	22	31	32	38
+bekende	31	34
+bekenden	20	22	31	32	38
+bekendmaking	31	32
+bekennen	20	22	31	32	39	 
+bekent	20	22	31	32	39
+bekentenis	20	22	31	32	 	 
+bekijk 	27	28	39
+bekijken	27	28	39
+bekijkt	27	28	39
+bekken	60	61
+beklaag	12	16	31	32	39
+beklaagd	12	16	31	32	38
+beklaagde	12	16	31	32	38
+beklaagden	12	16	31	32	38
+beklaagt	12	16	31	32	39
+beklag	12	16	31	32
+beklagen	12	16	31	32	39
+beklemmend	12	16	17	20	24
+beklijfd	38
+beklijft	39
+beklijven	39
+beklim 	39	46
+beklimmen	39	46
+beklimt	39	46
+beklom	38	46
+beklommen	38	46
+beknopt	37
+bekoren	12	13	39
+bekritiseer	12	16	18	31	32	39
+bekritiseerde	12	16	18	31	32	38
+bekritiseerden	12	16	18	31	32	38
+bekritiseert	12	16	18	31	32	39
+bekritiseren	12	16	18	31	32	39
+bekrompen	20	24	 
+bekroning	12	13	47	50
+bekroond	12	13	47	50
+bekwaam	12	13
+bel	31	32	39
+belachelijk	12	16	18
+belangstellend	12	13
+belangstelling	12	13
+belast 	12	16	39
+belasten	12	16	39
+belasting	56
+belastte	12	16	38
+belastten	12	16	38
+belde	31	32	38
+belden	31	32	38
+beledig 	12	16	18	31	32	39
+beledigd	12	16	18	31	32	38
+beledigde 	12	16	18	31	32	38
+beledigden	12	16	18	31	32	38
+beledigen	12	16	18	31	32	39
+beledigend	12	16	18	 
+belediging	12	16	18	31	32
+beledigt	12	16	18	31	32	39
+beleggen	56	39
+belegging	56
+belemmer 	12	16	20	24	39
+belemmerd	12	16	20	24	38
+belemmerde	12	16	20	24	38
+belemmerden	12	16	20	24	38
+belemmeren	12	16	20	24	39
+belemmerend	12	16	20	24	 
+belemmering	12	16	20	24
+belemmert	12	16	20	24	39
+belet 	20	24	39
+belette 	20	24	38
+beletten	20	24	39
+belijden	57	58	39
+belijdenis	57	58
+bellen	31	32	39
+belonen	12	13	39
+beloning	12	13	47	50
+beloon	12	13	39
+beloond	12	13	38
+beloonde	12	13	38
+beloonden	12	13	38
+beloont	12	13	39
+belt	31	32	39
+beluister 	27	29	39
+beluisterd	27	29	38
+beluisterde	27	29	38
+beluisterden	27	29	38
+beluisteren	27	29	39
+beluistert	27	29	39
+bemin 	12	13	14	39	60	62
+bemind	12	13	14	38	60	62
+beminde	12	13	14	38	60	62
+beminden	12	13	14	38	60	62
+beminnen	12	13	14	39	60	62
+bemint	12	13	14	39	60	62
+bemoedig 	31	32	39
+bemoedigd 	31	32	38
+bemoedigde	31	32	38
+bemoedigden	31	32	38
+bemoedigen	31	32	39
+bemoedigend	31	32	 
+bemoediging	31	32
+bemoedigt	31	32	39
+ben	39
+benader 	39	46
+benaderd	38	46
+benaderde	38	46
+benaderden	38	46
+benaderen	39	46
+benadering	46
+benadert	39	46
+benauwd	12	16	17	38
+benauwen	12	16	17	39
+benauwt	12	16	17	39
+beneden	10	41	43
+benen	60	61
+beoordeel	31	32	39
+beoordeeld	31	32	38
+beoordeelde	31	32	38
+beoordeelden	31	32	38
+beoordeelt	31	32	39
+beoordelen	31	32	39	 	 
+beoordeling	31	32	 	 	 	 
+bepaal 	20	39
+bepaald	20	26 	38
+bepaalde	20	38
+bepaalden	20	38
+bepaalt	20	39
+bepalen	20	39
+beperk 	20	24	39
+beperken	20	24	39
+beperking	20	24
+beperkt	20	24
+beperkt	20	24	39
+beperkte	20	24	38
+beperkten	20	24	38
+beperktheid	20	24
+bepraat	27	29	31	32	39
+bepraatte	27	29	31	32	38
+bepraatten	27	29	31	32	38
+bepraten	27	29	31	32	39
+beredeneer	20	21	22	39
+beredeneerd	20	21	22	38
+beredeneerde	20	21	22	38
+beredeneerden	20	21	22	38
+beredeneert	20	21	22	39
+beredeneren	20	21	22	39
+bereidwillig	12	13
+bereik 	20	39	47	50
+bereiken	20	39	47	50
+bereikt	20	39	47	50
+bereikte	20	38	47	50
+bereikten	20	38	47	50
+bericht	31	32
+beriep	27	29	31	32	38
+beriepen	27	29	31	32	38
+berisp 	12	16	18	31	32	39
+berispen	12	16	18	31	32	39
+berispt	12	16	18	31	32	39
+berispte	12	16	18	31	32	38
+berispten	12	16	18	31	32	38
+beroemd	51	54
+beroep	27	29	47	49	39
+beroepen	27	29	31	32	39
+beroept	27	29	31	32	39
+beroerd	12	16	19
+beroerte	60	61
+beroof	12	16	39
+beroofd	12	16	38
+beroofde	12	16	38
+beroofden	12	16	38
+berooft	12	16	39
+berouw	12	16
+berouwen	12	16	39
+berouwvol	12	16
+beroven	12	16	39
+berust 	12	16	19	39
+berusten	12	16	19	39
+berusting	12	16	19
+berustte	12	16	19	38
+berustten	12	16	19	38
+beschaamd	12	16
+beschreef	20	31	32	38
+beschreven	20	31	32	38
+beschrijf	20	31	32	39
+beschrijft	20	31	32	39
+beschrijven	20	31	32	39
+besef 	20	22	39
+beseffen	20	22	39
+beseft	20	22	39
+besefte	20	22	38
+beseften	20	22	38
+beslis 	20	22	26	39
+beslissen	20	22	26	39
+beslissing	20	22	26
+beslist	20	22	26	39
+besliste	20	22	26	38
+beslisten	20	22	26	38
+besloot	20	22	26	38
+besloten	20	22	26	38
+besluit	20	22	26	39
+besluiteloos	20	25
+besluiten	20	22	26	39
+besmettelijk	60	61
+besmetting	60	61
+besparing	56
+besparingen	56
+bespeur 	20	22	39
+bespeurd	20	22	38
+bespeurde	20	22	38
+bespeurden	20	22	38
+bespeuren	20	22	39
+bespeurt	20	22	39
+bespottelijk	12	16	18
+besprak	31	32	38
+bespraken	31	32	38
+bespreek	31	32	39
+bespreekt	31	32	39
+bespreken	31	32	39
+bespreking	31	32
+besproken	31	32	38
+besteden	39
+besteed	39
+besteedde	38
+besteedden	38
+besteedt	39
+bestendigen	37
+bestraf 	12	16	18	39
+bestraffen	12	16	18	39
+bestraffing	12	16	18
+bestraft	12	16	18	39
+bestrafte	12	16	18	38
+bestraften	12	16	18	38
+bestudeer	20	39	47	48
+bestudeerd	20	39	47	38
+bestudeerde	20	39	47	38
+bestudeerden	20	39	47	38
+bestudeert	20	39	47	48
+bestuderen	20	39	47	48
+besturen	39	47	49
+bestuur	39	47	48	49
+bestuurd	38	47	49
+bestuurde	38	47	49
+bestuurden	38	47	49
+bestuurt	39	47	49
+betaal 	39	56
+betaald	38	56
+betaalde	38	56
+betaalden	38	56
+betaalpas	56
+betaalt	39	56
+betalen	39	56
+betaling	56
+betast 	27	30	38
+betasten	27	30	39
+beteken	20	22	39
+betekend	20	22	38
+betekende	20	22	38
+betekenden	20	22	38
+betekenen	20	22	39
+betekenis	20	22
+betekent	20	22	39
+beter	12	13
+beterschap	12	13
+beteugeld	12	16	20	24	38
+beteugelen	12	16	20	24	39
+betoog	31	32
+betrad	38	46
+betraden	38	46
+betreden	39	46
+betreed	39	46
+betreedt	39	46
+betreffen	20	39
+betreffende	10
+betreft	20	39
+betrek 	31	32	39
+betrekken	31	32	39
+betrekking	20	22
+betrekt	31	32	39
+betreur 	12	16	19	39
+betreurd	12	16	19	38
+betreurde	12	16	19	38
+betreurden	12	16	19	38
+betreuren	12	16	19	39
+betreurenswaardig	12	16	19
+betreurt	12	16	19	39
+betrof	20	38
+betrok	31	32	38
+betrokken 	31	32	38
+betrokkenheid	31
+betrouwbaar	12	13	26
+betwijfel 	20	22	25	39
+betwijfeld	20	22	25	38
+betwijfelde	20	22	25	38
+betwijfelden	20	22	25	38
+betwijfelen	20	22	25	39
+betwijfelt	20	22	25	39
+betwist 	20	22	31	32	39
+betwisten	20	22	31	32	39
+betwistte	20	22	31	32	38
+betwistten	20	22	31	32	38
+beval	31	32	38
+bevalen	31	32	38
+bevat 	20	22	39
+bevatte 	20	22	38
+bevatten	20	22	39
+bevecht 	12	16	18	39
+bevechten	12	16	18	39
+beveel	31	32	39
+beveelt	31	32	39
+bevelen	31	32	39
+beven	12	16	17	60	61	39
+bevestig 	20	39
+bevestigd	20	38
+bevestigde	20	38
+bevestigden	20	38
+bevestigen	20	39
+bevestiging	20
+bevestigt	20	39
+bevinding	20	22
+bevocht	12	16	18	38
+bevochten	12	16	18	38
+bevoegd	47	49
+bevoegdheid	47	49
+bevolen	31	32	38
+bevorder 	47	49	39
+bevorderd 	47	49	38
+bevorderde	47	49	38
+bevorderden	47	49	38
+bevorderen	47	49	39
+bevordert	47	49	39
+bevredig 	12	13	39
+bevredigd	12	13	38
+bevredigde	12	13	38
+bevredigden	12	13	38
+bevredigen	12	13	39
+bevredigend	12	13	 
+bevrediging	12	13
+bevredigt	12	13	39
+bevriend	31	34
+bevrijd 	12	13	39
+bevrijdde	12	13	38
+bevrijdden	12	13	38
+bevrijden	12	13	39
+bevrijdt	12	13	39
+bewaak 	39
+bewaakt	39
+bewaakte	38
+bewaakten	38
+bewaar	39
+bewaard	38
+bewaarde	38
+bewaarden 	38
+bewaart	39
+bewaken	39
+bewaren	39
+beweeg 	20	21	22	39	46
+beweegreden	20	21
+beweegt	20	21	22	39	46
+bewees	20	21	38
+bewegen	20	21	22	39	46
+beweging	51	53
+bewerkstelligd	20	21	22	38
+bewerkstelligen	20	21	22	39
+bewezen	20	21	38
+bewijs	20	21	39
+bewijst	20	21	39
+bewijzen	20	21	39	 	 
+bewogen	20	21	22	38	46
+bewonder 	12	13	14	39
+bewonderd	12	13	14	38
+bewonderde	12	13	14	38
+bewonderden	12	13	14	38
+bewonderen	12	13	14	39
+bewondert	12	13	14	39
+bewoner	51	52
+bewoog	20	21	22	38	46
+bewusteloos	60	61	64
+bezat	38
+bezaten	38
+bezeten	12	16	17
+bezeten	38
+bezichtig 	27	28	39
+bezichtigd	27	28	38
+bezichtigde 	27	28	38
+bezichtigden	27	28	38
+bezichtigen	27	28	39
+bezichtiging	27	28	 
+bezichtigt	27	28	39
+bezieling	57	58
+bezinnen	20	22	39
+bezit 	39
+bezitten	39
+bezocht	31	32	46	38
+bezochten	31	32	46	38
+bezoek	31	32	46	39
+bezoeken	31	32	46	39
+bezoekt	31	32	46	39
+bezorg	31	32	46	39
+bezorgd	12	16	31	32	46	38
+bezorgde	31	32	46	38
+bezorgden	31	32	46	38
+bezorgdheid	12	16	17
+bezorgen	31	32	46	39
+bezorgt	31	32	46	39
+bezwaar	12	16
+bezwarend	12	16
+bezweek	12	16	19	38
+bezweken	12	16	19	38
+bezwijk 	12	16	19	39
+bezwijken	12	16	19	39
+bezwijkt	12	16	19	39
+bibliotheek	47	48
+bid 	57	58	39
+bidden	57	58	39
+bidt	57	58	39
+biecht 	20	22	57	58	39
+biechten	20	22	57	58	39
+biechtte 	20	22	57	58	38
+bier	60	63
+bij	10	41	44
+bijbel	57	58
+bijeengekomen	31	32	38
+bijeengeroepen	27	29	31	32	38
+bijeenkomen	31	32	39
+bijeenkomst	31	32
+bijeenroepen	27	29	31	32	39
+bijgestaan	31	38
+bijles	47	48
+bijna	25
+bijsmaak	27	60	63
+bijstaan	31	39
+bijtijds	37
+biljart	51	53
+binnen	10	41	44
+binnengekomen	38	46
+binnenin	10	41	44
+binnenkomen	39	46
+binnenkort	37
+biologie	47	48
+bioscoop	51	54
+bitter	12	16	18	27
+bittere	12	16	18	27
+bizar	12	16
+blaas	60	61
+bleef	38
+bleek	20	22	38
+bleken 	20	22	38
+bleven	38
+blij	12	13	14
+blijdschap	12	13	14
+blijf	39
+blijft	39
+blijheid	12	13	14
+blijk	20	22	39
+blijken	20	22	39
+blijkt	20	22	39
+blijven	39
+blik	27	28	 
+blind	27	28
+blindedarm	60	61
+blindedarmontsteking	60	61
+bloed	60	61
+bloed	60	61	39
+bloedde	60	61	38
+bloedden	60	61	38
+bloeddruk	60	61
+bloeden	60	61	39
+bloederig	60	61
+bloeding	60	61
+bloedsuiker	60	61
+bloedt	60	61	39
+bloedtransfusie	60	61
+bloedvat	60	61
+bloedvergiftiging	60	61
+blokkade	20	24
+blokkeer	20	24	39
+blokkeerde	20	24	38
+blokkeerden	20	24	38
+blokkeert	20	24	39
+blokkeren	20	24	39
+bloos	60	61	39
+bloosde	60	61	38
+bloosden	60	61	38
+bloost	60	61	39
+bloot	60	61	62
+blootgelegd	20	22	31	32	38
+blootleggen	20	22	31	32	39
+blos	60	61
+blozen	60	61	39
+boeien	12	13	39
+boeiend	12	13	 
+boek	47	48
+boekenwurm	47	48
+boet 	12	16	19	39
+boeten	12	16	19	39
+boette	12	16	19	38
+boetten	12	16	19	38
+bof 	12	13	39
+boffen	12	13	39
+boft	12	13	39
+bofte	12	13	38
+boften	12	13	38
+bonnetje	56
+bonus	47	49	56
+bonzen	60	61	39
+boodschappen	56	60	63
+boos	12	16	18
+boosheid	12	16	18
+borst	60	61
+borstbeen	60	61
+borstel	65
+borstelen	65	39
+borsten	60	61	62
+borstkas	60	61
+borstvoeding	60	61
+bot	12	16
+botten	60	61
+boven	10	41	42
+bovenop	10	41	42
+bovenste	41	42
+braaf	12	13
+braaksel	60	61
+bracht	38	46
+brachten	38	46
+brak	38
+braken	60	61	39
+breder	41
+breed	41
+breedte	41
+breek	39
+breekt	39
+breken	39
+breng 	39	46
+brengen	39	46
+brengt	39	46
+briljant	12	13
+broeden	39
+broer	31	35
+broers	31	35
+bron	20	21
+bronchitis	60	61
+broodmager	60	61	63
+brunch	60	63
+buffet	60	63
+buik	60	61
+buikpijn	60	61
+buil	60	61
+buiten	7	10	41	45
+buitengesloten	45	38
+buitensluiten	45	39
+buitensport	51	53
+bulimia	60	61	63
+bullshit	12	16	18	66
+bult	60	61
+bulten	60	61
+bureau	47	49
+buren	31	34
+burnout	47	49	60	61
+buur	31	34
+buurman	31	34
+buurt	31	34
+buurvrouw	31	34
+carrière	47	49
+carrièrejager	47	49
+carrièrevrouw	47	49
+cassette 	51	55
+cassettebandje	51	55
+catastrofe	12	16
+causaal	20	21
+causaliteit	20	21
+cd	51	55
+centimeter	41
+charmant	12	13	
+charme	12	13
+chef	47	49
+cheque	56
+cholesterol	60	61
+Christelijk	57	58
+christen	57	58
+christendom	57	58
+Christus	57	58
+cijfer	47	48
+circa	25
+coach	47	49
+collega	31	33	47	49
+collega's	31	33	47	49
+college	47	48
+colleges	47	48
+collegezaal	47	48
+collegialiteit	47	49
+coma	60	61	64
+comateus	60	61	64
+comfort	12	13
+commentaar	31	32
+commissie	47	49
+communicatie	31	32
+communicatief	31	32
+communiceer	31	32	39
+communiceerde	31	32	38
+communiceerden	31	32	38
+communiceert	31	32	39
+communiceren	31	32	39
+communie	57	58
+competent	47	50
+competentie	47	50
+competitief	47	50
+compleet	26
+computer	47	48	49
+concentratie	12	13	20	22
+concentreer	12	13	20	22	39
+concentreerde	12	13	20	22	38
+concentreerden	12	13	20	22	38
+concentreert	12	13	20	22	39
+concentreren	12	13	20	22	39
+concert	51	55
+concludeer	20	22	39
+concludeerde	20	22	38
+concludeerden	20	22	38
+concludeert	20	22	39
+concluderen	20	22	39
+conclusie	20	22
+concurreer	39	47	49	50
+concurreerde	38	47	49	50
+concurreerden	38	47	49	50
+concurreert	39	47	49	50
+concurrent	47	49	50
+concurrentie	47	49	50
+concurreren	39	47	49	50
+concurrerend	47	49	50	 
+conditie	51	53
+conditietraining	51	53
+condoom	60	62
+conflict	20	23
+confrontatie	12	13
+confronteer	12	13	39
+confronteerde	12	13	38
+confronteerden	12	13	38
+confronteert	12	13	39
+confronteren	12	13	39
+conrector	47	48
+consulteer	31	32	39
+consulteerde	31	32	38
+consulteerden	31	32	38
+consulteert	31	32	39
+consulteren	31	32	39
+consument	56
+contact	31	32
+contant 	56
+contanten	56
+continu	37
+continuiteit	37
+contributie	56
+controle	12	13	20	24
+conversatie	31	32	 
+corruptie	56
+counselor	31	32	47	49
+creatief	12	13
+crematie	57	59
+crematorium	57	59
+cremeren	57	59	39
+cursus	47	48
+cursussen	47	48
+cynisch	12	16	18
+cyste	60	61
+daar	41
+daarentegen	45
+daarin	41
+daarna	37
+daarnet	37
+daarom	20	21
+daaronder	44
+daarop	37
+daaropvolgend	37
+daarvoor	20	21
+dacht	20	22	38
+dachten	20	22	38
+dadelijk	37
+dag	37
+dagelijks	37
+dakterras	51	52
+dame	31	36
+dames	31	36
+dank	12	13	31	32
+dankbaar	12	13	31	32
+dans	39	46	51	55
+dans	46	51	55
+dansen	39	46	51	55
+danst	39	46	51	55
+danste	38	46	51	55
+dansten	38	46	51	55
+dapper	12	13	15
+darm	60	61
+darmen	60	61
+dat	45
+de	9
+debat	31	32
+debiteur	56
+decaan	47	48
+december	37
+decennium	37
+deden	38
+deed	38
+deel	31	32	39
+deelde	31	32	38
+deelden	31	32	38
+deelgenomen	31	32	38
+deelnemen	31	32	39
+deelt	31	32	39
+defensief	12	16	18	20	24
+definitief	26
+delen	31	32	39
+denk	20	22	39
+denkbeeld	20	22
+denken	20	22	39
+denkt	20	22	39
+departement	47	49
+depressie	12	16	19
+depressief	12	16	19
+deprimeer	12	16	19	39
+deprimeerde	12	16	19	38
+deprimeerden	12	16	19	38
+deprimeert	12	16	19	39
+deprimeren	12	16	19	39
+derde	11
+dertien	11
+dertig	11
+deskundig	47	49
+desondanks	7	26
+dessert	60	63
+destructief	12	16	18
+deugd	12	13
+deurwaarder	47	49
+deze	44
+diabetes	60	61
+diabeticus	60	61
+diarree	60	61
+dichtbij	41
+dichtgeplakt	38
+dichtplakken	39
+die	45
+dieet	60	63
+dien 	39
+diende	38
+dienden	38
+dienen	39
+dienst	47	49
+dient	39
+dieper	41	43	 
+dierbaar	12	13	14
+diëtiste	60	63
+dij	60	61
+dijbeen	60	61
+dik	60	61	63
+dikke 	60	61	63
+diner	60	63
+dinsdag	37
+direct	37
+directeur	47	49
+directie	47	49
+discussie	31	32
+discussieer	31	32	39
+discussieerde	31	32	38
+discussieerden	31	32	38
+discussieert	31	32	39
+discussiëren	31	32	39
+dit	44
+docent	47	48
+docente	47	48
+dochter	31	35
+dochters	31	35
+doctoraal	47	48
+dodelijk	12	16	57	59
+doden	12	16	57	59	39
+doe	39
+doel	20	21	47	50
+doelbewust	20	21	47	50
+doeltreffend	12	13	15
+doemdenken	12	16	39
+doen	39
+doet	39
+doezelig	60	61	64
+dom	12	16
+dominee	57	58
+domineer	12	16	39
+domineerde	12	16	38
+domineerden	12	16	38
+domineert	12	16	39
+domineren	12	16	39
+domkop	12	16	66
+donderop	12	16	18	66
+dood	57	59
+doodgaan	39	57	59
+doodgegaan	38	57	59
+doodgeslagen	12	16	18	57	59	38
+doodskist	57	59
+doodslaan	12	16	18	57	59	39
+doodsstrijd	12	16	19	57	59
+doof	60	61	27	29
+doofstomme	60	61	27	29
+doopnaam	57	58
+door	10
+doorbreken	39
+doorgaan	39
+doorgebroken	38
+doorgegaan	38
+doorgeslikt	60	63	38
+doorlopend	37
+doorslikken	60	63	39
+doorsta 	12	13	39
+doorstaan	12	13	39
+doorstaat	12	13	39
+doorstond	12	13	38
+doorstonden	12	13	38
+doortastend	12	13	 
+doorzag	20	22	38
+doorzagen	20	22	38
+doorzie 	20	22	39
+doorzien	20	22	39
+doorziet	20	22	39
+dopen	57	58	39
+dorst	60	61	63
+dorstig	60	61	63
+douche	60	65
+draaf	39	46
+draafde	38	46
+draafden	38	46
+draaft	39	46
+draag	39	46
+draagt	39	46
+draai 	39
+draaide	38
+draaiden	38
+draaien	39
+draait	39
+dragen	39	46
+dralen	25	37
+draven	39	46
+dreig 	12	16	18	39
+dreigde	12	16	18	38
+dreigden	12	16	18	38
+dreigen	12	16	18	39
+dreigend	12	16	18	 
+dreigt	12	16	18	39
+drie	11
+drieën*	11
+driftig	12	16	18
+driftkop	12	16	18
+dring 	39
+dringen	39
+dringend 	37
+dringt	39
+drink 	39	60	63
+drinken	39	60	63	 
+drinkt	39	60	63
+droefheid	12	16	19
+droeg	38	46
+droegen	38	46
+droevig	12	16	19
+dromen	60	64	39
+dromer	60	64
+dromerig	60	64
+drong	38
+drongen 	38
+dronk	38	60	63
+dronken	38	60	63
+droom	60	64
+droom	60	64	39
+droomde	60	64	38
+droomden	60	64	38
+droomt	60	64	39
+druk	12	16	27	30 	39
+drukken	27	30	39
+drukt	27	30	39
+drukte	27	30	38
+drukten	27	30	38
+drum	51	55
+drummen	51	55	39
+drummer	51	55
+drums	51	55
+dubieus	12	16	20	25
+duidelijk	20	22	26
+duivel	12	16	57	58
+duivels	12	16	57	58
+duizelig	60	61
+duizend*	11
+duizendmaal	11
+duizendste	11
+duizendvoudige	11
+duld 	39
+duldde 	38
+duldden	38
+dulden	39
+duldt	39
+dupe	12	16	18
+durf	12	13	15	39
+durfde	12	13	15	38
+durfden	12	13	15	38
+durft	12	13	15	39
+durven	12	13	15	39
+dus	20	21
+dutje	60	64
+duur	56	37
+duw 	27	30	39
+duwde	27	30	38
+duwden	27	30	38
+duwen	27	30	39
+duwt	27	30	39
+dwaas	12	16	39
+dwang	12	16	20	24
+dwarsbomen	12	16	18	39
+dwing 	12	16	20	24	39
+dwingen	12	16	20	24	39
+dwingt	12	16	20	24	39
+dwong	12	16	20	24	38
+dwongen	12	16	20	24	38
+dynamiek	12	13	15
+dynamisch	12	13	15
+echt	26
+echter	25
+echtgenoot	31	35
+echtgenote	31	35
+echtgenoten	31	35
+echtgenotes	31	35
+economie	56
+economisch	56
+economische	47	49	56
+educatief	47	48
+eega	31	35
+één	11
+een	9
+eenen*	11
+eenjarig	37
+eenmaal	37
+eenmaal	11	37
+eens	11	25	37
+eensklaps	37
+eenzaam	12	16	19
+eenzaamheid	12	16	19
+eer	12	13	37	47	50
+eerder	37
+eergevoel	12	13	47	50
+eergisteren	37	 
+eerlijk	12	13
+eerlijkheid	12	13
+eerst	11	 	 
+eerste	11
+eerstejaars	47	48
+eerstejaarsstudent	47	48
+eerstvolgend	37
+eervol	12	13	47	50
+eet	39	60	63
+eetlust	60	63
+eettafel	60	63
+eeuw	37
+eeuwig	26	37
+eeuwigheid	37	57	58
+effect	20	21	22
+effecten	56
+egoïsme	12	16
+egoïst	12	16
+egoïstisch	12	16
+eierstok	60	61
+eierstokken	60	61
+eigenaardig	12	16
+eigengereid	12	16
+eigenlijk	25
+eigenzinnig	12	16
+eind	20	37
+einde	20	37
+eindelijk	37
+eindexamen	47	48
+eindexamens	47	48
+eindig 	39
+eindigde	38
+eindigden	38
+eindigen	20	37	39
+eindigt	39
+elegant	12	13
+elf	11
+elftal	31	51	53
+ellende	12	16	19
+ellendig	12	16	19
+email	31	32
+e-mail	31	32
+emails	31	32
+e-mails	31	32
+emotioneel	12	16
+en	44
+energie	12	13	15
+energiek	12	13	15
+engel	57	58
+engelen	57	58
+Engels	47	48
+Engelse	47	48
+enkel	60	61
+enkeling	31	36
+enthousiasme	12	13	15
+enthousiast	12	13	15
+entreegeld	56
+erbarmelijk	12	16	19
+erectie	60	61	62
+eredienst	57	58
+erewoord	26	57	58
+erf	56	39
+erfde	56	38
+erfden	56	38
+erfenis	56
+erfgenaam	56
+erfgename	56
+erft	56	39
+erg	12	16
+ergens	25	41
+erger	12	16	18	39
+ergerde	12	16	18	38
+ergerden	12	16	18	38
+ergeren	12	16	18	39
+ergerlijk	12	16	18
+ergernis	12	16	18
+ergert	12	16	18	39
+erken 	20	22	31	32	39
+erkend	20	22	31	32	38
+erkende	20	22	31	32	38
+erkenden	20	22	31	32	38
+erkennen	20	22	31	32	39
+erkent	20	22	31	32	39
+erkentelijk	12	13	31	32
+ernaast	41
+ernst	12	16
+ernstig	12	16
+ernstigheid	12	16
+eruitgezien	27	28	38
+eruitzien	27	28	39
+ervaar	20	22	39
+ervaart	20	22	39
+ervaren	20	22	39
+erven	56	39
+ervoer	20	22	38
+ervoeren	20	22	38
+eten	39	60	63
+etenstijd	60	63
+euro	56
+eurocent	56
+evaluatie	20	22
+evalueer	20	22	39
+evalueerde	20	22	38
+evalueerden	20	22	38
+evalueert	20	22	39
+evalueren	20	22	39
+evangelie	57	58
+even	37
+eveneens	44
+ex	31	36
+exact	26
+examen	47	48
+examengeld	56
+examens	47	48
+exclusief	45
+excuseer	31	32	39
+excuseerde	31	32	38
+excuseerden	31	32	38
+excuseert	31	32	39
+excuseren	31	32	39
+excuses	31	32
+excuus	31	32
+extase	12	13	14
+extra	44
+faal	12	16	19	39	47	50
+faalde	12	16	19	38	47	50
+faalden	12	16	19	38	47	50
+faalt	12	16	19	39	47	50
+factuur	56
+faculteit	47	48
+failliet	56
+faillissement	56
+falen	12	16	19	39	47	50
+familie	31	35
+familieleden	31	35
+families	31	35
+fanaat	12	16
+fantastisch	12	13	15
+fase	37
+fataal	57	59
+februari	37
+feest	12	13	31
+feestelijk	12	13
+feestvreugde	12	13
+feit	20	26
+feite	20	26
+feitelijk	20	26
+fel	12	16	18
+fiasco	12	16	19	47	50
+fiets	46	51	53	39
+fiets	51	53
+fietsen	46	51	53	39
+fietser	51	53
+fietst	46	51	53	39
+fietste	46	51	53	38
+fietsten	46	51	53	38
+fijn	12	13	14
+fijngevoelig	12	13
+film	51	54
+filosofie	47	48
+financieel	56
+financiën	56
+financier 	39	47	49	56
+financierde	38	47	49	56
+financierden	38	47	49	56
+financieren	39	47	49	56
+financiert	39	47	49	56
+fitness	51	53
+flat 	51	52
+flatgebouw	51	52
+flauwgevallen	60	61	38
+flauwte	60	61
+flauwvallen	60	61	39
+flikker	60	62	66
+flikkers	60	62	66
+flink	12	13	15
+flirten	12	13	60	62	39
+flop	12	16
+foltering	12	16	19
+fonds	56
+forceer	12	16	17	39
+forceerde	12	16	17	38
+forceerden	12	16	17	38
+forceert	12	16	17	39
+forceren	12	16	17	39
+fornuis	60	63
+fortuin	56
+fout	12	16
+foutloos	12	13
+fraai	12	13	27	28
+freak	12	16
+frigide	60	62
+frustratie	12	16	18
+frustreer	12	16	18	39
+frustreerde	12	16	18	38
+frustreerden	12	16	18	38
+frustreert	12	16	18	39
+frustreren	12	16	18	39
+functie	47	49
+functies	47	49	 	 
+functionaris	47	49
+functioneer	39	47	49
+functioneerde	38	47	49
+functioneerden	38	47	49
+functioneert	39	47	49
+functioneren	39	47	49
+fundamentalisme	57	58
+fundamentalist	57	58
+furieus	12	16	18
+ga	39	46
+gaaf	12	13
+gaan	39	46
+gaat	39	46
+gadegeslagen	27	28	38
+gadeslaan	27	28	39
+gaf	38
+garage	51	52
+garandeer	26	39
+garandeerde	26	38
+garandeerden	26	38
+garandeert	26	39
+garanderen	26	39
+gast	31	34
+gauw	37
+gave	12	13
+gaven	38
+geaarzeld	20	24	25	38
+geaccepteerd	8	12	13	20	22	38
+geageerd	12	16	18	38
+geamuseerd	12	13	38
+geamuseerdheid	12	13
+geanalyseerd	20	22	38
+geantwoord	31	32	38
+gearriveerd	38	46
+gebabbeld	27	29	31	32	38
+gebed	57	58
+gebedeld	31	32	38
+gebeden	57	58	38
+gebedenboek	57	58
+gebeefd	12	16	17	60	61	38
+gebeld	31	32	38
+gebelgd	12	16	18
+gebeurd	38
+gebeurde	38
+gebeuren	39
+gebeurt	39
+gebiecht	20	22	57	58	38
+gebied	41
+gebleken	20	22	38
+gebleven	38
+gebloed	60	61	38
+geblokkeerd	20	24	38
+gebloosd	60	61	38
+gebod	57	58
+geboeid	12	13	38
+geboet	12	16	19	38
+geboft	12	13	38
+gebonsd	60	61	38
+geborgen	12	13
+geborgenheid	12	13
+geborsteld	65	38
+gebraakt	60	61	38
+gebracht	38	46
+gebrek	12	16
+gebrekkig	12	16
+gebroed	38
+gebroken	38
+gebruik 	39
+gebruiken	39
+gebruikt	39
+gebruikte	38
+gebruikten	38
+gecommuniceerd	31	32	38
+geconcentreerd	12	13	20	22	38
+geconcludeerd	20	22	38
+geconcurreerd	38	47	49	50
+geconfronteerd	12	13	38
+geconsulteerd	31	32	38
+gecremeerd	57	59	38
+gedaan	38
+gedacht	20	22	38
+gedachte	20	22
+gedachten	20	22
+gedanst	38	46	51	55
+gedeprimeerd	12	16	19	38
+gediend	38
+gedijd	38
+gedijen	39
+gediplomeerd	47	48	49
+gediscussieerd	31	32	38
+gedomineerd	12	16	38
+gedood	12	16	57	59	38
+gedoopt	57	58	38
+gedraafd	38	46
+gedraaid	38
+gedraal	25	37
+gedragen	38	46
+gedreigd	12	16	18	38
+gedrongen	38
+gedronken	38	60	63
+gedroomd	60	64	38
+gedrukt	27	30	38
+geduld	38
+gedurende	37
+gedurende	10
+gedurfd	12	13	15	38
+geduwd	27	30	38
+gedwarsboomd	12	16	18	38
+gedwongen	12	16	20	24	38
+geef	39
+geeft	39
+geëindigd	38
+geëmotioneerd	12	16
+geen	7
+geërfd	56	38
+geërgerd	12	16	18	38
+geest	57	58
+geestdrift	12	13	15
+geestdriftig	12	13	15
+geestig	12	13
+geestkracht	12	13	57	58
+geëvalueerd	20	22	38
+geëxcuseerd	31	32	38
+gefaald	12	16	19	38	47	50
+gefietst	46	51	53	38
+gefinancierd	38	47	49	56
+geflirt	12	13	60	62	38
+geforceerd	12	16	17	38
+gefrustreerd	12	16	18	38
+gefunctioneerd	38	47	49
+gegaan	38	46
+gegarandeerd	26	38
+gegeneerd	12	16	17	38
+gegeten	38	60	63
+gegeven	38
+gegiechel	12	13	14
+gegiecheld	12	13	38
+gegild	12	16	38
+gegist	25	38
+gegniffeld	12	13	38
+gegooid	38	46
+gegrepen	27	30	38
+gehaald	38	46
+gehaat	12	16	18	38
+gehad	38
+gehandeld	38
+gehecht	12	13	14
+gehechtheid	12	13	14
+geheel	26
+geheeld	60	61	38
+gehinderd	12	16	18	38
+gehoefd	20	23	38
+gehoest	60	61	38
+gehold	38	46
+geholpen	31	38
+gehoopt	12	13	15	20	23	25	38
+gehoorapparaat	60	61
+gehoord	27	29	39	38
+gehouden	38
+gehuild	12	16	19	38
+geil	60	61	62
+geïmpliceerd	20	21	38
+geïnitieerd	20	38	47	50
+geïnspireerd	12	13	15	38
+geïntegreerd	20	38
+geïnteresseerd	12	13	38
+geïnterviewd	31	32	38
+geïntimideerd	12	16	18	38
+geïnvesteerd	56
+geïrriteerd	12	16	18	38
+geïsoleerd	12	16	19	38
+gejammerd	12	16	19	38
+gejankt	12	16	19	38
+gejend	12	16	18	38
+gejengeld	12	16	19	38
+gejogd	38	46	51	53
+gejuicht	12	13	14	38
+gek	12	16	 
+gekamd	65	38
+gekanker	12	16	18	66
+gekauwd	60	63	38
+gekeken	27	28	38
+gekend	20	22	38
+gekeuveld	31	32	38
+geklauterd	38	46
+gekleefd	38
+gekletst	31	32	38
+geklikt	31	32	38
+geklommen	38	46
+geklonken	27	29	38
+gekneld	27	30	38
+geknuffeld	27	30	60	62	38
+gekocht	38	56
+gekoesterd	12	13	14	38
+gekomen	38	46
+gekookt	60	63	38
+gekopieerd	38
+gekost	38
+gekotst	60	61	38
+gekrabd	60	61	38
+gekregen	38
+gekrenkt	12	16	19	38
+gekund	38
+gekweld	12	16	38
+gekwetst	12	16	19	38
+gelachen	12	13	14	38
+gelaten	12	16	19	38
+gelatenheid	12	16	19
+geld	56
+geldautomaat	56
+geleden	37	 
+geleden	12	16	19	38
+geleend	38
+geleerd	20	22	38	47	48
+gelegen	38
+gelegenheid	25	37
+geleid	38
+geleken	20	25	38
+gelezen	20	27	28	38
+geliefd	12	13
+geliefde	31	34	60	62
+geliefden	31	34	60	62
+geliefkoosd	12	13	14	38
+gelimiteerd	20	24	38
+gelogeerd	38
+gelogen	12	16	38
+geloof	20	22	25	39
+geloofd	20	22	25	38
+geloofde	20	22	25	38
+geloofden	20	22	25	38
+gelooft	20	22	25	39
+gelopen	38	46
+geloven	20	22	25	39
+gelovig	57	58
+gelovigen	57	58
+geluid	27	29
+geluidloos	27	29
+geluisterd	27	29	31	32	38
+geluk	12	13	14
+gelukkig	12	13	14
+gelul	12	16	18	66
+geluncht	60	63	38
+gemaakt	38
+gemak	12	13
+gemakkelijk	12	13
+gemasseerd	27	30	38
+gemeden	12	16	20	24	38
+gemediteerd	57	58	38
+gemeen	12	16	18
+gemeend	20	22	38
+gemeld	27	29	31	32	38
+gemerkt	20	22	27	30	38
+gemist	12	16	19	38
+gemoedsrust	12	13
+gemoeten	20	23	38
+gemogen	38
+gemolesteerd	12	16	18	38
+gemoraliseerd	57	58	38
+gemotiveerd	20	21	22	38
+genade	57	58
+genaderd	38	46
+gênant	12	16
+gêne	12	16
+geneer	12	16	17	39
+geneerde	12	16	17	38
+geneerden	12	16	17	38
+geneert	12	16	17	39
+genegeerd	12	16	18	20	38
+genegenheid	12	13	14
+generatie	37
+generen	12	16	17	39
+geneukt	60	62	38
+genezen	60	61
+genieten	12	13	14
+genitaal	60	61	62
+genitaliën	60	61	62
+genodigde	31	34
+genodigden	31	34
+genoegen	12	13
+genomen	38	46
+genot	12	13	14
+gentleman	31	36
+geobsedeerd	12	16	17	38
+geobsedeerd	27	28	38
+geopenbaard	20	22	31	32	38
+geopperd	31	32	38
+geordend	20	38
+georganiseerd	20	31	38
+geouwehoer	12	16	18	66
+gepakt	27	30	38	46
+geparfumeerd	65	38
+geparticipeerd	31	32	38
+gepauzeerd	38
+gepeinsd	20	22	38
+gepest	12	16	18	31	32	38
+gepiekerd	12	16	17	38
+geplaagd	12	16	38
+geplaatst	38
+geplakt	38
+geplast	38	60	61
+gepoetst	38	51	52	60	65
+gepraat	27	29	31	32	38
+gepreekt	57	58	38
+gepresenteerd	38	47	48	49
+gepresteerd	20	38	47	50
+geprikkeld	12	16	18
+geprobeerd	20	25	38
+geproefd	27	38	60	63
+geprofiteerd	56	38
+gepromoveerd	38	47	48	49
+geprotesteerd	12	16	38
+geraadpleegd	31	32	38
+geraakt	20	27	30	38
+geraas	27	29
+geracet	38	46	51	53
+geradbraakt	12	16	60	61
+geraden	25	31	32	38
+gerationaliseerd	20	21	22	38
+gereageerd	20	21	38
+gerealiseerd	20	22	38
+gerecht	60	63
+gerechten	60	63
+gereden 	38	46
+geredeneerd	20	21	22	31	32	38
+gereflecteerd	20	22	38
+geregeerd	38	47	49
+geregeld	20	38
+gereikt	38	46
+gereisd	38	46
+geremdheid	12	16	20	24
+gerend	38	46
+geresulteerd	20	21	38
+gericht	38
+geriefelijk	12	13
+geroddel	12	16	31	32
+geroddeld	12	16	31	32	38
+geroepen	27	29	31	32	38
+geroken	27	38
+geromantiseerd	12	13	14	38
+gerookt	38
+gerouwd	12	16	19	38	57	59
+gerucht	31	32
+geruchten	31	32
+geruild	38
+geruïneerd	12	16	38	56
+geruis	27	29	
+gerust	12	13	38	60	64
+gerustgesteld	12	13	31	32	38
+geruststellen	12	13	31	32	39
+geschaad	12	16	19	38
+geschaamd	12	16	38
+geschenen	20	25	27	28	38
+geschept	38
+geschiedenis	37
+geschil	12	16	18
+geschipper	25	37
+gescholden	12	16	18	38
+geschonden	12	16	38
+geschonken	31	32	38
+geschoren	38	65
+geschreeuwd	12	16	38
+geschreven	38
+geschrokken	12	16	17	38
+geschud	38	46
+gesjokt	38	46
+geslaagd	38	47	50
+geslaapwandeld	38	46	60	64
+geslacht	60	62
+geslachtsdelen	60	61	62
+geslachtsgemeenschap	60	62
+geslapen	38	60	64
+gesleten	38
+geslikt	38	60	63
+gesloopt	38
+gesmaakt	27	60	63	38
+gesmeekt	31	32	38
+gesmeten	38
+gesnapt	20	22	38
+gesneld	38	46
+gespannen	12	16
+gespeeld	31	51	53	38
+gespierd	60	61
+gesplitst	38
+gesprek	31	32	 
+gesproken	27	29	31	32	38
+gestaan	38
+gestaard	27	28	38
+gestapt	38	46
+gesteund	12	13	38
+gestikt	38	60	61
+gestimuleerd	12	13	38
+gestoken	38
+gestonken	27	38
+gestoord	12	16	31	32	38
+gestopt	38
+gestort	38
+gestorven	38	57	59
+gestraft	12	16	18	38
+gestreeld	12	13	14	38
+gestresst	12	16
+gestroomd	38	46
+gestructureerd	20	38
+gestudeerd	38	47	48
+gestuurd	38	46
+gesuggereerd	31	32	38
+getast	27	30	38
+geteisterd	12	16	18	38
+getelefoneerd	31	32	38
+getergd	12	16	18	38
+geterroriseerd	12	16	17	18	38
+getest	38	47	48
+getierd	12	16	18	38
+getikt	12	16
+getinteld	38	60	61
+getobd	12	16	17	38
+getoetst	47	48	38
+getoond	27	28	38
+getracht	20	25	38
+getraind	38	51	53
+getransporteerd	38	46
+getreiterd	12	16	18	38
+getreurd	12	16	19	38
+getrild	60	61	38
+getrimd	38	46	51	53
+getroffen	31	32	38
+getrokken	38	46
+getrommeld	38	51	55
+getroost	12	13	38
+getrotseerd	12	13	15	38
+getrouw	12	13
+getuige	27	28
+getuigen	27	28
+getuigschrift	47	49
+geuit	12	31	32	38
+geur 	27
+geurig	27
+geurtje	65
+gevaar	12	16	17
+gevaarlijk	12	16	17
+gevangen	38	46
+gevat	12	13	20
+gevat	20	22	38
+gevecht	12	16	18
+geven	39
+gevergd	20	38	47	50
+gevierd	31	32	38
+gevist	38	51	53
+gevit	12	16	18	38
+gevlogen	38	46
+gevlucht	38	46
+gevochten	12	16	18	31	32	38
+gevoel	12	27	30
+gevoeld	27	30	38
+gevoelens	12
+gevoelig	12
+gevoeligheid	12
+gevoelloos	60	61
+gevolg	20	21
+gevolgd	38	46
+gevonden	20	22	38
+gevormd	38
+gevraagd	27	29	31	32	38
+gevreesd	12	16	17	38	
+gewaagd	12	13	15
+gewaaid	38	46
+gewaardeerd	12	13	38
+gewacht	38
+gewalgd	12	16	18	38
+gewandeld	38	46	51	53
+gewanhoopt	12	16	17	19	38
+gewantrouwd	12	16	38
+gewassen	38	60	65
+gewedijverd	38	47	50
+geweest	38
+geweifeld	20	25	38
+geweigerd	12	16	31	32	38
+gewekt	38	60	64
+gewelddadig	12	16	18
+geweldig	12	13	15
+gewend	38
+gewenst	20	23	40
+gewerkt	38	47	49
+geweten	20	22	38
+gewicht	60	63
+gewiekst	12	13	20
+gewijd	12	13	14	38
+gewild	12	13	20	23	38
+gewinkeld	38	56
+gewisseld	38
+gewonnen	12	13	38	47	50
+gewoond	38	51	52
+geworden	38
+geworpen	38
+gewreven	27	30	38
+gewrichtsontsteking	60	61
+gewroken	12	16	18	38
+gezag	47	49
+gezang	51	55
+gezanik	12	16	18
+gezanikt	12	16	18	38
+gezegd	27	29	31	32	38
+gezegend	12	13	38	57	58
+gezellig	12	13
+gezelligheid	12	13
+gezet	38
+gezeten	38
+gezeur	12	16	18
+gezeurd	12	16	18	38
+gezicht	60	61
+gezichtsvermogen	27	28	60	61
+gezien	20	22	27	28	38
+gezin	31	35	51	52
+gezinnen	31	35	51	52
+gezoend	12	13	38	60	62
+gezond	60	61
+gezondheid	60	61
+gezondigd	12	16	38	57	58
+gezongen	38	51	55
+gezorgd	38
+gezweet	38	60	61
+gezwel	60	61
+gezwollen	60	61
+gezwommen	38	46	51	53
+giechel 	12	13	39
+giechelde	12	13	38
+giechelden	12	13	38
+giechelen	12	13	39
+giechelt	12	13	39
+gil 	12	16	39
+gilde	12	16	38
+gilden	12	16	38
+gillen	12	16	39
+gilt	12	16	39
+ging	38	46
+gingen	38	46
+girorekening	56
+gis 	25	39
+gissen	25	39
+gist	25	39
+giste	25	38
+gisten	25	38
+gisteren	37	 	 
+gitaar	51	55
+gitarist	51	55
+glansrijk	12	13	15
+glimlach	12	13	39
+glimlachen	12	13	39
+glimlacht	12	13	39
+glimlachte	12	13	38
+glimlachten	12	13	38
+gniffel 	12	13	39
+gniffelde	12	13	38
+gniffelden	12	13	38
+gniffelen	12	13	39
+gniffelt	12	13	39
+God	57	58
+goddelijk	12	13	57	58
+goddomme	12	16	18	66
+godsdienst	57	58
+godsdienstig	57	58	
+godverdomme	12	16	18	66
+godverdorie	12	16	18	66
+goed	12	13
+goedaardig	12	13
+goedgekeurd	8	12	13	20	38
+goedgepraat	20	22	31	32	38
+goedgevonden	8	20	38
+goedgezind	12	13
+goedheid	12	13
+goedkeuren	8	12	13	20	39
+goedkeuring	12	13	20
+goedkoop	56
+goedkoper	56
+goedpraten	20	22	31	32	39
+goedvinden	8	20	39
+golf	51	53
+gooi 	39	46
+gooide	38	46
+gooiden	38	46
+gooien	39	46
+gooit	39	46
+graf	57	59
+grafsteen	57	59
+grap	12	13
+grappig	12	13
+gratie	57	58
+gratificatie	47	49	56
+greep	27	30	38
+grepen	27	30	38
+Grieks	47	48
+griep	60	61
+griezel	12	16	17
+griezelig	12	16	17
+grijns	12	13
+grijp 	27	30	39
+grijpen	27	30	39
+grijpt	27	30	39
+gril	12	16
+grimmig	12	16	
+grof	12	16	18
+groot	41
+grootmoeder	31	35
+grootmoeders	31	35
+grootouder	31	35
+grootouders	31	35
+groots	12	13
+grootte	41
+grootvader	31	35
+grootvaders	31	35
+gruwel	12	16	17
+gruwelijk	12	16	17
+gunst 	12	13
+gunstig	12	13
+gym 	51	53
+gymnastiek	51	53
+haal	39	46
+haalde	38	46
+haalden	38	46
+haalt	39	46
+haar	1	6	31	33
+haarzelf	1	6	31	33
+haat 	12	16	18	39
+haatdragend	12	16	18
+haatte	12	16	18	38
+haatten	12	16	18	38
+had	38	
+hadden	38
+halen	39	46
+half	11
+halfjaar	37	47	48
+hallo	31	32
+hals	60	61
+halsstarrig	12	16	18	20	24
+halve	11
+hand	60	61
+handdruk	60	61
+handel 	39
+handelde	38
+handelden	38
+handelen	39
+handeling	46	 
+handelt	39
+handen	60	61
+handhaven	37
+hapje	60	63
+hardgelopen	38	46
+hardlopen	39	46
+hardnekkig	12	16	18	20	24
+haren	60	61	65
+harmonie	12	13
+hart	60	61
+hartaanval	60	61
+hartelijk	12	13
+hartelijkheid	12	13
+harteloos	12	16
+hartinfarct	60	61
+hartkloppingen	60	61
+hartslag	60	61
+hartstilstand	60	61
+hartstocht	12	13	14	60	62
+hartstochtelijk	12	13	14	60	62
+hatelijk	12	16	18
+haten	12	16	18	39
+heb	39
+hebben	39
+hebt	39
+hebzucht	12	16	18	56
+hebzuchtig	12	16	18	56
+hectisch	12	16
+heden	37
+hedenavond	37
+hedendaags	37
+heelal	41
+Heer	57	58
+heerlijk	12	13
+heftig	12	16	18
+heilzaam	12	13
+hel	12	16	57	58
+helaas	12	16
+held	12	13	15
+helder	20	22	26
+heldhaftig	12	13	15
+heldhaftigheid	12	13	15
+heldin	12	13	15
+helemaal	26	44
+helen	60	61	39
+help	31	39
+helpen	31	39
+helpt	31	39
+hels	12	16	18
+hem	1	6	31	33
+hemel	12	13	57	58
+hemels	12	13	57	58
+hemzelf	1	6	31	33
+hen	1	6	31	33
+herfst	37
+herhaaldelijk	37
+herinner 	20	39
+herinnerd	20	38
+herinnerde	20	38
+herinnerden	20	38
+herinneren	20	39
+herinnering	20
+herinnert	20	39
+herken 	20	22	39
+herkend	20	22	38
+herkende	20	22	38
+herkenden	20	22	38
+herkennen	20	22	39
+herkent	20	22	39
+heroverweeg	20	22	39
+heroverweegt	20	22	39
+heroverwegen	20	22	39
+heroverweging	20	22
+heroverwogen	20	22	38
+heroverwoog	20	22	38
+herriep	7	38
+herriepen	7	38
+herroep 	7	39
+herroepen	7	39
+herroept	7	39
+hersenen	60	61
+hersens	60	61
+herzag	20	22	38
+herzagen	20	22	38
+herzie 	20	22	39
+herzien	20	22	39
+herziet	20	22	39
+het	9
+hetgeen	20
+hetze	12	16	18
+heup	60	61
+heupen	60	61
+hevig	12	16
+hield	38
+hielden	38
+hielp	31	38
+hielpen	31	38
+hier	41
+hierheen	46
+hieruit	20	21
+hij	1	6	31	33
+hijzelf	1	6	31	33
+hilarisch	12	13	15
+hinder 	12	16	18	39
+hinderde	12	16	18	38
+hinderden 	12	16	18	38
+hinderen	12	16	18	39
+hinderlijk	12	16	18
+hindernis	20	24
+hindert	12	16	18	39
+historie	37
+historisch	37
+HIV	60	61
+hockey	51	53
+hoe	20
+hoef	20	23	39
+hoefde	20	23	38
+hoefden	20	23	38
+hoeft	20	23	39
+hoer	60	62
+hoest	60	61	39
+hoesten	60	61	39
+hoestte	60	61	38
+hoestten	60	61	38
+hoeven	20	23	39
+hoewel	25	45
+hoezo	20
+hoger	41	42
+hogeschool	47	48
+hoi	31	32
+hol 	39	46
+holde	38	46
+holden	38	46
+hollen	39	46
+holt	39	46
+homo	60	62
+homoseksualiteit	60	62
+homoseksueel	60	62
+honderd*	11
+honderdtal	11
+honderdvoudig	11
+honderste	11
+honger	60	61	63
+hongerig	60	61	63
+honk	51	52
+honorarium	56
+hoofd	60	61
+hoofdpijn	60	61
+hoog	41	42
+hoogleraar	47	48
+hoogste	41	42
+hoogstwaarschijnlijk	25
+hoogte	41	42
+hoop	12	13	15	20	23	25	39
+hoopgevend	12	13	15	20	23	25
+hoopt	12	13	15	20	23	25	39
+hoopte	12	13	15	20	23	25	38
+hoopten	12	13	15	20	23	25	38
+hoopvol	12	13	15	20	23	25
+hoor	27	29	39	39
+hoorde	27	29	39	38
+hoorden	27	29	39	38
+hoort	27	29	39	39
+hopelijk	12	13	15	20	23	25
+hopeloos	12	16	19
+hopen	12	13	15	20	23	25	39
+horen	27	29	39	39	 
+houd 	39
+houden	39
+houdt	39
+huid	60	61
+huidig	37
+huiduitslag	60	61
+huil	12	16	19	39
+huilbui	12	16	19
+huilde	12	16	19	38
+huilden	12	16	19	38
+huilen	12	16	19	39
+huilend	12	16	19
+huilerig	12	16	19
+huilt	12	16	19	39
+huis	51	52
+huiselijk	51	52
+huishoudelijk	51	52
+huishouden	51	52
+huishouding	51	52
+huisvrouw	31	36
+huisvrouwen	31	36
+huiswerk	47	48
+huiverig	12	16	17
+huivering	12	16	17
+huiveringwekkend	12	16	17
+hulpeloos	12	16	19
+hulpvaardig	31	12	13
+humeurig	12	16	18
+humor	12	13
+hun	1	6	31	33
+huur	51	52	56
+hypernerveus	12	16	17
+hypertensie	60	61
+hypotheek	56
+ideaal	12	13
+idealisering	12	13
+idealisme	12	13
+idealistisch	12	13
+idee	20	22
+idioot	12	16	18	66
+iedereen	1	25	31	33
+iemand	1	25	31	33
+iets	1	25
+ietwat	25
+ijdel	12	16
+ijdelheid	12	16
+ijverig	12	13
+ik	1	2	4
+ikzelf	1	2	4
+implicatie	20	21
+impliceer	20	21	39
+impliceerde	20	21	38
+impliceerden	20	21	38
+impliceert	20	21	39
+impliceren	20	21	39
+impotent	60	62
+in	10	44
+inademen	60	61	39
+inadequaat	12	16
+inbegrepen	44
+inbegrepen	44
+incapabel	12	16
+incest	60	62
+inclusief	44
+indammen	39
+inderdaad	8	26
+indien	20	25
+indiensttreding	47	49
+individu	31	36
+individueel	31	36
+individuen	31	36
+indrukwekkend	12	13
+indutten	60	64	39
+ineffectief	12	16
+inefficiënt	12	16
+infarct	60	61
+infectie	60	61
+inferieur	12	16
+ingeademd	60	61	38
+ingebeeld	27	28
+ingedamd	38
+ingedut	60	64	38
+ingehouden	20	24	38
+ingekocht	56	38
+ingeleverd	38	46
+ingenomen	38	46
+ingepakt	38	46
+ingeroepen	31	32	38
+ingeschreven	38	47	48
+ingeslapen	60	64	38
+ingeslikt	60	63	38
+ingetrapt	38	46	 
+ingeving	20	22
+ingewanden	60	61
+ingewilligd	8
+ingewonnen	20	22	31	32	38
+ingezien	20	22	38
+inhouden	20	24	39
+inhouden	20	24	39
+initiatief	20	47	50
+initiatiefnemer	47	50
+initiëren	20	39	47	50
+inkoop	56
+inkopen	56	39
+inleveren	39	46
+innemen	39	46
+innemend	12	13
+innig	12	13	14
+inpakken	39	46
+inroepen	31	32	39
+inschrijven	39	47	48
+inschrijving	47	48
+inslapen	60	64	39
+inslikken	60	63	39
+inspanning	12	16
+inspecteur	47	49
+inspiratie	12	13	15
+inspireer	12	13	15	39
+inspireerde	12	13	15	38
+inspireerden	12	13	15	38
+inspireert	12	13	15	39
+inspireren	12	13	15	39
+inspirerend	12	13	15
+inspraak	31	32
+instrument	51	55
+instrumentaal	51	55
+integreren	20	39
+intellect	12	13	20
+intellectueel	12	13	20
+intellectuelen	12	13	20
+intelligent	12	13	20
+intelligentie	12	13	20
+intens	12	13	14
+interactie	31	32
+interactief	31	32
+interessant	12	13
+interesse	12	13
+interesseer	12	13	39
+interesseerde	12	13	38
+interesseerden	12	13	38
+interesseert	12	13	39
+interesseren	12	13	39
+interruptie	12	16	31	32
+interview	31	32	39
+interviewde	31	32	38
+interviewden	31	32	38
+interviewen	31	32	39
+interviewer	31	32
+interviews	31	32
+interviewt	31	32	39
+intimidatie	12	16	18
+intimideer	12	16	18	39
+intimideerde	12	16	18	38
+intimideerden	12	16	18	38
+intimideert	12	16	18	39
+intimideren	12	16	18	39
+intrappen	39	46	 
+introducé	31	34
+introducés	31	34
+intussen	37
+inventaris	56
+investeer	56
+investeerde	56
+investeerden	56
+investeerder	56
+investeert	56
+investeren	56
+investering	56
+invloed	20	21
+inwinnen	20	22	31	32	39
+inwonend	51	52
+inzetbaar	47	49
+inzicht	20	22
+inzien	20	22	39
+irrationeel	12	16
+irritant	12	16	18
+irritatie	12	16	18
+irriteer	12	16	18	39
+irriteerde	12	16	18	38
+irriteerden	12	16	18	38
+irriteert	12	16	18	39
+irriteren	12	16	18	39
+irriterend	12	16	18
+is	39
+isolement	12	16	19
+isoleren	12	16	19	39
+ja	8	26
+jaar	37
+jaarlijks	37
+jaartelling	37
+jaloers	12	16	18
+jaloersheid	12	16	18
+jaloezie	12	16	18
+jammer	12	16	19
+jammeren	12	16	19	39
+jank	12	16	19	39
+janken	12	16	19	39
+jankt	12	16	19	39
+jankte	12	16	19	38
+jankten	12	16	19	38
+januari	37
+jaren	37
+jarenlang	37
+jawel	8	26
+jazz	51	55
+jazzy	51	55
+je	1	5	31	33
+jegens	10
+jen	12	16	18	39
+jende	12	16	18	38
+jenden	12	16	18	38
+jengel 	12	16	19	39
+jengelde	12	16	19	38
+jengelden	12	16	19	38
+jengelen	12	16	19	39
+jengelt	12	16	19	39
+jennen	12	16	18	39
+jent	12	16	18	39
+jeugdig	37
+jeuk	27	30	60	61
+jeukerig	27	30	60	61
+Jezus	57	58
+Jij	1	5	31	33
+jochie	31	36
+jog 	39	46	51	53
+jogde	38	46	51	53
+jogden	38	46	51	53
+joggen	39	46	51	53
+jogger	46	51	53
+jogt	39	46	51	53
+jolig	12	13
+jong	37
+jongeman	31	36
+jongste	31	36
+jongstleden	37
+jou	1	5	31	33
+jouw	1	5	31	33
+juich 	12	13	14	39
+juichen	12	13	14	39
+juicht	12	13	14	39
+juichte	12	13	14	38
+juichten	12	13	14	38
+juist	8	26
+jukbeen	60	61
+juli	37
+jullie	1	5	31	33
+juni	37
+kaak	60	61
+kaakbeen	60	61
+kaal	60	61	
+kabaal	27	29
+kaken	60	61
+kalm	12	13
+kalmte	12	13
+kam	65
+kam	65	39
+kamde	65	38
+kamden	65	38
+kamer	51	52
+kameraad	31	34
+kameraadschap	31	34
+kammen	65	39
+kampioen	47	50
+kampioenschap	47	50
+kamt	65	39
+kan	39
+kanker	60	61
+kankeren	12	16	18	66	39
+kans	25
+kantine	47	48	63
+kantoor	47	49
+kantooruren	47	49
+kapelaan	57	58
+kapitaal	56
+kas 	56
+kater	60	61
+katholiek	57	58
+kauw 	60	63	39
+kauwde	60	63	38
+kauwden	60	63	38
+kauwen	60	63	39
+kauwgom	60	63
+kauwt	60	63	39
+keek	27	28	38
+keel	60	61
+keelamandel	60	61
+keer	37
+keken	27	28	38
+ken	20	22	39
+kende	20	22	38
+kenden	20	22	38
+kennelijk	20	22	25
+kennen	20	22	39
+kennis	20	22	31	34
+kennismaking	31	32
+kent	20	22	39
+kerels	31	36
+kerk	57	58
+kerkdienst	57	58
+kerkelijk	57	58
+kerkhof	57	59
+keuken	51	52	60	63
+keurig	12	13
+keuvelen	31	32	39
+kies	60	61
+kijk 	27	28	39
+kijken	27	28	39
+kijkje	27	28
+kijkt	27	28	39
+kilometer	41
+kilometers	41
+kind	31	36
+kinderachtig	12	16
+kinderen	31	36
+kindje	31	36
+kindjes	31	36
+klaarblijkelijk	26
+klaargemaakt	60	63	38
+klaarmaken	60	63	39
+klank	27	29
+klas	47	48
+klasgenoot	47	48
+klasgenoten	47	48
+klaslokaal	47	48
+klaslokalen	47	48
+klassen	47	48
+klauter 	39	46
+klauterde	38	46
+klauterden	38	46
+klauteren	39	46
+klautert	39	46
+kleef	39
+kleefde	38
+kleefden	38
+kleeft	39
+klein	41
+kleindochter	31	35
+kleindochters	31	35
+kleingeestig	12	16
+kleinkind	31	35
+kleinkinderen	31	35
+kleintje	31	36
+kleintjes	31	36
+kleinzielig	12	16
+kleinzonen	31	35
+kleinzoon	31	35
+klere	12	16	18	66
+klets 	31	32	39
+kletsen	31	32	39
+kletst	31	32	39
+kletstante	12	16	31	32
+kletste	31	32	38
+kletsten	31	32	38
+kleven	39
+klier	66
+klikken	31	32	39
+klim 	39	46
+klimmen	39	46
+klimt	39	46
+klink 	27	29	39
+klinken	27	29	39
+klinkt	27	29	39
+klojo	12	16	18	66
+klok	37
+klom	38	46
+klommen	38	46
+klonk	27	29	38
+klonken	27	29	38
+klootzak	12	16	18	66
+klote	12	16	18	66
+knap	12	13	20
+knel 	27	30	39
+knelde	27	30	38
+knelden	27	30	38
+knellen	27	30	39
+knelt	27	30	39
+knie	60	61
+knieën	60	61
+kniegewricht	60	61
+knieschijf	60	61
+knobbel	60	61
+knoeiboel	12	16
+knokkel	60	61
+knokkels	60	61
+knuffel 	27	30	60	62	39
+knuffelde	27	30	60	62	38
+knuffelden	27	30	60	62	38
+knuffelen	27	30	60	62	39
+knuffelt	27	30	60	62	39
+knul	31	36
+kocht	38	56
+kochten	38	56
+koers	56
+koester 	12	13	14	39
+koesterde	12	13	14	38
+koesterden	12	13	14	38
+koesteren	12	13	14	39
+koestert	12	13	14	39
+kok	60	63
+koken	60	63	39
+koken	60	63	39
+kom 	39	46
+komedie	51	54
+komen	39	46	 
+komend	37
+komende	37
+komiek	51	54
+komisch	12	13
+komt	39	46
+kon 	38
+konden	38
+kont	60	61
+kook	60	63	39
+kookboek	60	63
+kookt	60	63	39
+kookte	60	63	38
+kookten	60	63	38
+koop	39	56
+koopje	56
+koopkracht	56
+koopsom	56
+koopt	39	56
+koor	51	55
+koorts	60	61
+koortsig	60	61
+kopen	39	56
+koper	56
+kopieer	39
+kopieerde	38
+kopieerden	38
+kopieert	39
+kopiëren	39
+koppig	12	16	18	20	24
+kort	37
+kort	41
+kortstondig	37
+kost	39
+kostbaar	56
+kostelijk	12	13
+kosten	39
+kostte	38
+kostten	38
+kots 	60	61	39
+kotsen	60	61	39
+kotst	60	61	39
+kotste	60	61	38
+kotsten	60	61	38
+kougevat	60	61	38
+kouvatten	60	61	39
+kouwelijk	60	61
+krab 	60	61	39
+krabben	60	61	39
+krabde	60	61	38
+krabden	60	61	38
+krabt	60	61	39
+kracht	12	13	15	47	50
+krachtdadig	12	13	15	47	50
+krachtig	12	13	15	47	50
+kramp	60	61
+krankzinnig	12	16
+krankzinnigheid	12	16
+kransslagader	60	61
+krap	41
+kreeg	38
+kregen	38
+kreng	12	16	18	66
+krenk 	12	16	19	39
+krenken	12	16	19	39
+krenkend	12	16	19
+krenking	12	16	19
+krenkt	12	16	19	39
+krenkte	12	16	19	38
+krenkten	12	16	19	38
+krijg 	39
+krijgen	39
+krijgt	39
+kritiek	12	16	18	31	32
+kritisch	12	16	18	31	32
+kritische	12	16	18	31	32
+kroeg	51	60	63
+krul	65
+krullend	65
+kuit	60	61
+kunnen	39
+kunstnier	60	61
+kunt	39
+kus	12	13	60	62
+kussen	12	13	60	62
+kut	12	16	18	60	62	66
+kwaad	12	16	18
+kwaadaardig	12	16	18
+kwaal	60	61
+kwaaltjes	60	61
+kwalijk	12	16	18
+kwam	38	46
+kwamen	38	46
+kwart	11
+kwartaal	11
+kwel 	12	16	39
+kwelde	12	16	38
+kwelden	12	16	38
+kwellen	12	16	39
+kwelt	12	16	39
+kwets	12	16	19	39
+kwetsbaar	12	16	17
+kwetsbaarheid	12	16	17
+kwetsen	12	16	19	39
+kwetst	12	16	19	39
+kwetste	12	16	19	38
+kwetsten	12	16	19	38
+kwijlen	60	61	39
+kwijtgeraakt	12	16	38
+kwijtraken	12	16	39
+kwitantie	56
+laag	41	43	 
+laagst	41	43	 
+laagste	41	43	 
+laat	37	39
+laatst	37
+laatste	37
+lach 	12	13	14	39
+lachen	12	13	14	39
+lacht	12	13	14	39
+lachte	12	13	14	38
+lachten	12	13	14	38
+lachwekkend	12	13	14
+lady	31	36
+lag 	38
+lagen	38
+lager	41	43	 
+lang	41
+langs	10
+las	20	27	28	38
+last	12	16	18
+lastig	12	16	18
+laten	39
+later	37
+lawaai	27	29
+lazen	20	27	28	38
+leden	12	16	19	38
+leed	12	16	19	38
+leeftijd	37
+leeg	12	16	19
+leegheid	12	16	19
+leek	20	25	38
+leen	39
+leende	38
+leenden	38
+leent	39
+leer	20	22	39	47	48
+leerde	20	22	38	47	48
+leerden	20	22	38	47	48
+leerkracht	47	48
+leerling	47	48
+leerplan	47	48
+leerplichtig	47	48
+leert	20	22	39	47	48
+leervermogen	47	48	
+leerzaam	47	48
+lees	20	27	28	39
+leest	20	27	28	39
+leid 	39
+leidde	38
+leidden	38
+leiden	39
+leiding	47	49
+leidinggevende	47	49
+leidt	39
+leken	20	25	38
+lekker	12	13
+lelijk	12	16
+lenen	39
+lente	37
+leraar	47	48
+lerares	47	48
+leren	20	22	39	47	48
+les	47	48
+lesbisch	60	62
+lesbische	60	62
+lesbo	12	16	18	66
+lesgegeven	47	48	38
+lesgeven	47	48	39
+leslokaal	47	48
+leslokalen	47	48
+lesprogramma	47	48
+lessen	47	48
+lesuren	47	48
+lesuur	47	48
+leugen	12	16
+leugenaar	12	16	18
+leugens	12	16
+leuk	12	13
+leukemie	60	61
+levendig	12	13	15
+leverancier	47	49
+lezen	20	27	28	39
+lezing	47	48
+libido	60	62
+lichaam	60	61
+lichaamsbeweging	51	53
+lichamelijk	60	61
+lied	51	55
+lief	12	13	14
+liefde	12	13	14	60	62
+liefdevol	12	13	14
+liefgehad	12	13	14	38	60	62
+liefhebben	12	13	14	39	60	62
+liefhebbend	12	13	14
+liefkozen	12	13	14	39
+liefkozing	12	13	60	62
+lieftallig	12	13
+lieg 	12	16	39
+liegen	12	16	39
+liegt	12	16	39
+liep	38	46
+liepen	38	46
+liet	38
+lieten	38
+lieveling	12	13	14	31	34
+lig 	39
+liggen	39
+ligt	39
+lijd 	12	16	19	39
+lijden	12	16	19	39
+lijdt	12	16	19	39
+lijf	60	61
+lijfelijk	60	61
+lijk	20	25	39	57	59
+lijken	20	25	39
+lijkkist	57	59
+lijkstoet	57	59
+lijkt	20	25	39
+limiteren	20	24	39
+lip	60	61
+lippen	60	61
+list	12	16	18
+listig	12	16	18
+literatuur	47	48
+logé	31	34
+logen	12	16	38
+logeren	39
+lol	12	13
+lolletje	12	13
+lollig	12	13
+lomp	12	16	18
+long	60	61
+longen	60	61
+loog	12	16	38
+loom	60	64
+loon	47	49	56
+loonstrook	47	49	56
+loop 	39	46
+loopbaan	47	49
+loopt	39	46
+lopen	39	46
+losbarsten	39
+losbreken	39
+losgebarsten	38
+losgebroken	38
+losgelaten	12	13	20	22	38
+losgemaakt	20	22	38
+losgerukt	12	16	38
+losgescheurd	38
+loslaten	12	13	20	22	39
+losmaken	20	22	39
+losrukken	12	16	39
+losscheuren	39
+loyaal	12	13
+loyaliteit	12	13
+luister 	27	29	31	32	39
+luisterde	27	29	31	32	38
+luisterden	27	29	31	32	38
+luisteren	27	29	31	32	39
+luistert	27	29	31	32	39
+lul	12	16	18	60	62	66
+lullig	12	16	18	66
+lunch 	60	63	39
+lunchen	60	63	39
+lunchpauze	60	63
+luncht	60	63	39
+lunchte	60	63	38
+lunchten	60	63	38
+lust	12	13	60	62
+maag	60	61
+maagpijn	60	61
+maak	39
+maakt	39
+maakte	38
+maakten	38
+maaltijd	60	63
+maand	37
+maandag	37
+maandelijks	37
+maar	20	23	45
+maart	37
+maatschappij	47	49
+macht	47	49
+machteloos	12	16	19
+machtig	47	49
+machtsspel	47	49
+mag	39
+mager	60	61	63
+maken	39
+make-up	65
+mam	31	35
+mama	31	35
+mammie	31	35
+man	31	35
+management	47	49
+manager	47	49
+manie	12	16
+mannelijk	31	36
+mannen	31	36
+marketing	47	49
+markt	47	49
+massa	31	36
+masseer	27	30	39
+masseerde	27	30	38
+masseerden	27	30	38
+masseert	27	30	39
+masseren	27	30	39
+mat	12	16	19
+mathematisch	47	48
+matig	12	16
+me	1	2	4
+mededelen	27	29	31	32	39
+mededeling	31	32
+medegedeeld	27	29	31	32	38
+medelijden	12	16	19
+meden	12	16	20	24	38
+medescholier	47	48
+medewerker	47	49
+meditatie	57	58
+meditatief	57	58
+mediteer	57	58	39
+mediteerde	57	58	38
+mediteerden	57	58	38
+mediteert	57	58	39
+mediteren	57	58	39
+mee	10	41	44
+meebrengen	39	46
+meed	12	16	20	24	38
+meedogenloos	12	16
+meedragen	39	46
+meegaan	39
+meegebracht	38	46
+meegedragen	38	46
+meegegaan	38
+meegegeven	31	32	38
+meegenomen	38	46
+meegesleept	38	46
+meegeteld	44	38
+meegeven	31	32	39
+meegevoerd	38	46
+meen 	20	22	39
+meende	20	22	38
+meenden	20	22	38
+meenemen	39	46
+meent	20	22	39
+meeslepen	39	46
+meetellen	44	39
+meeting	31	32	47	49
+meevoeren	39	46
+meisje	31	36
+meld 	27	29	31	32	39
+meldde	27	29	31	32	38
+meldden	27	29	31	32	38
+melden	27	29	31	32	39
+melding	31	32
+meldt	27	29	31	32	39
+men	1	6	31	33
+meneer	31	36
+menen	20	22	39
+menigte	31	36
+mening	20	22
+mens	31	36
+menselijk	31	36
+menselijke	31	36
+mensen	31	36
+mensonwaardig	12	16
+merk 	20	22	27	30	39
+merken	20	22	27	30	39
+merkt	20	22	27	30	39
+merkte	20	22	27	30	38
+merkten	20	22	27	30	38
+met	10	44
+mevrouw	31	36
+middag	37
+middagdutje	60	64
+middelste	41
+midden	41
+migraine	60	61
+mij	1	2	4
+mijd 	12	16	20	24	39
+mijden	12	16	20	24	39
+mijdt	12	16	20	24	39
+mijlenver	41
+mijn	1	2	4
+mijne	1	2	4
+mijnheer	31	36
+mijzelf	1	2	4
+mild	12	13
+miljard	11
+miljoen	11
+minderjarige	31	36
+minderjarigen	31	36
+minderwaardig	12	16
+miniem	41
+minimumloon	56
+minister 	47	49
+ministerie	47	49
+minnaar	12	13	14	60	62
+minuut	37
+mis	12	16	19	39
+misbruik	12	16
+misbruiken	12	16	39
+misbruikt	12	16	38
+misdadig	12	16
+misdienaar	57	58
+miserabel	12	16	19
+misère	12	16	19
+misgelopen	12	16	38
+misgund	12	16	38
+misgunnen	12	16	39
+mishandel 	12	16	18	39
+mishandeld	12	16	18	38
+mishandelde	12	16	18	38
+mishandelden	12	16	18	38
+mishandelen	12	16	18	39
+mishandelt	12	16	18	39
+miskraam	60	61	62
+mislopen	12	16	39
+misluk 	12	16	19	39	47	50
+mislukken	12	16	19	39	47	50
+mislukking	12	16	19	47	50
+mislukt	12	16	19	38	47	50
+mislukte	12	16	19	38	47	50
+mislukten	12	16	19	38	47	50
+misschien	25
+misselijk	12	16	17	60	61
+misselijkheid	60	61
+missen	12	16	19	39
+misser	12	16
+mist	12	16	19	39
+miste	12	16	19	38
+misten	12	16	19	38
+mocht	38
+mochten	38
+moe	60	61	64
+moed	12	13	15
+moedeloos	12	16	19
+moeder	31	35
+moeders	31	36
+moedig	12	13	15
+moeheid	60	61	64
+moeilijk	12	16
+moeilijke	12	16
+moeilijkheid	12	16
+moest	20	23	38
+moesten	20	23	38
+moet 	20	23	39
+moeten	20	23	39
+mogelijk	25
+mogelijke	25
+mogelijkheid	25
+mogen	39
+molesteren	12	16	18	39
+moment	37
+mond	60	61
+monnik	57	58
+mooi	12	13
+mooier	12	13
+moord	57	59
+moordenaar	57	59
+moraal	57	58
+moraliseren	57	58	39
+moraliserend	57	58
+moralistisch	57	58
+moreel	57	58
+morgen 	37	40
+morgenochtend	37
+morgens	37
+motiveer	20	21	22	39
+motiveerde	20	21	22	38
+motiveerden	20	21	22	38
+motiveert	20	21	22	39
+motiveren	20	21	22	39
+munt	56
+musical	51	55
+musicus	51	55
+muziek	51	55
+muziekliefhebber	51	55
+muzikaal	51	55
+muzikaliteit	51	55
+muzikant	51	55
+na	37
+na	10	37
+naakt	60	61	62
+naar	10
+naast	10	41	45
+nabij	10	41
+nacht	37
+nachtmerrie	60	64
+nachts	37
+nadeel	12	16
+nadelig	12	16
+nadenken	20	22	39
+nader 	39	46
+naderde	38	46
+naderden	38	46
+naderen	39	46
+naderhand	37
+nadert	39	46
+nagedacht	20	22	38
+nagelaten	38
+nagerecht	60	63
+najaar	37
+nalaten	39
+nam	38	46
+namen	38	46
+narigheid	12	16	19
+nasaal	60	61
+natuurlijk	26
+nauw	41
+nauwkeurig	20	24
+nauwsluitend	41
+nederlaag	12	16	19	47	50
+nee	7
+neef	31	35
+neem	39	46
+neemt	39	46
+neen	7
+neergelegd	38	46
+neerleggen	39	46
+neerslachtig	12	16	19
+neerslachtigheid	12	16	19
+negeer	12	16	18	20	39
+negeerde	12	16	18	20	38
+negeerden	12	16	18	20	38
+negeert	12	16	18	20	39
+negen	11
+negende	11
+negenen*	11
+negenmaal	11
+negental	11
+negentien	11
+negentiende	11
+negentig	11
+negenvoud	11
+negenvoudig	11
+negeren	12	16	18	20	39
+nek	60	61
+nemen	39	46
+nergens	7
+nerveus	12	16	17
+netelige	12	16
+netjes	12	13
+netvlies	60	61
+neuken	60	62	39
+neus	60	61
+neusklank	60	61
+neven	31	35
+nicht	31	35
+niemand	1
+nier	60	61
+nierbekken	60	61
+nieren	60	61
+niet	7
+niets	1	7
+niettemin	7	26
+nieuw	37
+nijd	12	16	18
+nijdig	12	16	18
+nimmer	7	26	37
+nobel	12	13
+noch	7	45
+nonchalant	12	16
+nood	12	16	17
+noodlottig	12	16	57	59
+nooit	7	26	37
+noord	41
+noordelijk	41
+noordelijke	41
+noorden	41
+noordoost	41
+noordoosten	41
+noordwest	41
+noordwesten	41
+november	37
+nu	37
+nul	11
+nut	12	13
+nutteloos	12	16	19
+nuttig	12	13
+obsedeer	12	16	17	39
+obsedeerde	12	16	17	38
+obsedeerden	12	16	17	38
+obsedeert	12	16	17	39
+obsederen	12	16	17	39
+observatie	27	28
+observeer	27	28	39
+observeerde	27	28	38
+observeerden	27	28	38
+observeert	27	28	39
+observeren	27	28	39
+obsessie	12	16	17
+ochtend	37
+oefening	51	53
+of	45
+offensief	12	16	18
+officier	47	49
+ofschoon	45
+ogenblik	37
+ogenblikkelijk	37
+okay	8	12	13
+oké	8	12	13
+oktober	37
+om	10
+omdat	20	21
+omdraaien	39
+omgaan	39
+omgedraaid	38
+omgegaan	38
+omgegooid	38	46
+omgekeerd	38
+omgekleed	38
+omgekocht	38	56
+omgelopen	38	46
+omgeruild	38
+omgeschakeld	38
+omgeslagen	38
+omgeven	39	41
+omgooien	39	46	 
+omhelsd	27	30	38
+omhelzen	27	30	39
+omhelzing	27	30
+omkeren	39
+omkeren	39
+omkleden	39
+omkopen	39	56
+omlopen	39	46	 
+omringd	38	41
+omringen	39	41
+omruilen	39
+omschakelen	39
+omschreven	31	32	38
+omschrijven	31	32	39
+omslaan	39
+omstreeks	10	25
+omtrent	10	25
+omvat 	39	44
+omvatte 	38	44
+omvatten	39	44
+omzeil 	39
+omzeild	38
+omzeilde	38
+omzeilden	38
+omzeilen	39
+omzeilt	39
+onaangenaam	12	16
+onaantrekkelijk	12	16
+onachtzaam	12	16
+onafgebroken	37
+onbehaaglijk	12	16	17
+onbehaaglijkheid	12	16	17
+onbeholpen	12	16
+onbekend	25
+onbekommerd	12	13	15
+onbeleefd	12	16
+onberispelijk	12	13
+onbeschaafd	12	16
+onbeschermd	12	16
+onbeschoft	12	16	18
+onbeslist	25
+onbestendig	12	16	17	25
+onbetaalbaar	56
+onbetrouwbaar	12	16	25
+onbevredigend	12	16
+onbezorgd	12	13
+onder	10	41	43
+onderbrak	12	16	31	32	38
+onderbraken	12	16	31	32	38
+onderbreek	12	16	31	32	39
+onderbreekt	12	16	31	32	39
+onderbreken	12	16	31	32	39
+onderbreking	12	16	31	32
+onderbroken	12	16	31	32	38
+onderdruk 	12	16	20	24	39
+onderdrukken	12	16	20	24	39
+onderdrukking	12	16	20	24
+onderdrukt	12	16	20	24	39
+onderdrukte	12	16	20	24	38
+onderdrukten	12	16	20	24	38
+onderga 	39
+ondergaan	39
+ondergaat	39
+ondergang	12	16	19
+onderging	38
+ondergingen	38
+onderhandel	31	32	47	49	39
+onderhandelaar	31	32	47	49
+onderhandeld	31	32	47	49	38
+onderhandelde	31	32	47	49	38
+onderhandelden	31	32	47	49	38
+onderhandelen	31	32	47	49	39
+onderhandeling	31	32	47	49
+onderhandelt	31	32	47	49	39
+onderhield	38
+onderhielden	38
+onderhoud	39
+onderhouden	39
+onderhoudend	12	13	30	31
+onderhoudt	39
+onderken 	20	22	39
+onderkend	20	22	38
+onderkende	20	22	38
+onderkenden	20	22	38
+onderkennen	20	22	39
+onderkent	20	22	39
+onderste	41	43	 
+ondersteun 	12	13	31	39
+ondersteund	12	13	31	38
+ondersteunde	12	13	31	38
+ondersteunden 	12	13	31	38
+ondersteunen	12	13	31	39
+ondersteunt	12	13	31	39
+ondertussen	37
+onderwees	38	47	48
+onderwezen	38	47	48
+onderwijs	39	47	48
+onderwijst	39	47	48
+onderwijzen	39	47	48
+onderwijzend	47	48
+onderwijzer	47	48	
+onderwijzeres	47	48
+onderzocht	20	22	38
+onderzochten	20	22	38
+onderzoek	20	22	39
+onderzoeken	20	22	39
+onderzoekt	20	22	39
+ondoelmatig	12	16
+ondraaglijk	12	16	19
+onduidelijk	25
+oneens	12	16
+oneindig	11	37
+oneindigheid	11	37
+onenigheid	12	16	18	31	32
+ongeduld	12	16
+ongeduldig	12	16
+ongeduldigheid	12	16
+ongedurig	12	16
+ongedwongen	12	13
+ongelukkig	12	16	19
+ongelukkige	12	16	19
+ongemak	12	16	17
+ongemakkelijk	12	16	17
+ongerust	12	16	17
+ongerustheid	12	16	17
+ongetwijfeld	26
+ongeveer	25
+ongunstig	12	16
+onheil	12	16
+onheilspellend	12	16
+onjuist	20	23
+onkosten	56
+onkostenvergoeding	56
+onkunde	12	16
+onkundig	12	16
+onlangs	37
+onmiddellijk	37
+onnozel	12	16
+onplezierig	12	16
+onrecht	12	16
+onrechtmatig	12	16
+onrechtvaardig	12	16
+onredelijk	12	16
+onrust	12	16	17
+onrustig	12	16	17
+onruststoker	12	16	18
+ons	1	3	4	31	33
+onschatbaar	12	13
+onsterfelijk	37	57	58	59
+onsterfelijke	37	57	58
+onsterfelijkheid	37	57	58
+onszelf	1	3	4	31	33
+ontbering	12	16	17
+ontbijt	60	63
+ontbijten	60	63
+ontdek 	20	22	39
+ontdekken	20	22	39
+ontdekt	20	22	39
+ontdekte	20	22	38
+ontdekten	20	22	38
+ontevreden	12	16
+onthield	20	38
+onthielden	20	38
+onthoud 	20	39
+onthouden	20	39
+onthoudt	20	39
+onthul 	20	22	31	32	39
+onthuld	20	22	31	32	38
+onthulde	20	22	31	32	38
+onthulden	20	22	31	32	38
+onthullen	20	22	31	32	39
+onthulling	20	22	31	32
+onthult	20	22	31	32	39
+ontken 	7	20	22	39
+ontkend	7	20	22	38
+ontkende	7	20	22	38
+ontkenden	7	20	22	38
+ontkennen	7	20	22	39
+ontkenning	7	20	22
+ontkent	7	20	22	39
+ontlast 	12	13	39
+ontlasten	12	13	39
+ontlastte	12	13	38
+ontlastten	12	13	38
+ontliep	12	16	20	24	38
+ontliepen	12	16	20	24	38
+ontlok 	31	32	39
+ontlokken	31	32	39
+ontlokt	31	32	39
+ontlokte	31	32	38
+ontlokten	31	32	38
+ontloop	12	16	20	24	39
+ontloopt	12	16	20	24	39
+ontlopen	12	16	20	24	39
+ontmoedig 	12	16	19	39
+ontmoedigd	12	16	19	38
+ontmoedigde	12	16	19	38
+ontmoedigden	12	16	19	38
+ontmoedigen	12	16	19	39
+ontmoedigend	12	16	19
+ontmoediging	12	16	19
+ontmoedigt	12	16	19	39
+ontmoet 	31	32	39
+ontmoeten	31	32	39
+ontmoeting	31	32
+ontmoette	31	32	38
+ontmoetten	31	32	38
+ontnam	12	16	19	38
+ontnamen	12	16	19	38
+ontneem 	12	16	19	39
+ontneemt	12	16	19	39
+ontnemen	12	16	19	39
+ontnomen	12	16	19	38
+ontraad	12	16	39
+ontraadde	12	16	38
+ontraadden	12	16	38
+ontraadt	12	16	39
+ontraden	12	16	39
+ontrouw	12	16	60	62
+ontslag	47	49
+ontslagen	39	47	49
+ontspan 	12	13	39
+ontspande	12	13	38
+ontspanden	12	13	38
+ontspannen	12	13	39
+ontspanning	12	13
+ontspant	12	13	39
+ontstaan	20	21	37	39
+ontstaat	20	21	39
+ontsteking	60	61
+ontsteld	12	16
+ontsteltenis	12	16
+ontstond	20	21	38
+ontucht	60	62
+ontvang 	31	32	39	46
+ontvangen	31	32	39	46
+ontvangst	31	32
+ontvangt	31	32	39	46
+ontving	31	32	38	46
+ontvingen	31	32	38	46
+ontwaakt	38	60	64
+ontwaken	39	60	64
+ontweek	12	16	17	20	24	38
+ontweken 	12	16	17	20	24	38
+ontwijk 	12	16	17	20	24	39
+ontwijken	12	16	17	20	24	39
+ontwijkt	12	16	17	20	24	39
+ontwikkel 	20	22	39
+ontwikkeld	20	22	38
+ontwikkelde	20	22	38
+ontwikkelden	20	22	38
+ontwikkelen	20	22	39
+ontwikkeling	20	22
+ontwikkelt	20	22	39
+ontzagwekkend	12	13
+ontzeg 	20	24	39
+ontzegd	20	24	38
+ontzegde	20	24	38
+ontzegden	20	24	38
+ontzeggen	20	24	39
+ontzegging	20	24
+ontzegt	20	24	39
+ontzei	20	24	38
+ontzeiden	20	24	38
+ontzettend	12
+ontzetting	12	16
+onuitstaanbaar	12	16	18
+onveilig	12	16	17	
+onveiligheid	12	16	17
+onverhoeds	37
+onvermogen	12	16
+onverschillig	12	16
+onverschilligheid	12	16
+onverwacht	37
+onverzettelijk	12	16	18	20	24
+onvoldoende	12	16	47	48
+onvolkomen	12	16
+onvoordelig	12	16
+onwaarschijnlijk	25
+onwetend	12	16
+onwetendheid	12	16
+onwillig	12	16	20	24
+onze	1	3	4	31	33
+onzeker	12	16	17	25
+onzekerheid	12	16	17	25
+Onze-Lieve-Heer	57	58
+onzinnig	12	16	18
+oog	27	28	60	61
+ooit	26	37
+ook	44
+oom	31	35
+oor	27	29	60	61
+oorsprong	20	21	37
+oorzaak	20	21
+oorzakelijk	20	21
+oost	41
+oostelijk	41
+oosten	41
+op	10	42
+opa	31	35
+opa's	31	35
+opbellen	27	29	31	32	39
+opbeuren	12	13	15	39
+opbouwen	20	22	39
+opbreken	12	16	39
+opbrengen	12	16	39
+opdoen	39
+opdonderen	12	16	18	39
+opdrinken	27	39	60	63
+openbaar	20	22	31	32	39
+openbaarde	20	22	31	32	38
+openbaarden	20	22	31	32	38
+openbaart	20	22	31	32	39
+openbaren	20	22	31	32	39
+openhartig	31	32
+operette	51	55
+opeten	27	39	60	63
+opfleuren	12	13	15	39
+opgebeld	27	29	31	32	38
+opgebeurd	12	13	15	38
+opgebouwd	20	22	38
+opgebracht	12	16	38
+opgebroken	12	16	38
+opgedaan	38
+opgedonderd	12	16	18	38
+opgedronken	27	38	60	63
+opgefleurd	12	13	15	38
+opgegeten	27	38	60	63
+opgegeven	12	16	19	20	38
+opgehelderd	20	22	38
+opgehouden	20	24	38
+opgejaagd	12	16	17	38
+opgejaagd	12	16	38
+opgeklommen	38	46
+opgekomen	38
+opgelet	27	28	38
+opgeleverd	38	47	50
+opgelost	20	22	38
+opgemaakt	20	22	38
+opgemerkt	31	32	38
+opgemonterd	12	13	14	38
+opgenomen	38	44
+opgepast	38
+opgeplakt	38
+opgeroepen	27	29	31	32	38
+opgeruimd	12	13
+opgeschort	38
+opgeschoven	38	46
+opgeschreven	38
+opgestapt	38	46
+opgesteld	38
+opgetogenheid	12	13	14
+opgevat	20	22	38
+opgeven	12	16	19	20	39
+opgevrolijkt	12	13	14	15	38
+opgewekt	12	13	15
+opgezegd	27	29	31	32	38
+opgezocht	31	32	38
+ophelderen	20	22	39
+opheldering	20	22
+ophouden	20	37	39
+opinie	20	22
+opjagen	12	16	17	39
+opklimmen	39	46	 
+opkomen	39
+opletten	27	28	39
+oplettend	27	28
+opleveren	39	47	50
+oplossen	20	22	39
+oplossing	20	22
+opmaken	20	22	39
+opmerken	31	32	39
+opmerking	31	32
+opmonteren	12	13	14	39
+opnemen	39	44
+opnieuw	37
+oppassen	39
+opper 	31	32	39
+opperde	31	32	38
+opperden	31	32	38
+opperen	31	32	39
+oppermachtig	12	13	15
+oppert	31	32	39
+oppervlak	41
+oppervlakte	41
+opplakken	39
+oprecht	12	13
+oprechtheid	12	13
+oprichten	37	39
+oproepen	27	29	31	32	39
+oproer	12	16	18
+opruiming	56
+opschorten	39
+opschrijven	39
+opschudding	12	16	18
+opschuiven	39	46
+opslag	47	49	56
+opstand	12	16	18
+opstandig	12	16	18
+opstappen	39	46
+opstellen	39
+optimisme	12	13	15
+optimist	12	13	15
+optimistisch	12	13	15
+opvatten	20	22	39
+opvrolijken	12	13	14	15	39
+opwindend	12	13
+opzeggen	27	29	31	32	39
+opzoeken	31	32	39
+orde	8
+orden 	20	39
+ordende	20	38
+ordenden	20	38
+ordenen	20	39
+ordent	20	39
+oren	27	29	60	61
+organisatie	31	47	49
+organisaties	31	47	49
+organiseer 	20	31	39
+organiseerde	20	31	38
+organiseerden	20	31	38
+organiseert	20	31	39
+organiseren	20	31	39
+orgasme	60	61	62
+origine	20	21	37
+orkest	51	55
+orkestbak	51	55
+oud	37
+ouder	31	35
+ouderdom	37
+ouders	31	35
+oudoom	31	35
+oudtante	31	35
+over	10	37
+overal	41
+overbrengen	31	32	39
+overdag	37
+overdracht	47	48	49
+overdragen	39	47	48	49
+overdreven	12	16
+overeengekomen	8	20	38
+overeengestemd	8	20	38
+overeenkomen	8	20	39
+overeenkomst	8	20
+overeenstemmen	8	20	39
+overeenstemming	8	20
+overgaan	39
+overgebracht	31	32	38
+overgedragen	38	47	48	49
+overgegaan	38
+overgegeven	38	60	61
+overgehaald	20	22	31	32	38
+overgelaten	38
+overgenomen	38	46
+overgeschakeld	38
+overgeschreven	38
+overgestoken	38	46
+overgeven	39	60	61
+overgewicht	60	61	63
+overgrootvader	31	35
+overhalen	20	22	31	32	39
+overheers 	12	16	18	39
+overheersen	12	16	18	39
+overheerst	12	16	18	39
+overheerste	12	16	18	38
+overheersten	12	16	18	38
+overhoord	47	48	38
+overhoren	47	48	39
+overhoring	47	48
+overkom 	39
+overkomen	39
+overkomt	39
+overkwam	38
+overlaten	39
+overleden 	38	57	59
+overledene	57	59
+overleed	38	57	59
+overlijd 	39	57	59
+overlijden	39	57	59
+overlijdensakte	57	59
+overlijdensbericht	57	59
+overlijdt	39	57	59
+overnemen	39	46
+overreden	20	22	31	32	39
+overredingskracht	31	32
+overreed	20	22	31	32	39
+overreedde	20	22	31	32	38
+overreedden	20	22	31	32	38
+overschakelen	39
+overschrijven	39
+overstappen	39
+oversteken	39	46
+overstelp 	12	16	17	39
+overstelpen	12	16	17	39	 
+overstelpend	12	16	17
+overstelpt	12	16	17	39
+overstelpte	12	16	17	38
+overstelpten	12	16	17	38
+overstuur	12	16	17	19
+overtrad	38
+overtraden	38
+overtreden	39
+overtreder	12	16
+overtreding	12	16
+overtreed	39
+overtreedt	39
+overtref 	12	13	15	39	47	50
+overtreffen	12	13	15	39	47	50
+overtreft	12	13	15	39	47	50
+overtrof	12	13	15	38	47	50
+overtroffen	12	13	15	38	47	50
+overtuig 	20	22	31	32	39
+overtuigd	20	22	31	32	38
+overtuigde	20	22	31	32	38
+overtuigden	20	22	31	32	38
+overtuigen	20	22	31	32	39
+overtuigend	20	22	31	32
+overtuiging	20	26
+overtuigt	20	22	31	32	39
+overvloed	12	13	56
+overweeg	20	22	39
+overweegt	20	22	39
+overwegen	20	22	39
+overweging	20	22
+overweldig 	12	16	17	19	39
+overweldigd	12	16	17	19	38
+overweldigde	12	16	17	19	38
+overweldigden	12	16	17	19	38
+overweldigen	12	16	17	19	39
+overweldigend	12	16	17	19
+overweldigt	12	16	17	19	39
+overwinnaar	47	50
+overwinning	12	13	15	47	50
+overwogen	20	22	38
+overwoog	20	22	38
+pa	31	35
+pak 	27	30	39	46
+pakken	27	30	39	46
+pakt	27	30	39	46
+pakte	27	30	38	46
+pakten	27	30	38	46
+paniek	12	16	17
+paniekerig	12	16	17
+paniekzaaier	12	16	17
+papa	31	35
+pappie	31	35
+paps	31	35
+paradijs	12	13
+paragnost	57	58
+paranoia	12	16	17
+paranoïde	12	16	17
+pardon	31	32
+parfum	65
+parfumeren	65	39
+participatie	31	32
+participeer	31	32	39
+participeerde	31	32	38
+participeerden	31	32	38
+participeert	31	32	39
+participeren	31	32	39
+partner	31	36
+partners	31	36
+pas	37
+Pasen	57	58
+passie	12	13	14	15
+pastoor	57	58
+pastor	57	58
+pathetisch	12	16	19
+paus	57	58
+pauze	37
+pauzeer	39
+pauzeerde	38
+pauzeerden	38
+pauzeert	39
+pauzeren	39
+pech	12	16
+pedagogie	47	48
+pedagoog	47	48	49
+pees	60	61
+peetoom	57	58
+peettante	57	58
+peins	20	22	39
+peinsde	20	22	38
+peinsden	20	22	38
+peinst	20	22	39
+peinzen	20	22	39
+penis	60	61	62
+per	10
+perceptie	20	22	27	28
+perfect	12	13	47	50
+periode	37
+permanent	37
+personen	31	36
+pervers	12	16	60	62
+pessimisme	12	16	19
+pessimist	12	16	19
+pessimistisch	12	16	19
+pest 	12	16	18	31	32	39
+pesten	12	16	18	31	32	39
+pestte	12	16	18	31	32	38
+pestten	12	16	18	31	32	38
+petekind	57	58
+peuters	31	36
+pezen	60	61
+pieker 	12	16	17	39
+piekerde	12	16	17	38
+piekerden	12	16	17	38
+piekeren	12	16	17	39
+piekert	12	16	17	39
+pienter	12	13	20
+pijn	12	16	27	30	60	61
+pijnlijk	12	16	27	30	60	61
+pijnlijke	12	16	27	30	60	61
+pijnloos	12	13	27	30	60	61
+pik	60	61	62	66
+pinautomaat	56
+pink	60	61
+pissig	12	16	18
+plaag  	12	16	39
+plaagde	12	16	38
+plaagden	12	16	38
+plaaggeest	12	16	18	31	32
+plaagt	12	16	39
+plaats	41
+plaatsen	39
+plagen	12	16	39
+plagerij	12	16
+plak 	39
+plakken	39
+plakt	39
+plakte	38
+plakten	38
+plas 	39	60	61
+plassen	39	60	61
+plast	39	60	61
+plaste	38	60	61
+plasten	38	60	61
+plat	41
+plek	41
+plezier	12	13
+plezierig	12	13
+plicht	20	24
+plotseling	37
+plus	44
+poets 	39	51	52	60	65
+poetsen	39	51	52	60	65
+poetst	39	51	52	60	65
+poetste	38	51	52	60	65
+poetsten	38	51	52	60	65
+pols	60	61
+polsslag	60	61
+poos	37
+poosje	37
+popgroep	31	51	55
+populair	12	13
+populariteit	12	13
+porno	60	62
+pornografie	60	62
+portie	60	63
+positie	41
+positief	12	13
+praat 	27	29	31	32	39
+praatje	27	29	31	32
+praatte	27	29	31	32	38
+praatten	27	29	31	32	38
+prachtig	12	13
+praten	27	29	31	32	39
+precies	26
+predikant	57	58
+preek	57	58
+preken	57	58	39
+presentatie	47	48	49
+presenteer 	39	47	48	49
+presenteerde	38	47	48	49
+presenteerden	38	47	48	49
+presenteert	39	47	48	49
+presenteren	39	47	48	49
+president	47	49
+pressie	12	16
+prestatie	20	47	50
+presteer	20	39	47	50
+presteerde	20	38	47	50
+presteerden	20	38	47	50
+presteert	20	39	47	50
+presteren	20	39	47	50
+pret	12	13
+pretje	12	13
+prettig	12	13
+priester	57	58
+priesteres	57	58
+priesterschap	57	58
+prijs	56
+prijslijst	56
+prijzig	56
+prikkel	60	61
+prikkelbaar	12	16
+pril	37
+prima	8	12	13
+probeer	20	25	39
+probeerde	20	25	38
+probeerden	20	25	38
+probeert	20	25	39
+proberen	20	25	39
+proef	27	39	60	63
+proefde	27	38	60	63
+proefden	27	38	60	63
+proeft	27	39	60	63
+proefwerk	47	48
+proefwerken	47	48
+proeven	27	39	60	63
+professioneel	47	49
+professor	47	48
+professoren	47	48
+profijt	12	13
+profiteer 	56	39
+profiteerde	56	38
+profiteerden	56	38
+profiteert	56	39
+profiteren	56	39
+profiteur	12	16
+prolongatie	37
+promotie	47	48	49
+promoveren	39	47	48	49
+prostaat	60	61	62
+prostituee	60	62
+prostitutie	60	62
+protest	12	16
+protestant	57	58
+protestantisme	57	58
+protestants	57	58
+protesteer	12	16	39
+protesteerde	12	16	38
+protesteerden	12	16	38
+protesteert	12	16	39
+protesteren	12	16	39
+psychologie	47	48
+psycholoog	47	49
+puinhoop	12	16
+raad 	25	31	32	39
+raadde	25	31	32	38
+raadden	25	31	32	38
+raadplegen	31	32	39
+raadt	25	31	32	39
+raak 	20	27	30	39
+raakt	20	27	30	39
+raakte	20	27	30	38
+raakten	20	27	30	38
+raar	12	16
+race 	39	46	51	53
+racen	39	46	51	53
+racet	39	46	51	53
+racete	38	46	51	53
+raceten	38	46	51	53
+radeloos	12	16	17
+raden	25	31	32	39
+radio	51	55
+raken	20	27	30	39
+ramp	12	16	17	19
+rampzalig	12	16	17	19
+rapmuziek	51	55
+rationaliseer 	20	21	22	39
+rationaliseerde	20	21	22	38
+rationaliseerden	20	21	22	38
+rationaliseert	20	21	22	39
+rationaliseren	20	21	22	39
+rationalistisch	20	21	22
+rationaliteit	20	21	22
+rationeel	20	21	22
+razend	12	16	18
+razernij	12	16	18
+reactie	20	21
+reageer	20	21	39
+reageerde	20	21	38
+reageerden	20	21	38
+reageert	20	21	39
+reageren	20	21	39
+realiseer	20	22	39
+realiseerde	20	22	38
+realiseerden	20	22	38
+realiseert	20	22	39
+realiseren	20	22	39
+rebel	12	16	18
+rebels	12	16	18
+recent	37
+rechtschapen	12	13
+rechtvaardig 	20	21	39
+rechtvaardigde	20	21	38
+rechtvaardigden	20	21	38
+rechtvaardigen	20	21	39
+rechtvaardiging	20	21
+rechtvaardigt	20	21	39
+reclame	51	54
+redeloos	12	16
+reden	20	21	22	38 	46
+redeneer	20	21	22	31	32	39
+redeneerde	20	21	22	31	32	38
+redeneerden	20	21	22	31	32	38
+redeneert	20	21	22	31	32	39
+redeneren	20	21	22	31	32	39
+redenering	20	21	22
+reed	38	46
+reeds	37
+reet	60	61	66
+reflecteer	20	22	39
+reflecteerde	20	22	38
+reflecteerden	20	22	38
+reflecteert	20	22	39
+reflecteren	20	22	39
+reflectie	20	22
+refrein	51	55
+regeer	39	47	49
+regeerde	38	47	49
+regeerden	38	47	49
+regeert	39	47	49
+regel 	20	39
+regelde	20	38
+regelden	20	38
+regelen	20	39
+regelmatig	37
+regelt	20	39
+regeren	39	47	49
+reik 	39	46
+reiken	39	46
+reikt	39	46
+reikte	38	46
+reikten	38	46
+reis	39	46
+reisde	38	46
+reisden	38	46
+reist	39	46
+reizen	39	46
+rekening	47	49	56
+rekenwerk	47	48
+relatie	31	32
+relatiegeschenk	47	49
+religie	57	58
+religieus	57	58
+religieuze	57	58
+religieuzen	57	58
+rem	12	16	20	24
+remmend	12	16	20	24
+remming	12	16	20	24
+ren 	39	46
+rende	38	46
+renden	38	46
+rennen	39	46
+rent	39	46
+resoluut	20	22	26
+restaurant	51	60	63
+resultaat	20	21
+resulteerde	20	21	38
+resulteert	20	21	39
+resulteren	20	21	39
+reuk	27	60	61
+reuma	60	61
+reumatisch	60	61
+rib	60	61
+ribben	60	61
+richt 	39
+richten	39
+richtte	38
+richtten	38
+riep	27	29	31	32	38
+riepen	27	29	31	32	38
+rigide	12	16	20	24
+rijd 	39	46
+rijden	39	46
+rijdt	39	46
+rijk	12	13	56
+rijkdom	56
+rilling	60	61
+ringvinger	60	61
+roddel 	12	16	31	32	39
+roddelde	12	16	31	32	38
+roddelden	12	16	31	32	38
+roddelen	12	16	31	32	39
+roddelt	12	16	31	32	39
+roem	12	13	15
+roep 	27	29	31	32	39
+roepen	27	29	31	32	39
+roept	27	29	31	32	39
+roes	60	61	64
+roken	27	38
+roken	39
+romance	12	13	14
+romanticus	12	13	14
+romantiek	12	13	14
+romantisch	12	13	14
+romantiseer	12	13	14	39
+romantiseerde	12	13	14	38
+romantiseerden	12	13	14	38
+romantiseert	12	13	14	39
+romantiseren	12	13	14	39
+romp	60	61
+rondgelopen	38	46
+rondlopen	39	46
+rondom	10	41
+rook	27	39
+rookt	27	39
+rookte	38
+rookten	38
+rotzooi	12	16
+rouw	12	16	19	39	57	59
+rouwde	12	16	19	38	57	59
+rouwden	12	16	19	38	57	59
+rouwen	12	16	19	39	57	59
+rouwkamer	57	59
+rouwt	12	16	19	39	57	59
+rug	60	61
+ruggengraat	60	61
+ruig	12	16	18
+ruik 	27	39
+ruiken	27	39
+ruikt	27	39
+ruil 	39
+ruilde	38
+ruilden	38
+ruilen	39
+ruilt	39
+ruim	41
+ruimte	41
+ruïneren	12	16	39	56
+ruis	27	29
+rumoer	27	29
+rust	12	13	39	60	64
+rusteloos	12	16	17
+rusten	39	60	64
+rustig	12	13
+rustte	38	60	64
+rustten	38	60	64
+ruw	12	16	18
+ruzie	12	16	18
+saai	12	16
+salaris	47	49	56
+salarisstrook	47	49	56
+samen	31	44
+samengewerkt	31	32	38
+samenhang	20	22
+samenhangen	20	22
+samenhangend	20	22
+samenwerken	31	32	39
+samenwerking	31	32
+sarcasme	12	16	18
+sarcastisch	12	16	18
+Satan	57	58
+satanisch	57	58
+schaad	12	16	19	39
+schaadde	12	16	19	38
+schaadden	12	16	19	38
+schaadt	12	16	19	39
+schaal	60	63
+schaam	12	16	39
+schaamde	12	16	38
+schaamden	12	16	38
+schaamt	12	16	39
+schaamte	12	16
+schaamteloos	12	16
+schaatsen	51	53
+schade	12	16	19
+schadelijk	12	16	19
+schaden	12	16	19	39
+schamen	12	16	39
+schandalig	12	16	18
+schande	12	16	18
+schandelijk	12	16	18
+schat	12	13	14	31	34
+schede	60	61	62
+schedel	60	61
+scheen	20	25	27	28	38
+scheer	39	65
+scheerkwast	65
+scheerschuim	65
+scheert	39	65
+scheld 	12	16	18	39	 
+schelden	12	16	18	39
+scheldt	12	16	18	39
+schend 	12	16	39
+schenden	12	16	39
+schendt	12	16	39
+schenen	20	25	27	28	38
+schenk 	31	32	39
+schenken	31	32	39
+schenkt	31	32	39
+schep 	39
+scheppen	39
+schept	39
+schepte	38
+schepten	38
+scheren	39	65
+schichtig	12	16	17
+schijn 	20	25	27	28	39
+schijnen	20	25	27	28	39
+schijnt	20	25	27	28	39
+schijt	12	16	18
+schildklier	60	61
+schipperen	25	37
+schitterend	12	13
+schoft	12	16	18	66
+schok	12	16
+schold	12	16	18	38
+scholden	12	16	18	38
+scholier	47	48
+schond	12	16	38
+schonden	12	16	38
+schonk	31	32	38
+schonken	31	32	38
+school	47	48
+schooldag	47	48
+schoolgebouw	47	48
+schoolgeld	56
+schooljaren	47	48
+schoolkind	47	48
+schoollokaal	47	48
+schoollokalen	47	48
+schooltijd	47	48
+schoolverlater	47	48
+schoon	60	65
+schoondochter	31	35
+schoondochters	31	35
+schoongemaakt	51	52	60	65	38
+schoonheid	12	13
+schoonmaak	51	52	60	65
+schoonmaakbeurt	51	52	60	65
+schoonmaken	51	52	60	65	39
+schoonmoeder	31	35
+schoonvader	31	35
+schoonvaders	31	35
+schoonzus	31	35
+schoonzusje	31	35
+schoonzussen	31	35	
+schoonzuster	31	35
+schoonzusters	31	35
+schoor	38	65
+schoorvoetend	12	16	17	20	24
+schor	60	61
+schoren	38	65
+schotel	60	63
+schouder	60	61
+schouderblad	60	61
+schouders	60	61
+schouwburg	51	55
+schranspartij	60	61	63
+schreef	38
+schreeuw 	12	16	39
+schreeuwde	12	16	38
+schreeuwden	12	16	38
+schreeuwen	12	16	39
+schreeuwend	12	16
+schreeuwt	12	16	39
+schreven	38
+schrift	47	48
+schrijf	39
+schrijft	39
+schrijven	39
+schrik	12	16	17	39
+schrikbarend	12	16	17
+schrikbeeld	12	16	17
+schrikken	12	16	17	39
+schrikt	12	16	17	39
+schrikwekkend	12	16	17
+schrok	12	16	17	38
+schrokken	12	16	17	38
+schud 	39	46
+schudde 	38	46
+schudden	39	46
+schudt	39	46
+schuld	12	16
+schulden	56
+schuldgevoel	12	16
+schuldig	12	16
+schuw	12	16	17
+secretariaat	47	49
+secretaris	47	49
+sedert	10	37
+seks	60	62
+sekse	60	62
+seksualiteit	60	62
+seksueel	60	62
+semester	37	47	48
+sensibel	12
+sentimenteel	12
+september	37	
+seropositief	60	61
+servies	60	63
+sex-appeal	60	62
+sexy	60	62
+shampoo	65
+shit	12	16	18	66
+shock	12	16	17
+sinds	10	37
+sindsdien	37
+sjok 	39	46
+sjokken	39	46	 	 
+sjokt	39	46
+sjokte	38	46
+sjokten	38	46
+ski	51	53
+skiën	51	53
+slaag	39	47	50
+slaagde	38	47	50
+slaagden	38	47	50	 
+slaagt	39	47	50
+slaap	39	60	64
+slaapkop	60	64
+slaapt	39	60	64
+slaapverwekkend	60	64
+slaapwandel	39	46	60	64
+slaapwandelaar	60	64
+slaapwandelde	38	46	60	64
+slaapwandelden	38	46	60	64
+slaapwandelen	39	46	60	64
+slaapwandelt	39	46	60	64
+slachtoffer	12	16
+slag	12	16	18
+slagader	60	61
+slagaderlijk	60	61
+slagen	39	47	50
+slagwerk	51	55
+slap	12	16	60	61
+slapeloos	60	64
+slapeloosheid	60	61	64
+slapen	39	60	64
+slapend	60	64
+slaperig	60	64
+slecht	12	16
+slechter	12	16
+slechts	45
+sleet	38
+sleten	38
+sliep	38	60	64
+sliepen	38	60	64
+slijt 	39
+slijten	39
+slik 	39	60	63
+slikken	39	60	63
+slikt	39	60	63
+slikte	38	60	63
+slikten	38	60	63
+slimmerik	12	13	20
+sloerie	12	16	18	66
+slok	60	63
+sloop	39
+sloopt	39
+sloopte	38
+sloopten	38
+slopen	39
+slordig	12	16
+smaad	12	16	18
+smaak	27	60	63
+smaakt	27	60	63	39
+smaakte	27	60	63	38
+smaakten	27	60	63	38
+smaakvol	27	60	63
+smakelijk	27	60	63
+smakeloos	12	16
+smaken	27	60	63	39
+smal	41
+smeek	31	32	39
+smeekt	31	32	39
+smeekte	31	32	38
+smeekte	31	32	38
+smeerboel	12	16
+smeerlap	12	16	18	66
+smeet	38
+smeken	31	32	39
+smeten	38
+smijt 	39
+smijten	39
+snack	60	63
+snap 	20	22	39
+snappen	20	22	39
+snapt	20	22	39
+snapte	20	22	38
+snapten	20	22	38
+snel 	39	46
+snelde	38	46
+snelden	38	46
+snellen	39	46
+snelt	39	46
+snertding	12	16	18	66
+snob	12	16	18	66
+snoezig	12	13
+soap	51	54
+soaps	51	54
+sodemieter	12	16	18	66
+sollicitatie	47	49	 
+sollicitatieformulier	47	49	 
+sollicitatiegesprek	31	32	47	49
+sollicitatiegesprekken	31	32	47	49
+somber	12	16	19
+somberheid	12	16	19
+sommige	25
+sommigen	25
+soms	25	37
+soort	25
+sorry	31	32
+spaarbank	56
+spaargeld	56
+spaarzaam	56
+spannend	12	13
+spanning	12	16	17
+spatie	41
+speciaal	12	13
+speeksel	60	61
+speel 	31	51	53	39
+speelde	31	51	53	38
+speelden	31	51	53	38
+speelt	31	51	53	39
+spel	31	51	53
+spelen	31	51	53	39
+spelend	31	51	53
+spelenderwijs	31	51	53
+spelletje	31	51	53
+spier	60	61
+spieren	60	61
+spierkracht	60	61
+spijsvertering	60	61
+spijt	12	16
+spiritualisme	57	58
+spiritualiteit	57	58
+splits 	39
+splitsen	39
+splitst	39
+splitste	38
+splitsten	38
+spoedig	37
+sport	31	51	53
+sportief	31	51	53
+sportieve	31	51	53
+sportkleding	51	53
+sportliefhebber	51	53
+sportwedstrijd	31	51	53
+spot	12	16	18
+spraakzaam	31	32
+sprak	27	29	31	32	38
+spraken	27	29	31	32	38
+spreek 	27	29	31	32	39
+spreekkamer	47	49
+spreekt	27	29	31	32	39
+spreken	27	29	31	32	39
+spreker	47	49
+spuug	60	61
+spuugzat	12	16	18
+sta 	39
+staan	39
+staar	27	28	39
+staarde	27	28	38
+staarden	27	28	38
+staart	27	28	39
+staat	39
+stak	38
+staken	38
+standgehouden	38
+standhouden	39
+standvastig	26
+stap	39	46
+stappen	39	46
+stapt	39	46
+stapte	38	46
+stapten	38	46
+stapvoets	46
+star	12	16	20	24
+staren	27	28	39
+starheid	12	16	20	24
+starten	37	39
+steeds	26	37
+steek	39
+steekt	39
+steken	39
+stellig	12	13	26
+stereo	51	55
+stereo-installatie	51	55
+sterf	39	57	59
+sterfbed	57	59
+sterfelijk	57	59
+sterfelijkheid	57	59
+sterfgeval	57	59
+sterft 	39	57	59
+sterfte	57	59
+sterk	12	13	15
+sterven	39	57	59
+steun 	12	13	39
+steunde	12	13	38
+steunden	12	13	38
+steunen	12	13	39
+steunt	12	13	39
+stiefbroer	31	35
+stiefbroers	31	35
+stiefdochter	31	35
+stiefdochters	31	35
+stiefkind	31	35
+stiefkinderen	31	35
+stiefmoeder	31	35
+stiefmoeders	31	35
+stiefouder	31	35
+stiefouders	31	35
+stiefvader	31	35
+stierf	38	57	59
+stierven	38	57	59
+stijf	60	61
+stijfheid	60	61
+stik 	39	60	61
+stikken	39	60	61
+stikt	39	60	61
+stikte	38	60	61
+stikten	38	60	61
+stilgestaan	38
+stilstaan	39
+stimuleer	12	13	39
+stimuleerde	12	13	38
+stimuleerden	12	13	38
+stimuleert	12	13	39
+stimuleren	12	13	39
+stinken	27	39
+stom	12	16	18
+stommerik	12	16	18	66
+stond	38
+stonden	38
+stoor	12	16	31	32	39
+stoorde	12	16	31	32	38
+stoorden	12	16	31	32	38
+stoort	12	16	31	32	39
+stop 	39
+stoppen	20	24	37	39
+stopt	39
+stopte	38
+stopten	38
+storen	12	16	31	32	39
+stort 	39
+storten	39
+stortte	38
+stortten	38
+stoutmoedig	12	13
+straalbezopen	60	61
+straf	12	16	18	39
+straffen	12	16	18	39
+straft	12	16	18	39
+strafte	12	16	18	38
+straften	12	16	18	38
+stralend	12	13	15
+stram	60	61
+streel	12	13	14	39
+streelde	12	13	14	38
+streelden	12	13	14	38
+streelt	12	13	14	39
+strelen 	12	13	14	39
+streng	12	16	20	24
+strengheid	12	16	20	24
+stress	12	16	17
+strijd	12	16	18	31	32
+stromen	39	46
+stroom	39	46
+stroomde	38	46
+stroomden	38	46
+stroomt	39	46
+strot	60	61
+structureer	20	39
+structureerde	20	38
+structureerden	20	38
+structureert	20	39
+structureren	20	39
+structuur	20
+studeer	39	47	48
+studeerde	38	47	48
+studeerden	38	47	48
+studeert	39	47	48
+student	47	48
+studentenflat	47	48
+studentenhuis	47	48
+studentenhuizen	47	48
+studentenvereniging	47	48
+studeren	39	47	48
+studie	47	48
+studiebegeleider	47	49
+studiebeurs	47	48	56
+studiekeuze	47	48
+studierichting	47	48
+stuitend	12	16
+sturen	39	46
+stuur	39	46
+stuurde	38	46
+stuurden	38	46
+stuurt	39	46
+succes	12	13	47	50
+suf	12	16	60	64
+suggereer	31	32	39
+suggereerde	31	32	38
+suggereerden	31	32	38
+suggereert	31	32	39
+suggereren	31	32	39
+suggestie	31	32
+suggestief	31	32
+suikerpatiënt	60	61
+suikerziekte	60	61
+sukkeldrafje	46
+sullig	12	16
+super	12	13	15
+sympathie	12	13
+sympathiek	12	13
+symptomen	60	61
+symptoom	60	61
+taai	60	63
+taakomschrijving	47	49
+tachtig	11
+tachtigste	11
+taille	60	61
+talent	12	13	47	50
+talentvol	12	13	47	50
+tamelijk	20	25
+tand	60	61
+tanden	60	61
+tante	31	35
+tast	27	30	39
+tastbaar	27	30
+tasten	27	30	39
+tastte	27	30	38
+tastten	27	30	38
+te	10
+team	31	36
+teamgenoot	31	36
+teamwork	31	32	36
+teder	12	13	14
+teef	12	16	18	66
+teen	60	61
+teennagel	60	61
+teer	12	13
+teergevoelig	12	13
+tegen	10
+tegengehouden	20	24	38
+tegengesproken	31	32	38
+tegenhouden	20	24	39
+tegenover	10
+tegenspoed	12	16	19
+tegenspraak	31	32
+tegenspreken	31	32	39
+tegenstand	12	16	18
+tegenstander	12	16	18
+tegenstrijdig	20	23
+tegenvaller	12	16
+tegenwerking	12	16
+tegenwoordig	37
+tegenwoordige	37
+tegenzin	12	16
+teister 	12	16	18	39
+teisterde	12	16	18	38
+teisterden	12	16	18	38
+teisteren	12	16	18	39
+teistert	12	16	18	39
+tekortgeschoten	12	16	19	38	47	50
+tekortschieten	12	16	19	39	47	50
+telefoneer	31	32	39
+telefoneerde	31	32	38
+telefoneerden	31	32	38
+telefoneert	31	32	39
+telefoneren	31	32	39
+telefonisch	31	32
+teleurgesteld	12	16	19	38
+teleurstellen	12	16	19	39
+teleurstelling	12	16	19
+televisie	51	52	54
+telkens	37
+tempel	57	58
+teneergeslagen	12	16	19
+tenen	60	61
+tenietdoen	12	16	39
+tenietgedaan	12	16	38
+tenminste	25
+tennis	51	53
+tennisbaan	51	53
+tenslotte	20	22	 37	 
+tentamen	47	48
+tentoongesteld	27	28	38
+tentoonstellen	27	28	39
+tenzij	45
+ter	10
+terg 	12	16	18	39
+tergde	12	16	18	38
+tergden	12	16	18	38
+tergen	12	16	18	39
+tergt	12	16	18	39
+terras	51	52
+terrein	41
+terreur	12	16	17	18
+terroriseren	12	16	17	18	39
+terugbrengen	39	46
+teruggebracht	38	46
+teruggehouden	20	24	38
+teruggekomen	38
+teruggeschrokken	12	16	17	38
+terughouden	20	24	39
+terughoudend	20	24
+terugkomen	39
+terugschrikken	12	16	17	39
+terwijl	37
+test	39	47	48
+testament	57	58
+testen	39	47	48
+testte	38	47	48
+testten	38	47	48
+tevergeefs	12	16
+tevreden	12	13	14
+tevredenheid	12	13	14
+teweegbrengen	20	21	39
+teweeggebracht	20	21	38
+thans	37
+theater	51	55
+theologie	57	58
+theologisch	57	58
+theoloog	57	58
+theoretisch	47	48
+thuis	51	52
+tien	11
+tiende	11
+tiental	11
+tier 	12	16	18	39
+tierde	12	16	18	38
+tierden	12	16	18	38
+tieren 	12	16	18	39
+tierend	12	16	18
+tiert	12	16	18	39
+tieten	60	61	62
+tijd	37
+tijdelijk	25	37
+tijdens	37
+tijdig	37
+tijdje	37
+tijdperk	37
+tijdsverloop	37
+tijdvak	37
+tik	12	16	18
+tintel 	39	60	61
+tintelde	38	60	61
+tintelden	38	60	61
+tintelen	39	60	61
+tinteling	60	61
+tintelt	39	60	61
+tob 	12	16	17	39
+tobben	12	16	17	39
+tobberig	12	16	17
+tobde	12	16	17	38
+tobden	12	16	17	38
+tobt	12	16	17	39
+toch	25
+toegejuicht	12	13	15	31	32	38
+toegekeken	27	28	38
+toegekend	12	13	38	47	50
+toegenegen	12	13	14
+toegestemd	8	20	38
+toegetakeld	12	16	18	38
+toegewijd	12	13	14	38
+toejuichen	12	13	15	31	32	39
+toekennen	12	13	39	47	50
+toekenning	12	13	47	50
+toekijken	27	28	39
+toekomst	37
+toekomstig	37
+toen	37
+toenmaals	37
+toenmalig	37
+toeschietelijk	12	13
+toeschouwer	27	28
+toeslag	47	49
+toestemmen	8	20	39
+toestemming	8
+toetakelen	12	16	18	39
+toets	47	48
+toetsen	47	48	39
+toevallig	25	37
+toewijden	12	13	14	39
+toewijding	12	13	14
+toneel	51	54
+toneelspeelster	51	54
+toneelspeler	51	54
+tonen	27	28	39
+tong	60	61
+toom	20	24
+toon	27	28	39
+toonde	27	28	38
+toonden	27	28	38
+toont	27	28	39
+top	41	42
+tot	10	37	44
+totaal	26
+totdat	37
+traan	12	16	19
+tracht 	20	25	39
+trachten	20	25	39
+trachtte	20	25	38
+trachtten	20	25	38
+tragedie	12	16	19
+tragiek	12	16	19
+tragisch	12	16	19
+train 	39	51	53
+trainde	38	51	53
+trainden	38	51	53
+trainen	39	51	53
+trainer	51	53
+training	51	53
+traint	39	51	53
+tranen	12	16	19
+transport	46
+transporteren	39	46
+tref 	31	32	39
+treffen	31	32	39
+treft	31	32	39
+treiter	12	16	18	39
+treiteraar	12	16	18
+treiterde	12	16	18	38
+treiterden	12	16	18	38
+treiteren	12	16	18	39
+treitert	12	16	18	39
+trek 	39	46
+trekken	39	46
+trekt	39	46
+treur	12	16	19	39
+treurde	12	16	19	38
+treurden	12	16	19	38
+treuren	12	16	19	39
+treurend	12	16	19
+treurende	12	16	19
+treurig	12	16	19
+treurt	12	16	19	39
+tril 	60	61	39
+trilde	60	61	38
+trilden	60	61	38
+trillen	60	61	39
+trilt	60	61	39
+trim 	39	46	51	53
+trimde	38	46	51	53
+trimden	38	46	51	53
+trimmen	39	46	51	53
+trimmer	46	51	53	 
+trimt	39	46	51	53
+triomf	12	13	15
+triomfantelijk	12	13	15
+triomferend	12	13	15
+trof	31	32	38
+troffen	31	32	38
+trok	38	46
+trokken	38	46
+trommel	51	55
+trommelen	39	51	55
+troost	12	13
+troost	12	13	39
+troosten	12	13	39
+troostte	12	13	38
+troostten	12	13	38
+trots	12	13	15
+trotseer	12	13	15	39
+trotseerde	12	13	15	38
+trotseerden	12	13	15	38
+trotseert	12	13	15	39
+trotseren	12	13	15	39
+trouw	12	13
+trouwens	25
+trut	12	16	18	66
+tuin	51	52
+tumor	60	61
+tussen	10	41	44
+tussenpoos	37
+TV	51	52	54
+twaalf	11
+twaalfde	11
+twee	11
+tweede	11
+tweeen*	11
+tweemaal	11
+tweetal	11
+tweevoud	11
+tweevoudig	11
+twijfel	25
+twijfelaar	25
+twijfelachtig	25
+twijfelend	25
+twintig	11
+twintigste	11
+u	1	5	31	33
+uit	10
+uitademen	39	60	61
+uitbarsten	39
+uitbetaald	38	47	49	56
+uitbetalen	39	47	49	56
+uitblazen	60	61	39
+uitblinken	12	13	15	47	50	39
+uitbreken	39
+uitdaging	12	13	15	47	50
+uitdienst	47	49
+uitdrukken	27	29	31	32	39
+uiteengezet	20	22	31	32	38
+uiteenzetten	20	22	31	32	39
+uiteindelijk	37
+uiten	12	31	32	39
+uitgaan	51	55	39
+uitgave	56
+uitgaven	56
+uitgeademd	38
+uitgebarsten	38
+uitgeblazen	60	61	38
+uitgeblonken	12	13	15	47	50	38
+uitgebreid	41
+uitgebroken	38
+uitgedrukt	27	29	31	32	38
+uitgegaan	51	55	38
+uitgegeven	38	56
+uitgehongerd	60	61	63
+uitgehoord	27	29	38
+uitgehouden	38
+uitgekeerd	38	47	49	56
+uitgekomen	38
+uitgelaten	12	13
+uitgelegd	20	22	31	32	38
+uitgemunt	12	13	15	38	47	50
+uitgenodigd	31	32	38
+uitgeput	12	16	38	60	61
+uitgescholden	12	16	18	38
+uitgesloten	45	38
+uitgesproken	27	29	31	32	38
+uitgespuwd	38	60	61
+uitgestaan	38
+uitgestapt	38
+uitgeven	39	56
+uitgevochten	12	16	18	31	32	38
+uitgevoerd	38
+uitgewerkt	38
+uitgezonderd	38	45
+uitgezonderd	45
+uithoren	27	29	39
+uithouden	39
+uitkeren	39	47	49	56
+uitkering	56
+uitkomen	39
+uitleg	20	22	31	32
+uitleggen	20	22	31	32	39
+uitmunten	12	13	15	39	47	50
+uitmuntend	12	13	15	47	50
+uitnodigen	31	32	39
+uitputten	12	16	39	60	61
+uitputtend	12	16	60	61
+uitputting	12	16	60	61
+uitscheiden	20	37	39
+uitschelden	12	16	18	39
+uitsluiten	45	39
+uitsluiting	45
+uitspreken	27	29	31	32	39
+uitspuwen	39	60	61
+uitstaan	39
+uitstappen	39
+uitstekend	12	13	15	47	50
+uitvechten	12	16	18	31	32	39
+uitverkoop	56
+uitvoeren	39
+uitwerken	39
+uitwerking	20	22	21
+uitzicht	27	28
+uitzichtloos	12	16	19
+uitzondering	45
+universitair	47	48
+universiteit	47	48
+universum	41
+urine	60	61
+uur	37
+uurwerk	37
+uw	1	5	31	33
+vaag	12	16	25
+vader	31	35
+vagina	60	61	62
+vaginaal	60	61	62
+vak	47	48	49
+vakbond	47	49
+vakbondslid	47	49
+vakkundig	47	49
+vakkundigheid	47	49
+vakman	47	49
+vals	12	16	18
+van	10
+vanaf	10
+vanavond	37
+vandaag	37
+vandaar	20	21
+vang 	39	46
+vangen	39	46
+vangt	39	46
+vannacht	37
+vanuit	10
+vanwege	10	20	21
+vastberaden	12	13	26
+vastberadenheid	12	13	26
+vastbesloten	12	13	20	26
+vastgehouden	20	24	27	30	38
+vastgeplakt	38
+vastgesteld	20	38
+vasthouden	20	24	27	30	39
+vastplakken	39
+vaststellen	20	39
+vat 	20	22	39
+vatte 	20	22	38
+vatten	20	22	39
+vecht 	12	16	18	31	32	39
+vechten	12	16	18	31	32	39
+veelbelovend	12	13	15
+veelbetekenend	20	22
+veertien	11
+veertiende	11
+veertig	11
+veilig	12	13
+veiligheid	12	13
+veiling	56
+venijnig	12	16	18
+vennootschap	47	49
+vennootschappen	47	49
+vent	31	36
+ver	41
+veracht 	12	16	18	39
+verachten	12	16	18	39
+verachtte	12	16	18	38
+verachtten	12	16	18	38
+veranda	51	52
+verander 	39
+veranderd	38
+veranderde	38
+veranderden	38
+veranderen	39
+veranderlijk	25
+verandert	39
+verantwoord	20	21	39
+verantwoordde	20	21	38
+verantwoordden	20	21	38
+verantwoordelijk	20	47	49
+verantwoordelijkheid	20	47	49
+verantwoorden	20	21	39
+verantwoordt	20	21	39
+verband	20	21	22
+verbazen	20	25	39
+verbazend	20	25
+verbazing	20	25
+verbazingwekkend	20	25
+verbeten	12	16	38
+verbeter	12	13	39	47	50
+verbeterd	12	13	38	47	50
+verbeterde	12	13	38	47	50
+verbeterden	12	13	38	47	50
+verbeteren	12	13	39	47	50
+verbetering	12	13	47	50
+verbetert	12	13	39	47	50
+verbied 	12	16	20	24	39
+verbieden	12	16	20	24	39
+verbiedt	12	16	20	24	39
+verbijster	12	16	17	39
+verbijsterd	12	16	17
+verbijsterd	12	16	17	38
+verbijsterde	12	16	17	38
+verbijsterden	12	16	17	38
+verbijsteren	12	16	17	39
+verbijsterend	12	16	17
+verbijstering	12	16	17
+verbijstert	12	16	17	39
+verbijten	12	16	39
+verbitterd	12	16	18
+verbleef	38
+verbleven	38
+verblijf	39	51	52
+verblijfplaats	51	52
+verblijft	39
+verblijven	39
+verboden	12	16	20	24	38
+verbood	12	16	20	24	38
+verbrak	12	16	38
+verbraken	12	16	38
+verbreden	41
+verbreek	12	16	39
+verbreekt	12	16	39
+verbreken	12	16	39
+verbroken	12	16	38
+verdacht	12	16	20	22	38
+verdachten	20	22	38
+verdedig 	12	16	18	20	24	39
+verdedigd	12	16	18	20	24	38
+verdedigde	12	16	18	20	24	38
+verdedigden	12	16	18	20	24	38
+verdedigen	12	16	18	20	24	39
+verdedigend	12	16	18	20	24
+verdediging	12	16	18	20	24
+verdedigt	12	16	18	20	24	39
+verdeel	31	32	39
+verdeeld	31	32	38
+verdeelde	31	32	38
+verdeelden	31	32	38
+verdeelt	31	32	39
+verdelen	31	32	39
+verdenk 	20	22	39
+verdenken	20	22	39
+verdenkt	20	22	39
+verder	41
+verderf	12	16
+verderfelijk	12	16
+verdien 	39	56
+verdiend	38	56
+verdiende	38	56
+verdienden	38	56
+verdienen	39	56
+verdienste	12	13
+verdient	39	56
+verdoemd	12	16	18	38
+verdoemen	12	16	18	39
+verdomme	12	16	18	66
+verdoofd	38	60	61
+verdorie	12	16	18	66
+verdoven	39	60	61
+verdoving	60	61
+verdraag 	12	16	39
+verdraagt	12	16	39
+verdraagzaam	12	13
+verdragen	12	16	38
+verdragen	12	16	39
+verdriet	12	16	19
+verdrietig	12	16	19
+verdring 	12	16	20	24	39
+verdringen	12	16	20	24	39
+verdringing	12	16	20	24
+verdringt	12	16	20	24	39
+verdroeg	12	16	38
+verdroegen	12	16	38
+verdrong	12	16	20	24	38
+verdrongen	12	16	20	24	38
+verduidelijk 	20	22	39
+verduidelijken	20	22	39
+verduidelijking	20	22
+verduidelijkt	20	22	39
+verduidelijkte	20	22	38
+verduidelijkten	20	22	38
+verdween	38	46	
+verdwenen	38	46
+verdwijn 	39	46
+verdwijnen	39	46
+verdwijnt	39	46
+vereer	12	13	14	39	57	58
+vereerd	12	13	14	38	57	58
+vereerde	12	13	14	38	57	58
+vereerden	12	13	14	38	57	58
+vereert	12	13	14	39	57	58
+vereeuwigen	37	57	58
+vereeuwiging	37	57	58
+verenigd	31	32	38
+verenigen	31	32	39
+vereniging	31	32
+vereren	12	13	14	39	57	58
+vererger	12	16	39
+verergerd	12	16	38
+verergerde	12	16	38
+verergerden	12	16	38
+verergeren	12	16	39
+verergering	12	16
+verergert	12	16	39
+verg	20	39	47	50
+vergaar	20	22	39
+vergaard	20	22	38
+vergaarde	20	22	38
+vergaarden	20	22	38
+vergaart	20	22	39
+vergader 	31	32	39	47	49
+vergader 	31	32	39	47	49
+vergaderd	31	32	38	47	49
+vergaderde	31	32	38	47	49
+vergaderden	31	32	38	47	49
+vergaderen	31	32	39	47	49
+vergadering	31	32	47	49
+vergadert	31	32	39	47	49
+vergaf	12	13	14	20	22	31	32	38
+vergal 	12	16	18	39
+vergald	12	16	18	38
+vergalde	12	16	18	38
+vergalden	12	16	18	38
+vergallen	12	16	18	39
+vergalt	12	16	18	39
+vergaren	20	22	39
+vergaven	12	13	14	20	22	31	32	38
+vergde	20	38	47	50
+vergden	20	38	47	50
+vergeef	12	13	14	20	22	31	32	39
+vergeeft	12	13	14	20	22	31	32	39
+vergen	20	39	47	50
+vergeven	12	13	14	20	22	31	32	39
+vergiffenis	12	13	14	20	22	31	32
+vergiftigd	12	16	18	38
+vergiftigen	12	16	18	39
+vergoed 	38	47	49	56
+vergoeden	39	47	49	56
+vergrijp	12	16	18
+vergt	20	39	47	50
+verhaald	27	29	31	32	38
+verhalen	27	29	31	32	39
+verhelderd	20	22	38
+verhelderde	20	22	38
+verhelderden	20	22	38
+verhelderen	20	22	39
+verheldering	20	22
+verheldert	20	22	39
+verheug	12	13	14	39
+verheugd	12	13	14	38
+verheugde	12	13	14	38
+verheugden	12	13	14	38
+verheugen	12	13	14	39
+verheugend	12	13
+verheugt	12	13	14	39
+verhinder 	12	16	20	24	39
+verhinderd	12	16	20	24	38
+verhinderde	12	16	20	24	38
+verhinderden	12	16	20	24	38
+verhinderen	20	24	39
+verhinderen	12	16	20	24	39
+verhindert	12	16	20	24	39
+verhogen	39	42	46
+verhonger 	39	60	61	63
+verhongerd	38	60	61	63
+verhongerde	38	60	61	63
+verhongerden	38	60	61	63
+verhongeren	39	60	61	63
+verhongert	39	60	61	63
+verhoor	27	29	31	32	39
+verhoord	27	29	31	32	38
+verhoorde	27	29	31	32	38
+verhoorden	27	29	31	32	38
+verhoort	27	29	31	32	39
+verhoren	27	29	31	32	39
+verhuis	39	46
+verhuisd	38	46
+verhuisde	38	46
+verhuisden	38	46
+verhuist	39	46
+verhuizen	39	46
+verhuizing	46
+verijdeld	12	16	18	38
+verijdelen	12	16	18	39
+verkeerd	12	16
+verklaar	20	22	39
+verklaard	20	22	38
+verklaarde	20	22	38
+verklaarden	20	22	38
+verklaart	20	22	39
+verklaren	20	22	39
+verklarend	20	22
+verklaring	20	22
+verkleden	39
+verkleed	38
+verkleumd	38	60	61
+verklik 	27	29	31	32	39
+verklikken	27	29	31	32	39
+verklikt	27	29	31	32	38
+verklikt	27	29	31	32	39
+verklikte	27	29	31	32	38
+verklikten	27	29	31	32	38
+verknocht	12	13	14
+verknochtheid	12	13	14
+verknoei 	12	16	39
+verknoeid	12	16	38
+verknoeide	12	16	38
+verknoeiden	12	16	38
+verknoeien	12	16	39
+verknoeit	12	16	39
+verkocht	47	49	38	56
+verkocht	47	49	38	56
+verkochten	47	49	38	56
+verkoop	47	49	39	56
+verkoopt	47	49	39	56
+verkopen	47	49	39	56
+verkoudheid	60	61
+verkracht	12	16	18	38	60	62
+verkrachten	12	16	18	39	60	62
+verkrachting	12	16	18	60	62
+verkreeg	38
+verkregen	38
+verkrijg 	39
+verkrijgen	39
+verkrijgt	39
+verkwist 	39	56
+verkwisten	39	56
+verkwistte	38	56
+verkwistten	38	56
+verlaag	12	16	41	43	39
+verlaagd	12	16	41	43	38
+verlaagde	12	16	41	43	38
+verlaagden	12	16	41	43	38
+verlaagt	12	16	41	43	39
+verlaat	12	16	19	39
+verlagen	12	16	41	43	39
+verlamd	60	61
+verlamde	60	61
+verlammend	60	61
+verlamming	60	61
+verlang 	12	16	20	23	39
+verlangd	12	16	20	23	38
+verlangde	12	16	20	23	38
+verlangden	12	16	20	23	38
+verlangen	12	16	20	23	39
+verlangend	12	16	20	23
+verlangt	12	16	20	23	39
+verlaten	12	16	19	39
+verleden	37
+verleen	8	39
+verleend	8	38
+verleende	8	38
+verleenden	8	38
+verleent	8	39
+verlegen	12	16	17	20	24
+verlegenheid	12	16	17	20	24
+verleid 	12	13	60	62	39
+verleidde	12	13	60	62	38
+verleidden	12	13	60	62	38
+verleiden	12	13	60	62	39
+verleidt	12	13	60	62	39
+verlenen	8	39
+verlengen	37
+verlichting	12	13	15
+verlies	12	16	19	39	47	50
+verliest	12	16	19	39	47	50
+verliet	12	16	19	38
+verlieten	12	16	19	38
+verliezen	12	16	19	39	47	50
+verliezer	12	16	19	47	50
+verliezers	12	16	19	47	50
+verloofde	31	34
+verloor	12	16	19	38	47	50
+verloren	12	16	19	38	47	50
+vermaak	12	13	39	51	54	55
+vermaakt	12	13	39
+vermaakte	12	13	38
+vermaakten	12	13	38
+vermakelijk	12	13
+vermaken	12	13	39
+vermeden	12	16	20	24	38
+vermeed	12	16	20	24	38
+vermeld 	31	32	39
+vermeldde	31	32	38
+vermeldden	31	32	38
+vermelden	31	32	39
+vermelding	31	32
+vermeldt	31	32	39
+vermijd 	12	16	20	24	39
+vermijdbaar	12	16	20	24
+vermijden	12	16	20	24	39
+vermijding	12	16	20	24
+vermijdt	12	16	20	24	39
+vermoed	20	22	25	39
+vermoedde	20	22	25	38
+vermoedden	20	22	25	38
+vermoedelijk	25
+vermoeden	20	22	25	39
+vermoedt	20	22	25	39
+vermoeid	60	61	64
+vermoeide	38	60	61	64
+vermoeidheid	60	61	64
+vermoeien	39	60	61	64
+vermoeiend	60	61	64
+vermoord	38	57	59
+vermoorden	39	57	59
+verneder 	12	16	17	18	39
+vernederd 	12	16	17	18	38
+vernederde	12	16	17	18	38
+vernederden	12	16	17	18	38
+vernederen	12	16	17	18	39
+vernederend	12	16	17	18
+vernedering	12	16	17	18
+vernedert	12	16	17	18	39
+verniel 	12	16	18	39
+vernield	12	16	18	38
+vernielde	12	16	18	38
+vernielden	12	16	18	38
+vernielen	12	16	18	39
+vernieler	12	16	18
+vernieling	12	16	18
+vernielt	12	16	18	39
+vernielzuchtig	12	16	18
+vernietig 	12	16	18	39
+vernietigd	12	16	18	38
+vernietigde	12	16	18	38
+vernietigden	12	16	18	38
+vernietigen	12	16	18	39
+vernietigend	12	16	18
+vernietigt	12	16	18	39
+veronderstel 	20	25	39
+verondersteld	20	25	38
+veronderstelde	20	25	38
+veronderstelden	20	25	38
+veronderstellen	20	25	39
+veronderstelling	20	25
+veronderstelt	20	25	39
+verontrust	12	16	17	38
+verontrusten	12	16	17	39
+verontrustend	12	16	17
+verontschuldig	31	32	39
+verontschuldigd	31	32	38
+verontschuldigde	31	32	38
+verontschuldigden	31	32	38
+verontschuldiging	31	32
+verontschuldigingen	31	32	39
+verontschuldigt	31	32	39
+veroordeel	12	16	39
+veroordeeld	12	16	38
+veroordeelde	12	16	38
+veroordeelden	12	16	38
+veroordeelt	12	16	39
+veroordelen	12	16	39
+veroorzaak	20	21	39
+veroorzaakt	20	21	39
+veroorzaakte	20	21	38
+veroorzaakten	20	21	38
+veroorzaken	20	21	39
+verpak 	39
+verpakken	39
+verpakt	39
+verpakte	38
+verpakten	38
+verplaats 	39	46
+verplaatsen	39	46
+verplaatst	39	46
+verplaatste	38	46
+verplaatsten	38	46
+verpletterd	12	16	17	19	38
+verpletteren	12	16	17	19	39
+verpletterend	12	16	17	19
+verras 	12	13	39
+verrassen	12	13	39
+verrassing	12	13
+verrast	12	13	39
+verraste	12	13	38
+verrasten	12	13	38
+verricht 	39
+verrichten	39
+verrichtte	38
+verrichtten	38
+verruimd	38	41
+verruimen	39	41
+verrukkelijk	12	13	14
+verrukking	12	13	14
+verrukt	12	13	14
+verschaf 	31	32	39
+verschaffen	31	32	39
+verschaft	31	32	39
+verschafte	31	32	38
+verschaften	31	32	38
+verscheen	27	28	38
+verschenen	27	28	38
+verschijn 	27	28	39
+verschijnen	27	28	39
+verschijning	27	28
+verschijnt	27	28	39
+verschonen	39
+verschoon	39
+verschoond	38
+verschoonde	38
+verschoonden	38
+verschoont	39
+verschrikkelijk	12	16	17	18
+verschrikking	12	16	17
+verschuldigd	56
+verslagenheid	12	16	19
+verslechtering	12	16
+versleet	38
+versleten	38
+verslijt 	39
+verslijten	39
+verslik 	39	60	61
+verslikken	39	60	61
+verslikt	39	60	61
+verslikte	38	60	61
+verslikten	38	60	61
+verspeeld	12	16	19	38	47	50
+verspelen	12	16	19	39	47	50
+verspreid	41
+verstand	12	13	20
+verstandelijk	12	13	20
+verstandig	12	13	20
+verste	41
+verstijf 	12	16	17	39
+verstijfd	12	16	17	38
+verstijfd	60	61
+verstijfde	12	16	17	38
+verstijfden	12	16	17	38
+verstijft	12	16	17	39
+verstijven	12	16	17	39
+verstikkend	12	16	18
+verstoor	39
+verstoord 	38
+verstoorde	38
+verstoorden	38
+verstoort	39
+verstoren	39
+versuft	12	16	60	64
+verte	41
+vertel 	27	29	31	32	39
+verteld	27	29	31	32	38
+vertelde	27	29	31	32	38
+vertelden	27	29	31	32	38
+vertellen	27	29	31	32	39
+vertelt	27	29	31	32	39
+vertik 	20	24	39
+vertikken	20	24	39
+vertikt	20	24	39
+vertikte	20	24	38
+vertikten	20	24	38
+vertonen	27	28	39
+vertoning	27	28	51	54
+vertoon	27	28	39
+vertoond	27	28	38
+vertoonde	27	28	38
+vertoonden	27	28	38
+vertoont	27	28	39
+vertraging	37
+vertrek 	39	46
+vertrekken	37	39	46
+vertrekt	39	46
+vertrok	38	46
+vertrokken	38	46
+vertrouw	12	13	15	26	39
+vertrouwd	12	13	15	26	38
+vertrouwde	12	13	15	26	38
+vertrouwden	12	13	15	26	38
+vertrouwen	12	13	15	26	39
+vertrouwt	12	13	15	26	39
+vertwijfeld	12	16	17
+vertwijfeling	12	16	17
+vervaardigd	38
+vervaardigen	39
+verveel 	12	16	39
+verveeld	12	16	38
+verveelde	12	16	38
+verveelden	12	16	38
+verveelt	12	16	39
+vervelen	12	16	39
+vervelend	12	16	18
+verveling	12	16
+vervloek 	12	16	18	39
+vervloeken	12	16	18	39
+vervloekt	12	16	18	39
+vervloekte	12	16	18	38
+vervloekten	12	16	18	38
+vervoer	39	46
+vervoerd	38	46
+vervoerde	38	46
+vervoerden	38	46
+vervoeren	39	46
+vervoert	39	46
+vervolg 	37	39	46
+vervolgd	38	46
+vervolgde	38	46
+vervolgden	38	46
+vervolgen	37
+vervolgen	39	46
+vervolgens	37
+vervolgt	39	46
+vervul 	39	47	50
+vervuld	38	47	50
+vervulde	38	47	50
+vervulden	38	47	50
+vervullen	39	47	50
+vervult	39	47	50
+verwaarloos	12	16	39
+verwaarloosd	12	16	38
+verwaarloosde	12	16	38
+verwaarloosden	12	16	38
+verwaarloost	12	16	39
+verwaarlozen	12	16	39
+verwaarlozing	12	16
+verwacht 	12	13	15	20	23	25	39
+verwachten	12	13	15	20	23	25	39
+verwachting	12	13	15	20	23	25
+verwachtte	12	13	15	20	23	25	38
+verwachtten	12	13	15	20	23	25	38
+verwanten	31	35
+verwar	12	16	17	20	25	39
+verward	12	16	17	20	25	38
+verwarde	12	16	17	20	25	38
+verwarden	12	16	17	20	25	38
+verwardheid	12	16	17	20	25
+verwarren	12	16	17	20	25	39
+verwarrend	12	16	17	20	25
+verwarring	12	16	17	20	25
+verwart	12	16	17	20	25	39
+verweer	12	16	18	20	24
+verwelkom 	12	13	31	32	39
+verwelkomd	12	13	31	32	38
+verwelkomde	12	13	31	32	38
+verwelkomden	12	13	31	32	38
+verwelkomen	12	13	31	32	39
+verwelkomt	12	13	31	32	39
+verwerk 	20	22	39
+verwerken	20	22	39
+verwerking	20	22
+verwerkt	20	22	38
+verwerkt	20	22	39
+verwerkte	20	22	38
+verwerkten	20	22	38
+verwerp	7	12	16	39
+verwerpen	7	12	16	39
+verwerpt	7	12	16	39
+verwierp	7	12	16	38
+verwierpen	7	12	16	38
+verwijder 	39	46
+verwijderd	38	46
+verwijderde	38	46
+verwijderden	38	46
+verwijderen	39	46
+verwijdert	39	46
+verwissel 	39
+verwisseld	38
+verwisselde	38
+verwisselden	38
+verwisselen	39
+verwisselt	39
+verwoest 	12	16	18	39
+verwoesten	12	16	18	39
+verwoestend	12	16	18
+verwoestte	12	16	18	38
+verwoestten	12	16	18	38
+verwonding	60	61
+verworpen	7	12	16	38
+verzeker 	12	13	26	39
+verzekerd	12	13	26	38
+verzekerde	12	13	26	38
+verzekerden	12	13	26	38
+verzekeren	12	13	26	39
+verzekert	12	13	26	39
+verzet 	39	46
+verzette 	38	46
+verzetten	39	46
+verzocht	31	32	38
+verzochten	31	32	38
+verzoek	31	32
+verzoek	31	32	39
+verzoeken	31	32	39
+verzoekt	31	32	39
+verzorg 	12	13	39
+verzorgd	12	13	38
+verzorgde	12	13	38
+verzorgden	12	13	38
+verzorgen	12	13	39
+verzorgt	12	13	39
+verzuim 	47	48	49	39
+verzuimd	47	48	49	38
+verzuimde	47	48	49	38
+verzuimden	47	48	49	38
+verzuimen	47	48	49	39
+verzuimt	47	48	49	39
+verzwak 	39	60	61
+verzwakken	39	60	61
+verzwakking	60	61
+verzwakt	39	60	61
+verzwakte	38	60	61
+verzwakten	38	60	61
+video	51	54
+videoclip	51	54
+videorecorder	51	54
+vier	11
+vierde	11
+vieren*	11
+viermaal	11
+viertal	11
+viervoud	11
+viervoudig	11
+vijand	12	16	18
+vijandelijk	12	16	18
+vijandig	12	16	18
+vijandigheid	12	16	18
+vijandschap	12	16	18
+vijf	11
+vijfde	11
+vijfen*	11
+vijfmaal	11
+vijftal	11
+vijftien	11
+vijftiende	11
+vijftig	11
+vijftigste	11
+vijfvoud	11
+vijfvoudig	11
+vind 	20	22	39
+vinden	20	22	39
+vindt	20	22	39
+ving	38	46
+vingen	38	46
+vinger	60	61
+visie	27	28
+visioen	27	28
+vissen	39	51	53
+visueel	27	28
+vit	12	16	18	39
+vitaal	12	13	15	60	61
+vitaliteit	12	13	15	60	61
+vitte 	12	16	18	38
+vitten	12	16	18	39
+vlakbij	41
+vlieg 	39	46
+vliegen	39	46
+vliegt	39	46
+vlogen	38	46
+vloog	38	46
+vlucht 	39	46
+vluchten	39	46
+vluchtig	37
+vluchtte	38	46
+vluchtten	38	46
+vocht	12	16	18	31	32	38
+vochten 	12	16	18	31	32	38
+voeding	60	63
+voedingsleer	60	63
+voedsel	60	63
+voel	27	30	39
+voelbaar	27	30
+voelde	27	30	38
+voelden	27	30	38
+voelen	27	30	39
+voelt	27	30	39
+voet	60	61
+voetbal	47	51	53
+voeten	60	61
+volbracht	20	38	47	50
+volbrachten	20	38	47	50
+volbreng 	20	39	47	50
+volbrengen	20	39	47	50
+volbrengt	20	39	47	50
+voldoening	12	13
+volg 	39	46
+volgde	38	46
+volgden	38	46
+volgehouden	38
+volgen	39	46
+volgend	37
+volgende	37
+volgens	10
+volgt	39	46
+volhouden	39
+volk	31	36
+volkomen	26
+volleybal	51	53
+volmaakt	12	13	47	50
+volslagen	26
+volstrekt	26
+voltooi 	20	39
+voltooid	20	38
+voltooide	20	38
+voltooiden	20	38
+voltooien	20	37	39
+voltooit	20	39
+volwassen	31	36
+volwassene	31	36
+volwassenen	31	36
+vond	20	22	38
+vonden	20	22	38
+voor	10
+voorbij	10	37
+voorbijgaan	39
+voorbijgegaan	38
+voordeel	56
+voordelig	56
+voordien	37
+voorgelicht	20	22	31	32	38
+voorgevallen	38
+voorheen	37
+voorhoofd	60	61
+vooringenomen	12	16
+voorjaar	37
+voorkom 	20	24	39
+voorkomen	20	24	39
+voorkomend	12	13
+voorkomt	20	24	39
+voorkwam	20	24	38
+voorkwamen	20	24	38
+voorlichten	20	22	31	32	39
+voorlopig	25	37
+voormiddag	37
+vooroordeel	12	16
+voorspoedig	12	13
+voorstel	31	32
+voorstellen	20	22	39
+voortaan	37
+voortduren	37
+voortdurend	37
+voortduring	37
+voortgaan	37
+voortreffelijk	12	13
+voortzetten	37
+vooruitgaan	12	13	39
+vooruitgegaan	12	13	38
+vooruitzicht	20
+voorvallen	39
+voorvechter	47	50
+voorzichtig	12	13	20	24	25
+voorzitter	47	49
+vordering	12	13
+vorig 	37
+vorige	37
+vorm 	39
+vormde	38
+vormden	38
+vormen	39
+vorming	47	48
+vormt	39
+vraag 	27	29	31	32	39
+vraagt	27	29	31	32	39
+vragen	27	29	31	32	39
+vrede	12	13
+vredelievend	12	13
+vredig	12	13
+vreedzaam	12	13
+vreemd	12	16
+vreemdsoortig	12	16
+vrees	12	16	17
+vrees	12	16	17	39
+vreesde	12	16	17	38
+vreesden	12	16	17	38
+vreest	12	16	17	39
+vreselijk	12	16	17	18
+vreugde	12	13	14
+vrezen	12	16	17	39
+vriend	31	34
+vriendelijk	12	13
+vriendelijkheid	12	13
+vrienden	31	34
+vriendinnen	31	34
+vriendinnetje	31	34
+vriendinnetjes	31	34
+vriendje	31	34
+vriendjes	31	34
+vriendschap	31	34
+vriendschappelijk	12	13	31	32	34
+vrij	12	13	15
+vrijdag	37
+vrijen	60	61	62
+vrijheid	12	13	15
+vrijmoedig	12	13	15
+vroeg	37
+vroeg	27	29	31	32	38
+vroegen	27	29	31	32	38
+vroeger	37
+vroegtijdig	37
+vrolijk	12	13	14
+vrolijkheid	12	13	14
+vroom	57	58
+vrouw	31	35
+vrouwen	31	36
+vurig	12	13	15
+waaien	39	46
+waar	41
+waard 	56
+waarde	56
+waardeer	12	13	39
+waardeerde	12	13	38
+waardeerden	12	13	38
+waardeert	12	13	39
+waardeloos	12	16	19	56
+waarderen	12	13	39
+waardering	12	13
+waardevol	12	13
+waardig	12	13
+waardigheid	12	13
+waardoor	20	21
+waargenomen	20	22	27	28	38
+waarheid	12	13
+waarin	41
+waarneembaar	27	28
+waarnemen	20	22	27	28	39
+waarneming	20	22	27	28
+waarom	20	21
+waaronder	44
+waarschijnlijk	25
+waarschijnlijkheid	25
+waarvoor	20
+wacht 	39
+wachten	39
+wachtte	38
+wachtten	38
+wakker	60	64
+walg	12	16	18	39
+walgde	12	16	18	38
+walgden	12	16	18	38
+walgelijk	12	16	18
+walgen	12	16	18	39
+walging	12	16	18
+walgt	12	16	18	39
+wandel 	39	46	51	53
+wandelde	38	46	51	53
+wandelden	38	46	51	53
+wandelen	39	46	51	53
+wandelt	39	46	51	53
+wang	60	61
+wangen	60	61
+wanhoop	12	16	17	19	39
+wanhoopt	12	16	17	19	39
+wanhoopte	12	16	17	19	38
+wanhoopten	12	16	17	19	38
+wanhopen	12	16	17	19	39
+wanhopig	12	16	17	19
+wanneer	37
+wanordelijk	12	16
+wantrouw 	12	16	39
+wantrouwde	12	16	38
+wantrouwden	12	16	38
+wantrouwen	12	16	39
+wantrouwig	12	16
+wantrouwt	12	16	39
+warboel	12	16
+waren	38
+warm	12	13
+warmte	12	13
+was 	38
+wassen	39	60	65
+wast	39	60	65
+wastafel	60	65
+waste	38	60	65
+wasten	38	60	65
+wat	1
+wazig	12	16	25
+weddenschap	56
+wedijver	47	50
+wedijveren	39	47	50
+wedstrijd	31	51	53
+week	37
+weekdag	37
+weekend	37
+weekenden	37
+weelde	12	13
+weer	37
+weerhield	20	24	38
+weerhielden	20	24	38
+weerhoud 	20	24	39
+weerhouden	20	24	39
+weerhoudt	20	24	39
+weerklinken	27	29	39
+weerklonken	27	29	38
+weerlegd	7	38
+weerleggen	7	39
+weerloos	12	16	17
+weerspreken	7	39
+weersproken	7	38
+weersta 	39
+weerstaan	39
+weerstaat	39
+weerstond	38
+weerstonden	38
+weerzin	12	16
+weerzinwekkend	12	16
+weet	20	22	39
+wegbrengen	39	46
+wegens	10
+weggaan	39	46
+weggebracht	38	46
+weggegaan	38	46
+weggegooid	38
+weggelopen	38	46
+weggestopt	20	24	38
+weggestuurd	38	46
+weggooien	39
+weglopen	39	46
+wegstoppen	20	24	39
+wegsturen	39	46
+weifel 	20	25	39
+weifelde	20	25	38
+weifelden	20	25	38
+weifelen	20	25	39
+weifelend	20	25
+weifelt	20	25	39
+weiger 	12	16	31	32	39
+weigerde	12	16	31	32	38
+weigerden	12	16	31	32	38
+weigeren	12	16	31	32	39
+weigering	12	16	31	32
+weigert	12	16	31	32	39
+wekelijks	37
+wekken	39	60	64
+weldra	37
+welkom	31	32
+welnu	37
+welzijn	60	61
+wend 	39
+wendde	38
+wendden	38
+wenden	39
+wendt	39
+wens	20	23	40
+wensen	20	23	40
+wenst	20	23	40
+wenste	20	23	40
+wensten	20	23	40
+werd	38
+werden	38
+wereld	41
+werk	39	47	49
+werk	47	49
+werkcollege	47	48
+werken	39	47	49
+werkgelegenheid	47	49
+werkgever	47	49
+werkgroep	47	48
+werkloos	47	49
+werknemer	47	49
+werkt	39	47	49
+werkte	38	47	49
+werkten	38	47	49
+werkweek	37
+werkzaam	47	49
+werp 	39
+werpen	39
+werpt	39
+west	41	42
+westelijk	41	42
+westelijke	41	42
+westen	41	42
+westwaarts	41	42
+weten	20	22	39
+wie	1
+wielrenner	51	53
+wielrijder	51	53
+wierp	38
+wierpen	38
+wij	1	3	4	31	33
+wijd	41
+wijden	12	13	14	39
+wijder	41
+wijdte	41
+wijs	12	13
+wijsgemaakt	31	32	38
+wijsheid	12	13	20	22
+wijsmaken	31	32	39
+wijsvinger	60	61
+wijzelf	1	3	4	31	33
+wil	20	23	40
+wilde	20	23	40
+wilden	20	23	40
+willekeurig	25
+willen	20	23	40
+wilskracht	12	13	15
+wilskrachtig	12	13	15
+wilt	20	23	40
+win	12	13	39	47	50
+winkel 	39	56
+winkelde	38	56
+winkelden	38	56
+winkelen	39	56
+winkelier	47	49
+winkelt	39	56
+winnaar	12	13	47	50
+winnen	12	13	39	47	50
+winst	56
+winstgevend	56
+wint	12	13	39	47	50
+winter	37
+wiskunde	47	48
+wiskundig	47	48
+wissel 	39
+wisselde	38
+wisselden	38
+wisselen	39
+wisselt	39
+wisselwerking	31	32
+wist	20	22	38
+wisten	20	22	38
+woede	12	16	18
+woedend	12	16	18
+woensdag	37
+woest	12	16	18
+won	12	13	38	47	50
+wond	60	61
+wonderbaarlijk	12	13
+wonen	39	51	52
+woning	51	52
+wonnen	12	13	38	47	50
+woon	39	51	52
+woonachting	51	52
+woonde	38	51	52
+woonden	38	51	52
+woonplaats	51	52
+woont	39	51	52
+word	39
+worden	39
+wordt	39
+worsteling	12	16	19
+wou	20	23	40
+wouden	20	23	40
+wraak	12	16	18
+wraakzucht	12	16	18
+wraakzuchtig	12	16	18
+wreed	12	16	18
+wreedheid	12	16	18
+wreef	27	30	38
+wreek	12	16	18	39
+wreekt	12	16	18	39
+wreekte	12	16	18	38
+wreekten	12	16	18	38
+wreken	12	16	18	39
+wrevel	12	16	18
+wrevelig	12	16	18
+wreven	27	30	38
+wrijf	27	30	39
+wrijft	27	30	39
+wrijven	27	30	39
+wroeging	12	16
+wrok	12	16	18
+zaak	47	49
+zachtaardig	12	13
+zachtmoedig	12	13
+zag	20	22	27	28	38
+zagen	20	22	27	28	38
+zakelijk	47	49
+zaken	47	49
+zakenman	47	49
+zakenvrouw	47	49
+zal	20	23	40
+zalig	12	13
+zang	51	55
+zanger	51	55
+zangeres	51	55
+zanik 	12	16	18	39
+zaniken	12	16	18	39
+zanikt	12	16	18	39
+zanikte	12	16	18	38
+zanikten	12	16	18	38
+zat	38
+zaten	38
+zaterdag	37
+ze	1	6	31	33
+zedelijk	57	58
+zeep	65
+zeeziek	60	61
+zeg	27	29	31	32	39
+zege	12	13	15
+zegen	12	13	57	58
+zegenen	12	13	39	57	58
+zegening	12	13	57	58
+zeggen	27	29	31	32	39
+zegt	27	29	31	32	39
+zei	27	29	31	32	38
+zeiden	27	29	31	32	38
+zeker	8	26
+zekerheid	12	13	26
+zelfbeheersing	20	24
+zelfmoord	57	59
+zelfvertrouwen	12	13	15
+zelfverzekerd	12	13	15
+zender	51	54
+zenuw	60	61
+zenuwachtig	12	16	17
+zenuwen	60	61
+zenuwinzinking	12	16	17
+zes	11
+zesde	11
+zesen*	11
+zesmaal	11
+zestal	11
+zestien	11
+zestiende	11
+zestig	11
+zestigste	11
+zesvoud	11
+zesvoudig	11
+zet 	39
+zette 	38
+zetten	39
+zeur 	12	16	18	39
+zeurde	12	16	18	38
+zeurden	12	16	18	38
+zeuren	12	16	18	39
+zeurt	12	16	18	39
+zeven	11
+zevende	11
+zevenen*	11
+zevenmaal	11
+zevental	11
+zeventien	11
+zeventiende	11
+zeventig	11
+zeventigste	11
+zevenvoud	11
+zevenvoudig	11
+zicht	27	28
+zie	20	22	27	28	39
+ziek	60	61
+ziekelijk	60	61
+ziekte	60	61
+ziekteverschijnsel	60	61
+ziel	57	58
+zielen	57	58
+zien	20	22	27	28	39
+ziet	20	22	27	28	39
+zij	1	6	31	33
+zijde	41
+zijn	39
+zijzelf	1	6	31	33
+zing 	39	51	55
+zingen	39	51	55
+zingend	51	55
+zingt	39	51	55
+zit 	39
+zitten	39
+zo	37
+zodra	37
+zoen	12	13	39	60	62
+zoende	12	13	38	60	62
+zoenden	12	13	38	60	62
+zoenen	12	13	39	60	62
+zoent	12	13	39	60	62
+zoet	27	60	63
+zoeven	37
+zomer	37
+zondag	37
+zonde	12	16
+zonden	12	16	57	58
+zonder	7	10	45
+zondig 	12	16	39	57	58
+zondigde	12	16	38	57	58
+zondigden	12	16	38	57	58
+zondigen	12	16	39	57	58
+zondigt	12	16	39	57	58
+zonen	31	35
+zong	38	51	55
+zongen	38	51	55
+zoon	31	35
+zorg 	39
+zorgde	38
+zorgden	38
+zorgen	39
+zorgt	39
+zou	20	23	40
+zouden	20	23	40
+zuid	41
+zuidelijk	41
+zuidelijke	41
+zuidelijkst	41
+zuiden	41
+zuidoost	41
+zuidoostelijk	41
+zuidoosten	41
+zuidwaarts	41
+zuidwest	41
+zuidwestelijk	41
+zuigeling	31	36
+zuinig	56
+zuinigheid	56
+zullen	20	23	40
+zult	20	23	40
+zus	31	35
+zussen	31	35
+zusters	31	35
+zwaarlijvig	60	61	63
+zwager	31	35
+zwak	12	16	60	61
+zwanger	60	61
+zwangerschap	60	61	62
+zweer	60	61
+zweet	39	60	61
+zweette	38	60	61
+zweetten	38	60	61
+zwem	39	46	51	53
+zwembroek	51
+zwemmen	39	46	51	53
+zwemmer	46	51	53
+zwempak	51
+zwemt	39	46	51	53
+zweten	39	60	61
+zwom	38	46	51	53
+zwommen	38	46	51	53
