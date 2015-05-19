@@ -153,31 +153,36 @@ class CharNgrams:
         return self.transform(raw_data, frog_data)
 
 
-# class POSTagger:
+class PosNgrams:
+    """
+    """
+    def __init__(self, n_list=[1]):
+        self.n_list = n_list
+        self.feats = None
+        self.name = 'pos_ngrams'
 
-#     def __init__(self):
-#         pass
+    def fit(self, raw_data, frog_data):
+        feats = {}
+        for inst in frog_data:
+            for n in self.n_list:
+                feats.update(freq_dict(find_ngrams(zip(inst)[2], n)))
+        self.feats = feats.keys()
 
-#     def fit(self):
-#         pass
+    def transform(self, raw_data, frog_data):
+        if self.feats == None:
+            raise ValueError('There are no features to transform the data with. You probably did not "fit" before "transforming".')
+        instances = []
+        for inst in frog_data:
+            pos_dict = {}
+            for n in self.n_list:
+                pos_dict.update(freq_dict(find_ngrams(zip(inst)[2], n)))
+            instances.append([pos_dict.get(f,0) for f in self.feats])
+        return np.array(instances)
 
-#     def transform(self):
-#         pass
+    def fit_transform(self, raw_data, frog_data):
+        self.fit(raw_data, frog_data)
+        return self.transform(raw_data, frog_data)
 
-#     def fit_transform(self):
-#         self.fit()
-#         self.transform()
-    
-
-# if __name__ == '__main__':
-#     data = Datasheet.load('csi_reviews_10.csv',headers=False)
-    
-#     lijstje = [p[-1] for p in data]
-#     #print func_words(a,b)
-#     fw = FunctionWords()
-#     fw.fit(lijstje)
-#     X = fw.transform(lijstje)
-#     print X
 
 class FuncWords:
     """
@@ -279,7 +284,7 @@ FEATURES = {
     'simple_stats': SimpleStats,
     'token_ngrams': TokenNgrams,
     'char_ngrams': CharNgrams,
-    #'post_tags': POSTagger,
+    'pos_ngrams': PosNgrams,
     'function_words': FuncWords,
     'liwc': LiwcCategories,
     'pca': TokenPCA
