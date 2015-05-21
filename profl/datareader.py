@@ -64,7 +64,7 @@ class Datareader:
 
         rnd.seed(self.rnd_seed)
 
-    ## Passive use ------------------------------------------------------------
+    # Passive use -------------------------------------------------------------
 
     def load(self, file_list, dict_format=False):
         """
@@ -86,14 +86,14 @@ class Datareader:
         Returns
         -----
         data : list or dict
-            Either a flat list of lists with all data mixed, or a dict where 
+            Either a flat list of lists with all data mixed, or a dict where
             the datasets are split (see dict_format).
         """
         if dict_format:
             # note: fix unix only split with os.path.splitext(
             # os.path.basename(filepath))[0], or don't use Windows. -c-
-            data = {filename.split('/')[-1:][0]: 
-                    self.load_data_linewise(filename) 
+            data = {filename.split('/')[-1:][0]:
+                    self.load_data_linewise(filename)
                     for filename in file_list}
         else:
             data = [row for filename in file_list for row
@@ -102,7 +102,7 @@ class Datareader:
             rnd.shuffle(data)
         return data
 
-    ## General functions ------------------------------------------------------
+    # General functions -------------------------------------------------------
 
     def load_data_linewise(self, filename):
         """
@@ -118,7 +118,7 @@ class Datareader:
         Returns
         -----
         rows : list
-            List of lists where each row is an instance and column a label 
+            List of lists where each row is an instance and column a label
             entry or text data.
 
         """
@@ -141,13 +141,13 @@ class Datareader:
                             frog_index = self.headers.index('frog')
                         except ValueError:
                             frog_index = None
-                        rows.append([line[label_index], line[text_index]] + 
+                        rows.append([line[label_index], line[text_index]] +
                                     ([line[frog_index]] if frog_index else []))
                     else:
                         rows.append(line)
         return rows
 
-    ## Interactive part -------------------------------------------------------
+    # Interactive part --------------------------------------------------------
 
     def handle_data(self, filename):
         """
@@ -166,11 +166,11 @@ class Datareader:
         Returns
         -----
         rows : dict
-            Where each key is a dataset name and each value a list of lists 
-            where each row is an instance and column a label entry or text 
+            Where each key is a dataset name and each value a list of lists
+            where each row is an instance and column a label entry or text
             data.
         """
-        rows = load_data_linewise(filename)
+        rows = self.load_data_linewise(filename)
         # shuffle the dataset:
         if self.shuffle:
             rnd.shuffle(rows)
@@ -187,10 +187,10 @@ class Datareader:
         Removed any parameters overlapping with global class variables,
         here and in all other class functions, they do not make any
         sense -> no one wants to shuffle one set, but not the other.
-        
+
         Also, got rid of a lot of optional parameters that would introduce
         bugs.
-        
+
         -c-
         """
         dataset = self.handle_data(filename=filepath)
@@ -223,7 +223,7 @@ class Datareader:
             rnd.shuffle(combined_lines)
         return self.rows_2_dataset(combined_lines)
 
-    ## Data & Frog operations -------------------------------------------------
+    # Data & Frog operations --------------------------------------------------
 
     def rows_2_dataset(self, rows):
         """
