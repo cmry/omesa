@@ -81,20 +81,30 @@ class Datareader:
             Either a flat list of lists with all data mixed, or a dict where
             the datasets are split (see dict_format).
         """
-        if dict_format:
-            # note: fix unix only split with os.path.splitext(
-            # os.path.basename(filepath))[0], or don't use Windows. -c-
-            data = {filename.split('/')[-1:][0]:
-                    self.load_data_linewise(filename)
-                    for filename in file_list}
-        else:
-            data = [row for filename in file_list for row
-                    in self.load_data_linewise(filename)]
-        if self.shuffle and not dict_format:
+        data = [row for filename in file_list for row
+                in self.load_data_linewise(filename)]
+        if self.shuffle:
             rnd.shuffle(data)
         return data
 
     def extract_row(self, line):
+        """
+        Data extractor
+        =====
+        Fetches required data from data files. Handles frog data correctly.
+
+        Parameters
+        -----
+        line : list
+            List with .csv frow.
+
+        Returns
+        -----
+        rows : list
+            Row pruned to include only the selected label, raw data and decoded
+            frog data.
+
+        """
         label_data = line[self.headers.index(self.label)]
         text_data = line[self.headers.index('text')]
         try:
@@ -105,6 +115,27 @@ class Datareader:
             frog_data = []
         row = [label_data, text_data] + frog_data
         return row
+
+    def check_header(self, filename):
+        """
+        Header checker
+        =====
+        Sniffs if a .csv file has a header.
+
+        Parameters
+        -----
+        filename : str
+            Directory of a .csv file to be sniffed.
+
+        Returns
+        -----
+        has_header : bool
+            True if a header was sniffed in the file.
+        """
+        with open(filename, 'r') as sniff_file:
+            has_header = True if csv.Sniffer().has_header(
+                    sniff_file.read(200)) else False
+        return has_header
 
     def load_data_linewise(self, filename):
         """
@@ -124,11 +155,8 @@ class Datareader:
             entry or text data.
 
         """
-        rows, has_header = [], False
+        rows, has_header = [], self.check_header(filename)
         # check if provided file has a label
-        with open(filename, 'r') as sniff_file:
-            if csv.Sniffer().has_header(sniff_file.read(200)):
-                has_header = True
         with open(filename, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             for i, line in enumerate(csv_reader):
@@ -137,6 +165,7 @@ class Datareader:
                     self.headers = line
                     if not self.label:
                         self.label = self.headers[1]
+                # stop if we reached max_n
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
