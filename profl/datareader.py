@@ -22,6 +22,10 @@ class Datareader:
     rnd_seed : int, optional, default 99
         A seed number used for reproducing the random order.
 
+    label : str, optional, default None
+        Name of the label header row that should be retrieved. If kept
+        None, all labels will be read.
+
     Attributes
     -----
     datasets : dict
@@ -49,10 +53,11 @@ class Datareader:
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
     >>> dataset = reader.load(data, dict_format=True)
     """
-    def __init__(self, max_n=False, shuffle=True, rnd_seed=99):
+    def __init__(self, max_n=False, shuffle=True, rnd_seed=99, label=None):
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
+        self.label = label
         self.headers = "user_id age gender loc_country loc_region \
                        loc_city education pers_big5 pers_mbti texts".split()
         self.datasets = {}
@@ -117,9 +122,6 @@ class Datareader:
             entry or text data.
 
         """
-        data : list or dict
-            Either a flat list of lists with all data mixed, or a dict where 
-            the datasets are split (see dict_format).
         rows, has_header = [], False
         with open(filename, 'r') as sniff_file:
             if csv.Sniffer().has_header(sniff_file.read(200)):
@@ -132,7 +134,17 @@ class Datareader:
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
-                    rows.append(line)
+                    if self.label:
+                        label_index = self.headers.index(self.label)
+                        text_index = self.headers.index('text')
+                        try:
+                            frog_index = self.headers.index('frog')
+                        except ValueError:
+                            frog_index = None
+                        rows.append([line[label_index], line[text_index]] + 
+                                    ([line[frog_index]] if frog_index else []))
+                    else:
+                        rows.append(line)
         return rows
 
     ## Interactive part -------------------------------------------------------
