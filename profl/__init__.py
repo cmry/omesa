@@ -85,7 +85,8 @@ def make(name, data=['./data/test.csv'], dev=None, target_label='age',
          features=['pca', 'liwc'], max_n=None, shuffle=True, rnd_seed=666):
     
     print("::: loading datasets :::")
-    reader = Datareader(max_n=max_n, shuffle=shuffle, rnd_seed=rnd_seed)
+    reader = Datareader(max_n=max_n, shuffle=shuffle, rnd_seed=rnd_seed,
+                        label=target_label)
     datasets = datareader.load(data, dict_format=True)
 
     print("::: creating features :::")
