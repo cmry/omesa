@@ -51,22 +51,24 @@ class Datareader:
 
     >>> reader = Datareader(max_n=1000)
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
-    >>> dataset = reader.load(data)
+    >>> dataset = reader.load(data, dict_format=True)
     """
 
     def __init__(self, max_n=False, shuffle=True, rnd_seed=99):
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
-        self.headers = None
+        self.headers = "user_id age gender loc_country loc_region \
+                       loc_city education pers_big5 pers_mbti texts".split()
         self.datasets = {}
 
         rnd.seed(self.rnd_seed)
 
     def load(self, file_list, dict_format=False):
-        if dict_format:  # note: doesn't work yet -c-
-            # fix unix only split
-            data = {filename.split('/')[-1:]: self.load_data_linewise(filename) for filename in file_list}
+        if dict_format:
+            # TODO: fix unix only split (sometime :) )
+            data = {filename.split('/')[-1:][0]: self.load_data_linewise(filename) 
+                    for filename in file_list}
         else:
             data = [row for filename in file_list for row
                     in self.load_data_linewise(filename)]
@@ -83,11 +85,7 @@ class Datareader:
             csv_reader = csv.reader(csvfile)
             for i, line in enumerate(csv_reader):
                 if has_header and i == 0:
-                    self.headers = line  # merge if more on i==0
-                elif not has_header and i == 0:
-                    self.headers = "user_id age gender loc_country loc_region \
-                                    loc_city education pers_big5 pers_mbti \
-                                    texts".split()
+                    self.headers = line
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
