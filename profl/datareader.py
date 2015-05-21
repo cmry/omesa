@@ -16,7 +16,7 @@ class Datareader:
     ------
 
     max_n : int, optional, default = False
-        Maximum number of data instances user wants to work with.
+        Maximum number of data instances *per dataset* user wants to work with.
 
     shuffle : bool, optional, default = True
         If the order of the dataset should be randomized.
@@ -46,21 +46,58 @@ class Datareader:
     >>> blogs_csi = reader.combine_datasets(['blogs','csi'])
     >>> instance = reader.process_raw_text(string)
 
-    Generator:
+    Passive:
 
     >>> reader = Datareader(max_n=1000)
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
-    >>> for line in reader.stream_data(data):
-    >>>     # do something with line
+    >>> dataset = reader.load(data)
     """
 
     def __init__(self, max_n=False, shuffle=True, rnd_seed=99):
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
-        # init dataset container as dict
+        rnd.seed(self.rnd_seed)
+
         self.datasets = {}
         self.headers = None
+
+    def load(self, file_list, dict_format=False):
+        if dict_format:
+            # fix unix only split
+            data = {filename.split('/')[-1:]: self.load_data_linewise(filename)
+                    for filename in file_list}
+        else:
+            data = [row for filename in file_list for row
+                    in self.load_data_linewise(filename)]
+        if self.shuffle and not dict_format:
+            rnd.shuffle(data)
+        return data
+
+    def load_data_linewise(self, filename):
+        """
+        Main script to load data from the Amica-csv-files.
+        All other parsing script are deprecated now.
+        """
+        rows, head = [], False
+        with open(filename, 'r') as F:
+            csv_reader = csv.reader(F)
+            if csv.Sniffer().has_header(F.read(10)):
+                head = True
+            for i, line in enumerate(csv_reader):
+                if head and i == 0:
+                    self.headers = line
+                if self.max_n and i >= self.max_n:
+                    break
+                rows.append(line)
+
+        # shuffle the dataset:
+        if self.shuffle:
+            rnd.shuffle(rows)
+        if self.max_n:
+            rows = rows[:self.max_n]
+        dataset = self.rows_2_dataset(rows)
+        return dataset
 
     def add_dataset(self, filepath, dataset_name):
         #  removed any parameters overlapping with global class variables,
@@ -100,35 +137,8 @@ class Datareader:
         combined_lines = [row for name in dataset_names for row in
                           self.dataset_2_rows(self.datasets[name])]
         if self.shuffle:
-            rnd.seed(self.rnd_seed)
             rnd.shuffle(combined_lines)
         return self.rows_2_dataset(combined_lines)
-
-    def load_data_linewise(self, filename="./data/example.csv"):
-        """
-        Main script to load data from the Amica-csv-files.
-        All other parsing script are deprecated now.
-        """
-        rows, head = [], False
-        with open(filename, 'r') as F:
-            csv_reader = csv.reader(F)
-            if csv.Sniffer().has_header(F.read(10)):
-                head = True
-            for i, line in enumerate(csv_reader):
-                if head and i == 0:
-                    self.headers = line
-                if self.max_n and i >= self.max_n:
-                    break
-                rows.append(line)
-
-        # shuffle the dataset:
-        if self.shuffle:
-            rnd.seed(self.rnd_seed)
-            rnd.shuffle(rows)
-        if self.max_n:
-            rows = rows[:self.max_n]
-        dataset = self.rows_2_dataset(rows)
-        return dataset
 
     def rows_2_dataset(self, rows):
         """
