@@ -78,6 +78,6 @@ be set except for a name.
 __all__ = ['models']
 
 
-def make(name, data=[], test=None, dev=None,
-         target_label='age', features=['pca', 'liwc']):
+def make(name, data=['./data/test.csv'], target_label='age',
+         features=['pca', 'liwc'], dev=None):
     pass
