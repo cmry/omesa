@@ -85,7 +85,8 @@ class Datareader:
             the datasets are split (see dict_format).
         """
         if dict_format:
-            # note: fix unix only split (sometime :) )
+            # note: fix unix only split with os.path.splitext(
+            # os.path.basename(filepath))[0], or don't use Windows. -c-
             data = {filename.split('/')[-1:][0]: 
                     self.load_data_linewise(filename) 
                     for filename in file_list}
