@@ -6,7 +6,6 @@ class Datareader:
     """
     Datareader
     ======
-
     Container of datasets to be passed on to a featurizer. Can convert .csv
     files into a dataset with a chosen key. Envisioned for training:
     - can return combined datasets with any combinations of keys
@@ -14,19 +13,17 @@ class Datareader:
 
     Parameters
     ------
-
-    max_n : int, optional, default = False
+    max_n : int, optional, default False
         Maximum number of data instances *per dataset* user wants to work with.
 
-    shuffle : bool, optional, default = True
+    shuffle : bool, optional, default True
         If the order of the dataset should be randomized.
 
-    rnd_seed : int, optional, default = 99
+    rnd_seed : int, optional, default 99
         A seed number used for reproducing the random order.
 
     Attributes
     -----
-
     datasets : dict
         Dictionary where key is the name of a dataset, and the value its rows.
         Will not be filled if data is streamed.
@@ -37,7 +34,6 @@ class Datareader:
 
     Examples
     -----
-
     Interactive:
 
     >>> reader = Datareader(max_n=1000)
@@ -53,7 +49,6 @@ class Datareader:
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
     >>> dataset = reader.load(data, dict_format=True)
     """
-
     def __init__(self, max_n=False, shuffle=True, rnd_seed=99):
         self.max_n = max_n
         self.shuffle = shuffle
@@ -64,10 +59,35 @@ class Datareader:
 
         rnd.seed(self.rnd_seed)
 
+    ## Passive use ------------------------------------------------------------
+
     def load(self, file_list, dict_format=False):
+        """
+        Raw data loader
+        =====
+        If you'd rather load all the data directly by a list of files, this is
+        the go-to function. Produces exactly the same result with dict_format=
+        True as the interactive commands (see class docstring).
+
+        Parameters
+        -----
+        file_list : list of strings
+            List with document directories to be loaded.
+
+        dict_format : bool, optional, default False
+            Set to True if the datasets should be divided in a dictionary where
+            their key is the filename and the value the data matrix.
+
+        Returns
+        -----
+        data : list or dict
+            Either a flat list of lists with all data mixed, or a dict where 
+            the datasets are split (see dict_format).
+        """
         if dict_format:
-            # TODO: fix unix only split (sometime :) )
-            data = {filename.split('/')[-1:][0]: self.load_data_linewise(filename) 
+            # todo: fix unix only split (sometime :) )
+            data = {filename.split('/')[-1:][0]: 
+                    self.load_data_linewise(filename) 
                     for filename in file_list}
         else:
             data = [row for filename in file_list for row
@@ -76,7 +96,29 @@ class Datareader:
             rnd.shuffle(data)
         return data
 
+    ## General functions ------------------------------------------------------
+
     def load_data_linewise(self, filename):
+        """
+        Csv reader
+        =====
+        Reads a csv file by pathname, extracts headers and returns matrix.
+
+        Parameters
+        -----
+        filename : str
+            Directory of a .csv file to be stored into a list.
+
+        Returns
+        -----
+        rows : list
+            List of lists where each row is an instance and column a label 
+            entry or text data.
+
+        """
+        data : list or dict
+            Either a flat list of lists with all data mixed, or a dict where 
+            the datasets are split (see dict_format).
         rows, has_header = [], False
         with open(filename, 'r') as sniff_file:
             if csv.Sniffer().has_header(sniff_file.read(200)):
@@ -92,17 +134,33 @@ class Datareader:
                     rows.append(line)
         return rows
 
+    ## Interactive part -------------------------------------------------------
+
     def handle_data(self, filename):
         """
-        Main script to load data from the Amica-csv-files.
-        All other parsing script are deprecated now.
+        Main data handler
+        =====
+        Main function wrapping the csv reader load_data_linewise, adding a
+        shuffle and a maximum n cut-off. Isolated so that passive part does not
+        have to rely on rows_2_dataset. All other parsing script are deprecated
+        now.
+
+        Parameters
+        -----
+        filename : str
+            Directory of a .csv file to be stored into a list.
+
+        Returns
+        -----
+        rows : dict
+            Where each key is a dataset name and each value a list of lists 
+            where each row is an instance and column a label entry or text 
+            data.
         """
         rows = load_data_linewise(filename)
         # shuffle the dataset:
         if self.shuffle:
             rnd.shuffle(rows)
-        if self.max_n:
-            rows = rows[:self.max_n]
         dataset = self.rows_2_dataset(rows)
         return dataset
 
@@ -122,9 +180,7 @@ class Datareader:
         
         -c-
         """
-
         dataset = self.handle_data(filename=filepath)
-
         # check for presence of frog-column:
         # set frogstrings in write format ->
         # [[token,lemma,postag,sentenceindex], [token,lemma,...]]
@@ -153,6 +209,8 @@ class Datareader:
         if self.shuffle:
             rnd.shuffle(combined_lines)
         return self.rows_2_dataset(combined_lines)
+
+    ## Data & Frog operations -------------------------------------------------
 
     def rows_2_dataset(self, rows):
         """
