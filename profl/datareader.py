@@ -32,7 +32,8 @@ class Datareader:
         Will not be filled if data is streamed.
 
     headers : list
-        List of headers / labels if they were provided with the datasets.
+        List of headers / labels if they were found present in the datasets. If
+        not, standard AMiCA list is provided. Might introduce bugs.
 
     Examples
     -----
@@ -57,16 +58,15 @@ class Datareader:
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
+        self.headers = None
+        self.datasets = {}
+
         rnd.seed(self.rnd_seed)
 
-        self.datasets = {}
-        self.headers = None
-
     def load(self, file_list, dict_format=False):
-        if dict_format:
+        if dict_format:  # note: doesn't work yet -c-
             # fix unix only split
-            data = {filename.split('/')[-1:]: self.load_data_linewise(filename)
-                    for filename in file_list}
+            data = {filename.split('/')[-1:]: self.load_data_linewise(filename) for filename in file_list}
         else:
             data = [row for filename in file_list for row
                     in self.load_data_linewise(filename)]
@@ -75,22 +75,31 @@ class Datareader:
         return data
 
     def load_data_linewise(self, filename):
+        rows, has_header = [], False
+        with open(filename, 'r') as sniff_file:
+            if csv.Sniffer().has_header(sniff_file.read(200)):
+                has_header = True
+        with open(filename, 'r') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            for i, line in enumerate(csv_reader):
+                if has_header and i == 0:
+                    self.headers = line  # merge if more on i==0
+                elif not has_header and i == 0:
+                    self.headers = "user_id age gender loc_country loc_region \
+                                    loc_city education pers_big5 pers_mbti \
+                                    texts".split()
+                elif self.max_n and i >= self.max_n:
+                    break
+                else:
+                    rows.append(line)
+        return rows
+
+    def handle_data(self, filename):
         """
         Main script to load data from the Amica-csv-files.
         All other parsing script are deprecated now.
         """
-        rows, head = [], False
-        with open(filename, 'r') as F:
-            csv_reader = csv.reader(F)
-            if csv.Sniffer().has_header(F.read(10)):
-                head = True
-            for i, line in enumerate(csv_reader):
-                if head and i == 0:
-                    self.headers = line
-                if self.max_n and i >= self.max_n:
-                    break
-                rows.append(line)
-
+        rows = load_data_linewise(filename)
         # shuffle the dataset:
         if self.shuffle:
             rnd.shuffle(rows)
@@ -100,16 +109,23 @@ class Datareader:
         return dataset
 
     def add_dataset(self, filepath, dataset_name):
-        #  removed any parameters overlapping with global class variables,
-        #  here and in all other class functions, they do not make any
-        #  sense -> no one wants to shuffle one set, but not the other.
-        #
-        #  Also, got rid of a lot of optional parameters that would introduce
-        #  bugs.
-        #
-        # -c-
+        """
+        Parameters
+        -----
 
-        dataset = self.load_data_linewise(filename=filepath)
+        Note
+        -----
+        Removed any parameters overlapping with global class variables,
+        here and in all other class functions, they do not make any
+        sense -> no one wants to shuffle one set, but not the other.
+        
+        Also, got rid of a lot of optional parameters that would introduce
+        bugs.
+        
+        -c-
+        """
+
+        dataset = self.handle_data(filename=filepath)
 
         # check for presence of frog-column:
         # set frogstrings in write format ->
@@ -145,9 +161,6 @@ class Datareader:
         Converts 2D-list of items in row to a dict-based structure,
         with one feature column for each key.
         """
-        # initialize the dataset
-        if len(rows[0]) > len(self.headers):  # i.e. a column w. frog data
-            self.headers.append("frogs")
         dataset = {k: [] for k in self.headers}
         # write rows to the dataset
         for row in rows:
@@ -162,8 +175,6 @@ class Datareader:
         """
         # format of a dataset {'texts'=[], 'user_id'=[], ...}.
         # will be converted in an instance per line
-        if len(dataset.keys()) > len(self.headers):
-            self.headers.append('frogs')
         return zip(*[dataset[field] for field in self.headers])
 
     def decode_frogstring_train(self, frogstring):
