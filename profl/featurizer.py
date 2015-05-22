@@ -1,40 +1,61 @@
-# standard lib:
 import numpy as np
-from collections import Counter
 import operator
-
-# liwc imports:
 import utils.liwc as liwc
-
-# function word imports:
-from utils import find_ngrams, freq_dict
-
-# sklearn imports:
+from utils.utils import find_ngrams, freq_dict
+from collections import Counter
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 def identity(x):
     return x
 
-class Featurizer:
 
-    def __init__(self, data=dict(), state='train', features=[], target_label='gender'):
+class Featurizer:
+    """
+    Parameters
+    -----
+
+    raw : list
+        The raw data comes in an array where each entry represents a text
+        instance in the data file.
+
+    frogs : list
+        The frog data ...
+
+    features : list of strings
+        List of features that the featurizer has to extract from the provided
+        data by calling its helpers.
+
+    Notes
+    -----
+    For an explanation regarding the frog features, please refer either to
+    utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
+    """
+    def __init__(self, raws, frogs, features):
         """
         :data: a dict, created by the datareader
         :state: str can be either test or train
         :features: list of features calls by string
         """
 
-        if 'frog' in data.keys():
-            self.frog = data['frogs']
-        self.raw = data['texts']
-        self.helpers = [v for k, v in FEATURES.items() if k in features]
-        self.state = state
+        self.frog = frogs
+        self.raw = raws
+        self.modules = {
+            'simple_stats':     SimpleStats,
+            'token_ngrams':     TokenNgrams,
+            'char_ngrams':      CharNgrams,
+            'pos_ngrams':       PosNgrams,
+            'function_words':   FuncWords,
+            'liwc':             LiwcCategories,
+            'pca':              TokenPCA
+        }
+        self.helpers = [v for k, v in self.modules.items() if k in features]
 
-        # construct feature_families by combining the given features with their indices, 
-        # omits the use of an OrderedDict
+        # construct feature_families by combining the given features with
+        # their indices, omits the use of an OrderedDict
 
-    def transform(self):
+    def fit_transform(self):
         features = {}
         for helper in self.helpers:
             h = helper().fit(self.raw, self.frog)
@@ -42,12 +63,6 @@ class Featurizer:
         submatrices = [features[ft] for ft in sorted(features.keys())]
         X = np.hstack(submatrices)
         return X
-
-    def fit(self):
-        pass
-
-    def selection(self):
-        pass
 
 
 class BlueprintFeature:
@@ -67,7 +82,7 @@ class BlueprintFeature:
     def transform(self, data):
         instances = []
         for input_vector in data:
-            your_feature_vector = some_function(input_vector)
+            your_feature_vector = self.some_function(input_vector)
             instances.append(your_feature_vector)
         return instances
 
@@ -284,15 +299,3 @@ class LiwcCategories():
     def fit_transform(self, raw_data, frog_data):
         self.fit(raw_data, frog_data)
         return self.transform(raw_data, frog_data)
-
-
-FEATURES = {
-    'simple_stats': SimpleStats,
-    'token_ngrams': TokenNgrams,
-    'char_ngrams': CharNgrams,
-    'pos_ngrams': PosNgrams,
-    'function_words': FuncWords,
-    'liwc': LiwcCategories,
-    'pca': TokenPCA
-}
-

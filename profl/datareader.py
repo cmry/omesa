@@ -62,11 +62,11 @@ class Datareader:
         """
         Raw data loader
         =====
-        If you'd rather load all the data directly by a list of files, this is
-        the go-to function. Produces exactly the same result with dict_format=
-        True as the interactive commands (see class docstring).
+        This is now the main way to load in your .csv files. It will check
+        which labels are present in the input data, and will isolate any
+        specified label.
 
-        Parameters
+        Parametersis
         -----
         file_list : list of strings
             List with document directories to be loaded.
@@ -85,7 +85,7 @@ class Datareader:
                 in self.load_data_linewise(filename)]
         if self.shuffle:
             rnd.shuffle(data)
-        return data
+        return labels, raw, frogs # TODO: work from here
 
     def extract_row(self, line):
         """
