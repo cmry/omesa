@@ -75,23 +75,24 @@ dataset, you can specify `dev=True`, which will not require any parameters to
 be set except for a name.
 """
 
-from datareader import Datareader
-from featurizer import Featurizer
+from .datareader import Datareader
+from .featurizer import Featurizer
 
 __all__ = ['models']
 
 
-def make(name, data=['./data/test.csv'], dev=None, target_label='age',
-         features=['pca', 'liwc'], max_n=None, shuffle=True, rnd_seed=666):
+def make(name, data=['./profl/data/test.csv'], dev=None, target_label='age',
+         features={'liwc': {}, 'token_pca': {'dimensions': 2,'max_tokens': 10}}, 
+         max_n=None, shuffle=True, rnd_seed=666):
 
     print("::: loading datasets :::")
     reader = Datareader(max_n=max_n, shuffle=shuffle, rnd_seed=rnd_seed,
                         label=target_label)
-    datasets = reader.load(data, dict_format=True)
+    labels, raw, frog = reader.load(data, dict_format=True)
 
     print("::: creating features :::")
-    featurizer = Featurizer(data=datasets, state='train',
-                            features=features, target_label=target_label)
-    space = featurizer.transform()
-    config = {k: v for k, v in args}
-    return config, space
+    featurizer = Featurizer(raw, frog, features)
+    space = featurizer.fit_transform()
+    print(space)
+    # config = {k: v for k, v in args}
+    # return config, space

@@ -1,10 +1,13 @@
 import numpy as np
 import operator
-import utils.liwc as liwc
-from utils.utils import find_ngrams, freq_dict
-from collections import Counter
+from .utils import liwc
+from .utils import find_ngrams, freq_dict
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Authors: Chris Emmery, Mike Kestemont
+# Contributors: Ben Verhoeven, Florian Kunneman, Janneke van de Loo
+# License: BSD 3-Clause
 
 
 def identity(x):
@@ -23,9 +26,15 @@ class Featurizer:
     frogs : list
         The frog data ...
 
-    features : list of strings
-        List of features that the featurizer has to extract from the provided
-        data by calling its helpers.
+    features : dict
+        Subset any of the entries in the following dictionary:
+
+        features = {
+            'simple_stats': {}
+            'token_ngrams': {'n_list': bla, 'max_feats': bla}
+            'token_pca':    {'dimensions': 2, 'max_tokens': 10}
+            ... PLEASE ADD YOURS! -c-
+        }
 
     Notes
     -----
@@ -33,11 +42,6 @@ class Featurizer:
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
     def __init__(self, raws, frogs, features):
-        """
-        :data: a dict, created by the datareader
-        :state: str can be either test or train
-        :features: list of features calls by string
-        """
 
         self.frog = frogs
         self.raw = raws
@@ -48,9 +52,11 @@ class Featurizer:
             'pos_ngrams':       PosNgrams,
             'function_words':   FuncWords,
             'liwc':             LiwcCategories,
-            'pca':              TokenPCA
+            'token_pca':        TokenPCA
         }
-        self.helpers = [v for k, v in self.modules.items() if k in features]
+
+        self.helpers = [v(**features[k]) for k, v in
+                        self.modules.items() if k in features.keys()]
 
         # construct feature_families by combining the given features with
         # their indices, omits the use of an OrderedDict
@@ -58,7 +64,7 @@ class Featurizer:
     def fit_transform(self):
         features = {}
         for helper in self.helpers:
-            h = helper().fit(self.raw, self.frog)
+            h = helper.fit(self.raw, self.frog)
             features[h.name] = h.transform(self.raw, self.frog)
         submatrices = [features[ft] for ft in sorted(features.keys())]
         X = np.hstack(submatrices)
@@ -67,11 +73,14 @@ class Featurizer:
 
 class BlueprintFeature:
 
-    def __init__(self):
-        # any global features
+    def __init__(self, **kwargs):
+        self.name = 'blueprint_feature'
+        self.some_option = kwargs['some_option']
+        self.some_option = kwargs['some_option2']
+        # etc.
         pass
 
-    def fit(self, data):
+    def fit(self, raw, frog):
         # get feature types
         pass
 
@@ -79,16 +88,16 @@ class BlueprintFeature:
         # do some stuff to input_vector
         pass
 
-    def transform(self, data):
+    def transform(self, raw, frog):
         instances = []
-        for input_vector in data:
+        for input_vector in raw:
             your_feature_vector = self.some_function(input_vector)
             instances.append(your_feature_vector)
         return instances
 
-    def fit_transform(self, data):
-        self.fit(data)
-        return self.transform(data)
+    def fit_transform(self, raw_data, frog_data):
+        self.fit(raw_data, frog_data)
+        return self.transform(raw_data, frog_data)
 
 
 class SimpleStats:
@@ -136,7 +145,7 @@ class TokenNgrams:
             instances.append([tok_dict.get(f,0) for f in self.feats])
         return np.array(instances)
 
-     def fit_transform(self, raw_data, frog_data, n_list, max_feats=None):
+    def fit_transform(self, raw_data, frog_data, n_list, max_feats=None):
         self.fit(raw_data, frog_data, n_list, max_feats=max_feats)
         return self.transform(raw_data, frog_data)
 
@@ -170,7 +179,7 @@ class CharNgrams:
             instances.append([char_dict.get(f,0) for f in self.feats])
         return np.array(instances)
 
-    def fit_transform(self, raw_data, frog_data, n_list, max_feats=None:
+    def fit_transform(self, raw_data, frog_data, n_list, max_feats=None):
         self.fit(raw_data, frog_data, n_list, max_feats=max_feats)
         return self.transform(raw_data, frog_data)
 
@@ -227,7 +236,7 @@ class FuncWords:
         tokens = [item[0] for item in frogstring if item[2].split('(')[0] in functors]
         return tokens
     
-    def fit(self,raw_data, frog_data):
+    def fit(self, raw_data, frog_data):
         feats = {}
         for inst in frog_data:
             feats.update(freq_dict(func_words(inst)))
@@ -252,50 +261,49 @@ class TokenPCA():
     """
     Tryout: transforms unigram counts to PCA matrix
     """
-    def __init__(self, dimensions=2, max_tokens=10):
+    def __init__(self, **kwargs):
         # set params
-        self.dimensions = dimensions
-        self.max_tokens = max_tokens
         self.name = "token_pca"
+        self.dimensions = kwargs['dimensions']
+        self.max_tokens = kwargs['max_tokens']
         # init fitters:
         self.pca = PCA(n_components=self.dimensions)
-        self.vectorizer = TfidfVectorizer(analyzer=identity, use_idf=False, max_features=self.max_tokens)
+        self.vectorizer = TfidfVectorizer(analyzer=identity, use_idf=False,
+                                          max_features=self.max_tokens)
 
-    def fit(self, data):
-        X = self.vectorizer.fit_transform(data).toarray()
+    def fit(self, raw_data, frog_data):
+        X = self.vectorizer.fit_transform(raw_data).toarray()
         self.pca.fit(X)
         return self
 
-    def transform(self, data):
-        X = self.vectorizer.transform(data).toarray()
+    def transform(self, raw_data, frog_data):
+        X = self.vectorizer.transform(raw_data).toarray()
         return self.pca.transform(X)
 
-    def fit_transform(self, data):
-        self.fit(data)
-        return self.transform(data)
+    def fit_transform(self, raw_data, frog_data):
+        self.fit(raw_data)
+        return self.transform(raw_data)
+
 
 class LiwcCategories():
     """
     Compute relative frequencies for the LIWC categories.
     """
-    def __init__(self):
-        self.feats = None
+    def __init__(self, **kwargs):
         self.name = "liwc"
-        
+
     def fit(self, raw_data, frog_data):
         self.feats = liwc.liwc_nl_dict.keys()
         return self
-    
+
     def transform(self, raw_data, frog_data):
-        if self.feats == None:
-            raise ValueError('There are no features to transform the data with. You probably did not "fit" before "transforming".')
         instances = []
-        tok_data = raw_data.split() #adapt to frog words
+        tok_data = [dat.split() for dat in raw_data]  # adapt to frog words
         for inst in tok_data:
             liwc_dict = liwc.liwc_nl(inst)
             instances.append([liwc_dict[f] for f in self.feats])
         return np.array(instances)
-        
+
     def fit_transform(self, raw_data, frog_data):
         self.fit(raw_data, frog_data)
         return self.transform(raw_data, frog_data)

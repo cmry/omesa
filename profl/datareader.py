@@ -1,6 +1,9 @@
 import random as rnd
 import csv
-import utils.frog as frog
+from .utils import frog
+
+# Authors: Chris Emmery, Florian Kunneman
+# License: BSD 3-Clause
 
 
 class Datareader:
@@ -48,6 +51,7 @@ class Datareader:
     Interactive use has been deprecated in this version.
     """
     def __init__(self, max_n=False, shuffle=True, rnd_seed=99, label=None):
+
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
@@ -64,9 +68,10 @@ class Datareader:
         =====
         This is now the main way to load in your .csv files. It will check
         which labels are present in the input data, and will isolate any
-        specified label.
+        specified label. Please note that frog data **must** be under a 'frogs'
+        header, otherwise it won't parse it.
 
-        Parametersis
+        Parameters
         -----
         file_list : list of strings
             List with document directories to be loaded.
@@ -77,15 +82,21 @@ class Datareader:
 
         Returns
         -----
-        data : list or dict
-            Either a flat list of lists with all data mixed, or a dict where
-            the datasets are split (see dict_format).
+        labels : list
+            Labels for each of the instances in raw, labels should be
+            maintained in the same position for e.g. sklearn evaluation.
+        raw : list
+            The raw data comes in an array where each entry represents a text
+            instance in the data file.
+        frogs : list
+            The frog data, list is empty if no data is found.
         """
         data = [row for filename in file_list for row
                 in self.load_data_linewise(filename)]
         if self.shuffle:
             rnd.shuffle(data)
-        return labels, raw, frogs # TODO: work from here
+        labels, raw, frogs = zip(*data)
+        return list(labels), list(raw), list(frogs)
 
     def extract_row(self, line):
         """
@@ -113,7 +124,7 @@ class Datareader:
                          line[self.headers.index('frogs')]]
         except ValueError:
             frog_data = []
-        row = [label_data, text_data] + frog_data
+        row = [label_data, text_data, frog_data]
         return row
 
     def check_header(self, filename):
