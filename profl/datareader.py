@@ -23,6 +23,10 @@ class Datareader:
     rnd_seed : int, optional, default 99
         A seed number used for reproducing the random order.
 
+    label : str, optional, default None
+        Name of the label header row that should be retrieved. If kept
+        None, all labels will be read.
+
     Attributes
     -----
     datasets : dict
@@ -50,17 +54,18 @@ class Datareader:
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
     >>> dataset = reader.load(data, dict_format=True)
     """
-    def __init__(self, max_n=False, shuffle=True, rnd_seed=99):
+    def __init__(self, max_n=False, shuffle=True, rnd_seed=99, label=None):
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
+        self.label = label
         self.headers = "user_id age gender loc_country loc_region \
                        loc_city education pers_big5 pers_mbti texts".split()
         self.datasets = {}
 
         rnd.seed(self.rnd_seed)
 
-    ## Passive use ------------------------------------------------------------
+    # Passive use -------------------------------------------------------------
 
     def load(self, file_list, dict_format=False):
         """
@@ -82,13 +87,14 @@ class Datareader:
         Returns
         -----
         data : list or dict
-            Either a flat list of lists with all data mixed, or a dict where 
+            Either a flat list of lists with all data mixed, or a dict where
             the datasets are split (see dict_format).
         """
         if dict_format:
-            # note: fix unix only split (sometime :) )
-            data = {filename.split('/')[-1:][0]: 
-                    self.load_data_linewise(filename) 
+            # note: fix unix only split with os.path.splitext(
+            # os.path.basename(filepath))[0], or don't use Windows. -c-
+            data = {filename.split('/')[-1:][0]:
+                    self.load_data_linewise(filename)
                     for filename in file_list}
         else:
             data = [row for filename in file_list for row
@@ -97,7 +103,7 @@ class Datareader:
             rnd.shuffle(data)
         return data
 
-    ## General functions ------------------------------------------------------
+    # General functions -------------------------------------------------------
 
     def load_data_linewise(self, filename):
         """
@@ -113,13 +119,10 @@ class Datareader:
         Returns
         -----
         rows : list
-            List of lists where each row is an instance and column a label 
+            List of lists where each row is an instance and column a label
             entry or text data.
 
         """
-        data : list or dict
-            Either a flat list of lists with all data mixed, or a dict where 
-            the datasets are split (see dict_format).
         rows, has_header = [], False
         with open(filename, 'r') as sniff_file:
             if csv.Sniffer().has_header(sniff_file.read(200)):
@@ -132,10 +135,20 @@ class Datareader:
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
-                    rows.append(line)
+                    if self.label:
+                        label_index = self.headers.index(self.label)
+                        text_index = self.headers.index('text')
+                        try:
+                            frog_index = self.headers.index('frog')
+                        except ValueError:
+                            frog_index = None
+                        rows.append([line[label_index], line[text_index]] +
+                                    ([line[frog_index]] if frog_index else []))
+                    else:
+                        rows.append(line)
         return rows
 
-    ## Interactive part -------------------------------------------------------
+    # Interactive part --------------------------------------------------------
 
     def handle_data(self, filename):
         """
@@ -154,11 +167,11 @@ class Datareader:
         Returns
         -----
         rows : dict
-            Where each key is a dataset name and each value a list of lists 
-            where each row is an instance and column a label entry or text 
+            Where each key is a dataset name and each value a list of lists
+            where each row is an instance and column a label entry or text
             data.
         """
-        rows = load_data_linewise(filename)
+        rows = self.load_data_linewise(filename)
         # shuffle the dataset:
         if self.shuffle:
             rnd.shuffle(rows)
@@ -217,7 +230,7 @@ class Datareader:
         combi = self.rows_2_dataset(combined_lines)
         return combi
 
-    ## Data & Frog operations -------------------------------------------------
+    # Data & Frog operations --------------------------------------------------
 
     def rows_2_dataset(self, rows):
         """

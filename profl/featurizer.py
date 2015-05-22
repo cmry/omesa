@@ -1,6 +1,7 @@
 # standard lib:
 import numpy as np
 from collections import Counter
+import operator
 
 # liwc imports:
 import utils.liwc as liwc
@@ -94,30 +95,34 @@ class SimpleStats:
 class TokenNgrams:
     """
     Calculate token ngram frequencies.
-    Uses \n newline as token.
     """
-    def __init__(self, n_list=[1]):
+    def __init__(self):
         self.feats = None
-        self.n_list = n_list
         self.name = 'token_ngrams'
 
-    def fit(self, raw_data, frog_data):
+    def fit(self, raw_data, frog_data, n_list, max_feats=None):
+        self.n_list = n_list
         feats = {}
-        token_pattern = u'(?u)\b\w\w+\b'
-        for inst in raw_data:
-            #tokens = tokenize(inst)
-            #feats.update(ngrams(tokens,self.n))
-            pass
-        self.feats = feats
+        for inst in frog_data:
+            for n in self.n_list:
+                tokens = zip(inst)[0]
+                feats.update(freq_dict(["token-"+"_".join(item) for item in find_ngrams(tokens, n)]))
+        self.feats = [i for i,j in sorted(feats.items(), reverse=True, key=operator.itemgetter(1))][:max_feats]
 
     def transform(self, raw_data, frog_data):
         if self.feats == None:
             raise ValueError('There are no features to transform the data with. You probably did not "fit" before "transforming".')
         instances = []
+        for inst in frog_data:
+            tok_dict = {}
+            for n in self.n_list:
+                tokens = zip(inst)[0]
+                tok__dict.update(freq_dict(["tok-"+"_".join(item) for item in find_ngrams(tokens, n)]))
+            instances.append([tok_dict.get(f,0) for f in self.feats])
         return np.array(instances)
 
-     def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
+     def fit_transform(self, raw_data, frog_data, n_list, max_feats=None):
+        self.fit(raw_data, frog_data, n_list, max_feats=max_feats)
         return self.transform(raw_data, frog_data)
 
 
@@ -125,48 +130,50 @@ class CharNgrams:
     """
     Computes frequencies of char ngrams
     """
-    def __init__(self, n_list=[3]):
+    def __init__(self):
         self.feats = None
-        self.n_list = n_list
         self.name = 'char_ngrams'
 
-    def fit(self, raw_data, frog_data):
+    def fit(self, raw_data, frog_data, n_list, max_feats=None):
+        self.n_list = n_list
         feats = {}
         for inst in raw_data:
+            inst = list(inst)
             for n in self.n_list:
-                feats.update(freq_dict(find_ngrams(inst, n)))
-        self.feats = feats.keys()
+                feats.update(freq_dict(["char-"+"".join(item) for item in find_ngrams(inst, n)]))
+        self.feats = [i for i,j in sorted(feats.items(), reverse=True, key=operator.itemgetter(1))][:max_feats]
 
     def transform(self, raw_data, frog_data):
         if self.feats == None:
             raise ValueError('There are no features to transform the data with. You probably did not "fit" before "transforming".')
         instances = []
         for inst in raw_data:
+            inst = list(inst)
             char_dict = {}
             for n in self.n_list:
-                char_dict.update(freq_dict(find_ngrams(inst, n)))
+                char_dict.update(freq_dict(["char-"+"".join(item) for item in find_ngrams(inst, n)]))
             instances.append([char_dict.get(f,0) for f in self.feats])
         return np.array(instances)
 
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
+    def fit_transform(self, raw_data, frog_data, n_list, max_feats=None:
+        self.fit(raw_data, frog_data, n_list, max_feats=max_feats)
         return self.transform(raw_data, frog_data)
 
 
 class PosNgrams:
     """
     """
-    def __init__(self, n_list=[1]):
-        self.n_list = n_list
+    def __init__(self):
         self.feats = None
         self.name = 'pos_ngrams'
 
-    def fit(self, raw_data, frog_data):
+    def fit(self, raw_data, frog_data, n_list, max_feats=None):
+        self.n_list = n_list
         feats = {}
         for inst in frog_data:
             for n in self.n_list:
-                feats.update(freq_dict(find_ngrams(zip(inst)[2], n)))
-        self.feats = feats.keys()
+                feats.update(freq_dict(["pos-"+"_".join(item) for item in find_ngrams(zip(inst)[2], n)]))
+        self.feats = [i for i,j in sorted(feats.items(), reverse=True, key=operator.itemgetter(1))][:max_feats]
 
     def transform(self, raw_data, frog_data):
         if self.feats == None:
@@ -175,12 +182,12 @@ class PosNgrams:
         for inst in frog_data:
             pos_dict = {}
             for n in self.n_list:
-                pos_dict.update(freq_dict(find_ngrams(zip(inst)[2], n)))
+                pos_dict.update(freq_dict(["pos-"+"_".join(item) for item in find_ngrams(zip(inst)[2], n)]))
             instances.append([pos_dict.get(f,0) for f in self.feats])
         return np.array(instances)
 
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
+    def fit_transform(self, raw_data, frog_data, n_list, max_feats=None):
+        self.fit(raw_data, frog_data, n_list, max_feats=max_feats)
         return self.transform(raw_data, frog_data)
 
 
@@ -203,7 +210,6 @@ class FuncWords:
                     'TW':'quantifiers', 'VG':'conjunction', }
         # Make a list of all tokens where the POS tag is in the functors list
         tokens = [item[0] for item in frogstring if item[2].split('(')[0] in functors]
-        # Return the frequency dictionary of this token list
         return tokens
     
     def fit(self,raw_data, frog_data):
