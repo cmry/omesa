@@ -1,7 +1,7 @@
-# import frogger
 
+import frog
 
-def decode_frogstring_train(self, frogstring):
+def decode_frogstring_train(frogstring):
     """
     Decoder of frogged data in the Amica csv-files
     =====
@@ -18,15 +18,17 @@ def decode_frogstring_train(self, frogstring):
     decoded : list
         The frogstring as list of lists.
     """
+#    print(frogstring)
     lines = frogstring.split("\n")
     decoded = []
     for line in lines:
+        #print("FROG",line)
         # add a tuple with (token,lemma,postag,sentence index)
         decoded.append(line.split("\t"))
     return decoded
 
 
-def process_raw_text(self, text):
+def process_raw_text(text):
     """
     Extractor of frog tags
     =====
@@ -47,17 +49,23 @@ def process_raw_text(self, text):
         frogged column.
     """
     # initialize list
-    instance = [False] * 9  # empty fields
-    instance.append(text)
+    #instance = [False] * 9  # empty fields
+    #instance.append(text)
+    # initialize frog
+    fo = frog.FrogOptions(parser=False)
+    frogger = frog.Frog(fo, "/vol/customopt/uvt-ru/etc/frog/frog-twitter.cfg")
     # add frogged text
-    fr = frogger.Frogger([text])
-    fr.frog_docs()
-    fr.decode_frogstrings()
-    instance.append(fr.decoded_frogstrings[0])
-    return instance
+    data = frogger.process(text)
+    tokens = []
+    sentence = -1
+    for token in data:
+        if token["index"] == '1':
+            sentence += 1
+        tokens.append([token["text"], token["lemma"], token["pos"], str(sentence)])
+    return tokens
 
 
-def extract_tags(self, document, tags):
+def extract_tags(document, tags):
     """
     Extractor of frog tags
     =====

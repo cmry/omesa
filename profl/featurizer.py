@@ -120,7 +120,7 @@ class TokenNgrams:
     """
     Calculate token ngram frequencies.
     """
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.feats = None
         self.name = 'token_ngrams'
 
@@ -141,7 +141,7 @@ class TokenNgrams:
             tok_dict = {}
             for n in self.n_list:
                 tokens = zip(inst)[0]
-                tok__dict.update(freq_dict(["tok-"+"_".join(item) for item in find_ngrams(tokens, n)]))
+                tok__dict.update(freq_dict(["token-"+"_".join(item) for item in find_ngrams(tokens, n)]))
             instances.append([tok_dict.get(f,0) for f in self.feats])
         return np.array(instances)
 

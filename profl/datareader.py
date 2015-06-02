@@ -1,7 +1,11 @@
 import random as rnd
+import sys
 import csv
 
-from .utils import frog
+try:
+    from .utils import frog
+except:
+    from utils import frog
 
 # Authors: Chris Emmery, Florian Kunneman
 # License: BSD 3-Clause
@@ -58,7 +62,7 @@ class Datareader:
         self.rnd_seed = rnd_seed
         self.label = label
         self.headers = "user_id age gender loc_country loc_region \
-                       loc_city education pers_big5 pers_mbti texts".split()
+                       loc_city education pers_big5 pers_mbti text".split()
         self.datasets = {}
 
         rnd.seed(self.rnd_seed)
@@ -120,9 +124,7 @@ class Datareader:
         label_data = line[self.headers.index(self.label)]
         text_data = line[self.headers.index('text')]
         try:
-            frog_data = [frog.decode_frogstring_train(string)
-                         for string in
-                         line[self.headers.index('frogs')]]
+            frog_data = frog.decode_frogstring_train(line[self.headers.index('frogs')])
         except ValueError:
             frog_data = []
         row = [label_data, text_data, frog_data]
@@ -167,6 +169,7 @@ class Datareader:
             entry or text data.
 
         """
+        csv.field_size_limit(sys.maxsize)
         rows, has_header = [], self.check_header(filename)
         # check if provided file has a label
         with open(filename, 'r') as csvfile:
