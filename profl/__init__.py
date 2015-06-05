@@ -81,7 +81,7 @@ from .featurizer import Featurizer
 __all__ = ['models']
 
 
-def make(name, data=['./profl/data/test.csv'], dev=None, target_label='age',
+def make(name, data=['./profl/data/test3.csv'], dev=None, target_label='age',
          features={'liwc': {}, 'token_pca': {'dimensions': 2,'max_tokens': 10}}, 
          max_n=None, shuffle=True, rnd_seed=666):
 

@@ -22,7 +22,6 @@ def decode_frogstring_train(frogstring):
     lines = frogstring.split("\n")
     decoded = []
     for line in lines:
-        #print("FROG",line)
         # add a tuple with (token,lemma,postag,sentence index)
         decoded.append(line.split("\t"))
     return decoded
