@@ -4,6 +4,7 @@ from .utils import liwc
 from .utils import find_ngrams, freq_dict
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
+import cPickle
 
 # Authors: Chris Emmery, Mike Kestemont
 # Contributors: Ben Verhoeven, Florian Kunneman, Janneke van de Loo
@@ -52,7 +53,8 @@ class Featurizer:
             'pos_ngrams':       PosNgrams,
             'function_words':   FuncWords,
             'liwc':             LiwcCategories,
-            'token_pca':        TokenPCA
+            'token_pca':        TokenPCA,
+            'sentiment':        SentimentFeatures
         }
 
         self.helpers = [v(**features[k]) for k, v in
@@ -223,8 +225,7 @@ class FuncWords:
         self.feats = None
         self.name = 'function_words'
 
-    @staticmethod
-    def func_words(frogstring):
+    def func_words(self, frogstring):
         """
         Return a frequency dictionary of the function words in the text.
         Input is a string of frog output.
@@ -239,7 +240,7 @@ class FuncWords:
     def fit(self, raw_data, frog_data):
         feats = {}
         for inst in frog_data:
-            feats.update(freq_dict(func_words(inst)))
+            feats.update(freq_dict(self.func_words(inst)))
         self.feats = feats.keys()
         #print self.feats
         
@@ -248,7 +249,7 @@ class FuncWords:
             raise ValueError('There are no features to transform the data with. You probably did not "fit" before "transforming".')
         instances = []
         for inst in frog_data:
-            func_dict = func_words(inst)
+            func_dict = self.func_words(inst)
             instances.append([func_dict.get(f,0) for f in self.feats])
         return np.array(instances)
         
@@ -302,6 +303,124 @@ class LiwcCategories():
         for inst in tok_data:
             liwc_dict = liwc.liwc_nl(inst)
             instances.append([liwc_dict[f] for f in self.feats])
+        return np.array(instances)
+
+    def fit_transform(self, raw_data, frog_data):
+        self.fit(raw_data, frog_data)
+        return self.transform(raw_data, frog_data)
+
+class SentimentFeatures():
+    """
+    Calculates four features related to sentiment: average polarity, number of positive, negative and neutral words.
+    Counts based on the Duoman and Pattern sentiment lexicons.
+    
+    Based on code by Cynthia Van Hee, Marjan Van de Kauter, Orphee De Clercq
+    """
+    def __init__(self):
+        self.name = "sentiment"
+        import os
+        print(os.getcwd())
+        self.lexiconDict = cPickle.load(open('profl/sentilexicons.cpickle','r'))
+
+    def fit(self, raw_data, frog_data):
+        return self
+
+    def update_values(self, token, polarityScore, posTokens, negTokens, neutTokens):
+        """Updates all feature values based on a token of which polarity is extracted from the lexicon"""
+        token_polarity = self.lexiconDict[token]
+        polarityScore += token_polarity
+        if token_polarity > 0:
+            posTokens += 1
+        elif token_polarity < 0:
+            negTokens += 1
+        elif token_polarity == 0:
+            neutTokens += 1
+        return polarityScore, posTokens, negTokens, neutTokens
+
+    def calculate_sentiment(self, instance):
+        """
+        Calculates four features for the input instance.
+        instance is a list of word-pos-lemma tuples that represent a token.
+        """
+        polarityScore = 0.0
+        posTokens = 0.0
+        negTokens = 0.0
+        neutTokens = 0.0
+        for token in instance:
+            word, pos, lemma, sent_index = token
+            word = word.lower()
+            lemma = lemma.lower()
+            if pos == 'SPEC(vreemd)':
+                if (word, 'f') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'f'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'f') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'f'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos == 'BW()':
+                if (word, 'b') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'b'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'b') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'b'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos.startswith('N('):
+                if (word, 'n') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'n'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'n') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'n'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos == 'TSW()':
+                if (word, 'i') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'i'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'i') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'i'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos.startswith('ADJ(nom'):
+                if (word, 'a') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'a'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'a') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'a'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos.startswith('ADJ('):
+                if (word, 'a') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'a'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'a') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'a'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos.startswith('WW(od') or pos.startswith('WW(vd'):
+                if ',nom,' in pos:
+                    if (word, 'n') in self.lexiconDict:
+                        polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'n'), polarityScore, posTokens, negTokens, neutTokens)
+                    elif (lemma, 'v') in self.lexiconDict:
+                        polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'v'), polarityScore, posTokens, negTokens, neutTokens)
+                elif ',prenom,' in pos:
+                    if (word, 'a') in self.lexiconDict:
+                        polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'a'), polarityScore, posTokens, negTokens, neutTokens)
+                    elif (lemma, 'v') in self.lexiconDict:
+                        polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'v'), polarityScore, posTokens, negTokens, neutTokens)
+                elif ',vrij,' in pos:
+                    if (word, 'a') in self.lexiconDict:
+                        polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'a'), polarityScore, posTokens, negTokens, neutTokens)
+                    elif (lemma, 'v') in self.lexiconDict:
+                        polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'v'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos.startswith('WW(inf,nom'):
+                if (word, 'n') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'n'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'v') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'v'), polarityScore, posTokens, negTokens, neutTokens)
+            elif pos.startswith('WW('):
+                if (word, 'v') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((word, 'v'), polarityScore, posTokens, negTokens, neutTokens)
+                elif (lemma, 'v') in self.lexiconDict:
+                    polarityScore, posTokens, negTokens, neutTokens = self.update_values((lemma, 'v'), polarityScore, posTokens, negTokens, neutTokens)
+        # Normalize the sentiment feature scores
+        totalTokens = len(instance)
+        if totalTokens == 0:
+            print(instance)
+        polarityScore = polarityScore # In contrast with previous code by Van Hee, Van de Kauter & De Clercq, this score is not normalised
+        posTokens = posTokens/totalTokens
+        negTokens = negTokens/totalTokens
+        neutTokens = neutTokens/totalTokens
+        return polarityScore, posTokens, negTokens, neutTokens
+
+    def transform(self, raw_data, frog_data):
+        instances = []
+        for instance in frog_data:
+            instances.append(self.calculate_sentiment(instance))
+        print(instances)
         return np.array(instances)
 
     def fit_transform(self, raw_data, frog_data):
