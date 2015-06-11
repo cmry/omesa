@@ -76,14 +76,24 @@ be set except for a name.
 """
 
 from .datareader import Datareader
-from .featurizer import Featurizer
+from .featurizer import *
 
 __all__ = ['models']
 
+features = [
+    SimpleStats(),
+    TokenNgrams(),
+    CharNgrams(),
+    PosNgrams(),
+    FuncWords(),
+    LiwcCategories(),
+    TokenPCA(),
+    SentimentFeatures()
+]
+
 
 def make(name, data=['./profl/data/test3.csv'], dev=None, target_label='age',
-         features={'liwc': {}, 'token_pca': {'dimensions': 2,'max_tokens': 10}}, 
-         max_n=None, shuffle=True, rnd_seed=666):
+         features=features, max_n=None, shuffle=True, rnd_seed=666):
 
     print("::: loading datasets :::")
     reader = Datareader(max_n=max_n, shuffle=shuffle, rnd_seed=rnd_seed,
