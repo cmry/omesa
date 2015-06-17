@@ -2,10 +2,7 @@ import random as rnd
 import sys
 import csv
 
-try:
-    from .utils import frog
-except:
-    from utils import frog
+from .utils import frog
 
 # Authors: Chris Emmery, Florian Kunneman
 # License: BSD 3-Clause
@@ -124,7 +121,8 @@ class Datareader:
         label_data = line[self.headers.index(self.label)]
         text_data = line[self.headers.index('text')]
         try:
-            frog_data = frog.decode_frogstring_train(line[self.headers.index('frogs')])
+            head = self.headers.index('frogs')
+            frog_data = frog.decode_frogstring_train(line[head])
         except ValueError:
             frog_data = []
         row = [label_data, text_data, frog_data]

@@ -81,28 +81,27 @@ from .featurizer import *
 __all__ = ['models']
 
 features = [
-    SimpleStats(),
-    TokenNgrams(),
-    CharNgrams(),
-    PosNgrams(),
+    # SimpleStats(),
+    Ngrams('token'),
     FuncWords(),
     LiwcCategories(),
-    TokenPCA(),
-    SentimentFeatures()
+    # SentimentFeatures(),
+    TokenPCA()
 ]
 
 
 def make(name, data=['./profl/data/test3.csv'], dev=None, target_label='age',
          features=features, max_n=None, shuffle=True, rnd_seed=666):
 
-    print("::: loading datasets :::")
+    print("Loading datasets...", end='')
     reader = Datareader(max_n=max_n, shuffle=shuffle, rnd_seed=rnd_seed,
                         label=target_label)
     labels, raw, frog = reader.load(data, dict_format=True)
+    print(" loaded!")
 
-    print("::: creating features :::")
+    print("Creating features...", end='')
     featurizer = Featurizer(raw, frog, features)
     space = featurizer.fit_transform()
-    print(space)
-    # config = {k: v for k, v in args}
-    # return config, space
+    print(" sucessfully transformed!")
+    print("\n", space)
+    return space

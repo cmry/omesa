@@ -5,7 +5,7 @@ from .utils import liwc
 from .utils import find_ngrams, freq_dict
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
-import cPickle
+import pickle
 
 # Authors: Chris Emmery, Mike Kestemont
 # Contributors: Ben Verhoeven, Florian Kunneman, Janneke van de Loo
@@ -21,7 +21,7 @@ class Featurizer:
     Parameters
     -----
 
-    raw : list
+    raws : list
         The raw data comes in an array where each entry represents a text
         instance in the data file.
 
@@ -30,13 +30,6 @@ class Featurizer:
 
     features : dict
         Subset any of the entries in the following dictionary:
-
-        features = {
-            'simple_stats': {}
-            'token_ngrams': {'n_list': bla, 'max_feats': bla}
-            'token_pca':    {'dimensions': 2, 'max_tokens': 10}
-            ... PLEASE ADD YOURS! -c-
-        }
 
     Notes
     -----
@@ -69,10 +62,10 @@ class Featurizer:
         features[h.name] = h.transform(self.raw, self.frog)
 
     def transform(self):
-        self.loop_helpers(self.func_transform)
+        return self.loop_helpers(self.func_transform)
 
     def fit_transform(self):
-        self.loop_helpers(self.func_fit_transform)
+        return self.loop_helpers(self.func_fit_transform)
 
 
 class BlueprintFeature:
@@ -126,25 +119,30 @@ class Ngrams:
     max_feats : limit on how many features will be generated
     """
     def __init__(self, level='token', n_list=[2], max_feats=None):
+        self.name = level+'_ngram'
         self.feats = {}
         self.n_list = n_list
         self.max_feats = max_feats
         self.level = level
         self.i = 0 if level == 'token' else 2
 
+    # bug: fit errors if run two times with reinitiating profl
     def fit(self, raw_data, frog_data):
         data = raw_data if self.level == 'char' else frog_data
         for inst in data:
-            needle = list(inst) if self.level == 'char' else zip(inst)[self.i]
+            needle = list(inst) if self.level == 'char' else inst[self.i]
             for n in self.n_list:
                 self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
                                              item in find_ngrams(needle, n)]))
+        self.feats = [i for i, j in sorted(self.feats.items(), reverse=True,
+                      key=operator.itemgetter(1))][:self.max_feats]
 
     def transform(self, raw_data, frog_data):
+        data = raw_data if self.level == 'char' else frog_data
         instances = []
-        for inst in frog_data:
+        for inst in data:
             dct = {}
-            needle = list(inst) if self.level == 'char' else zip(inst)[self.i]
+            needle = list(inst) if self.level == 'char' else inst[self.i]
             for n in self.n_list:
                 dct.update(freq_dict([self.level+"-"+"_".join(item) for item
                                       in find_ngrams(needle, n)]))
@@ -158,39 +156,71 @@ class Ngrams:
 
 class FuncWords:
     """
-    Computes relative frequencies of function words.
+    Function Word Featurizer
+    ======
+    Computes relative frequencies of function words according to Frog data,
+    and adds the respective frequencies as a feature.
+
+    Parameters
+    -----
+    None
+
+    Attributes
+    -----
+    name : string
+        String representation of the featurizer.
+
+    feats : list
+        List with the function words that occur in the training set.
+
+    Notes
+    -----
+    Implemented by: Ben Verhoeven
+    Quality check: Chris Emmery
     """
     def __init__(self):
+        self.name = 'func_words'
         self.feats = None
 
-    def func_words(self, frogstring):
+    def func_freq(self, frogstring):
         """
+        Function Word frequencies
+        =====
         Return a frequency dictionary of the function words in the text.
-        Input is a string of frog output.
+        Input is a string of frog output. Selects based on relevant functors
+        the words that are function words from this input.
+
+        Parameters
+        -----
+        frogstring : list
+            List with Frogged data elements, example:
+            ['zijn', 'zijn', 'WW(pv,tgw,mv)', '43'], ['?', '?', 'LET()', '43']
+
+        Returns
+        -----
+        freq_dict(tokens): Counter
+            Frequency dictionary with the function words from the training set.
         """
-        # Define the POS tags that comprise function words
         functors = {'VNW': 'pronouns', 'LID': 'determiners',
                     'VZ': 'prepositions', 'BW': 'adverbs', 'TW': 'quantifiers',
                     'VG': 'conjunction'}
-        # Make a list of all tokens where the POS tag is in the functors list
-        tokens = [item[0] for item in frogstring
-                  if item[2].split('(')[0] in functors]
-        return tokens
+        tokens = [item[0] for item in frogstring if item[2].split('(')[0]
+                  in functors]
+        return freq_dict(tokens)
 
     def fit(self, raw_data, frog_data):
         feats = {}
         for inst in frog_data:
-            feats.update(freq_dict(self.func_words(inst)))
+            feats.update(self.func_freq(inst))
         self.feats = feats.keys()
-        #print self.feats
-        
+
     def transform(self, raw_data, frog_data):
         instances = []
         for inst in frog_data:
-            func_dict = self.func_words(inst)
-            instances.append([func_dict.get(f,0) for f in self.feats])
+            func_dict = self.func_freq(inst)
+            instances.append([func_dict.get(f, 0) for f in self.feats])
         return np.array(instances)
-        
+
     def fit_transform(self, raw_data, frog_data):
         self.fit(raw_data, frog_data)
         return self.transform(raw_data, frog_data)
@@ -200,14 +230,11 @@ class TokenPCA():
     """
     Tryout: transforms unigram counts to PCA matrix
     """
-    def __init__(self, **kwargs):
-        # set params
-        self.dimensions = kwargs['dimensions']
-        self.max_tokens = kwargs['max_tokens']
-        # init fitters:
-        self.pca = PCA(n_components=self.dimensions)
+    def __init__(self, dimensions=3, max_tokens=10):
+        self.name = 'token_pca'
+        self.pca = PCA(n_components=dimensions)
         self.vectorizer = TfidfVectorizer(analyzer=identity, use_idf=False,
-                                          max_features=self.max_tokens)
+                                          max_features=max_tokens)
 
     def fit(self, raw_data, frog_data):
         X = self.vectorizer.fit_transform(raw_data).toarray()
@@ -227,8 +254,8 @@ class LiwcCategories():
     """
     Compute relative frequencies for the LIWC categories.
     """
-    def __init__(self, **kwargs):
-        pass
+    def __init__(self):
+        self.name = 'liwc'
 
     def fit(self, raw_data, frog_data):
         self.feats = liwc.liwc_nl_dict.keys()
@@ -246,16 +273,18 @@ class LiwcCategories():
         self.fit(raw_data, frog_data)
         return self.transform(raw_data, frog_data)
 
+
 class SentimentFeatures():
     """
-    Calculates four features related to sentiment: average polarity, number of positive, negative and neutral words.
-    Counts based on the Duoman and Pattern sentiment lexicons.
-    
+    Calculates four features related to sentiment: average polarity, number of
+    positive, negative and neutral words. Counts based on the Duoman and
+    Pattern sentiment lexicons.
+
     Based on code by Cynthia Van Hee, Marjan Van de Kauter, Orphee De Clercq
     """
     def __init__(self):
         print(os.getcwd())
-        self.lexiconDict = cPickle.load(open('profl/sentilexicons.cpickle','r'))
+        self.lexiconDict = pickle.load(open('profl/sentilexicons.cpickle','r'))
 
     def fit(self, raw_data, frog_data):
         return self
