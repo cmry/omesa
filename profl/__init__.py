@@ -82,10 +82,10 @@ __all__ = ['models']
 
 features = [
     # SimpleStats(),
-    # Ngrams('token'),
+    Ngrams(),
     # FuncWords(),
     # LiwcCategories(),
-    SentimentFeatures(),
+    # SentimentFeatures(),
     # TokenPCA()
 ]
 

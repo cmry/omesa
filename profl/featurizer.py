@@ -327,8 +327,8 @@ class SentimentFeatures():
                     if (word.lower(), param[0]) in self.lexiconDict or \
                        (lemma.lower(), param[1]) in self.lexiconDict:
                         polarity_score += self.lexiconDict[token]
-                        break  # check if this scope is okay
-                        # note: might still want to get the token numbers here
+                    break
+                    # note: might still want to get the token numbers here
         return polarity_score
 
     def transform(self, raw_data, frog_data):

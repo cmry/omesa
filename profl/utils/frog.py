@@ -1,5 +1,5 @@
-
 import frog
+
 
 def decode_frogstring_train(frogstring):
     """
@@ -18,7 +18,6 @@ def decode_frogstring_train(frogstring):
     decoded : list
         The frogstring as list of lists.
     """
-#    print(frogstring)
     lines = frogstring.split("\n")
     decoded = []
     for line in lines:
@@ -48,8 +47,8 @@ def process_raw_text(text):
         frogged column.
     """
     # initialize list
-    #instance = [False] * 9  # empty fields
-    #instance.append(text)
+    # instance = [False] * 9  # empty fields
+    # instance.append(text)
     # initialize frog
     fo = frog.FrogOptions(parser=False)
     frogger = frog.Frog(fo, "/vol/customopt/uvt-ru/etc/frog/frog-twitter.cfg")
@@ -60,7 +59,8 @@ def process_raw_text(text):
     for token in data:
         if token["index"] == '1':
             sentence += 1
-        tokens.append([token["text"], token["lemma"], token["pos"], str(sentence)])
+        tokens.append([token["text"], token["lemma"],
+                       token["pos"], str(sentence)])
     return tokens
 
 
