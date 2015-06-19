@@ -5,6 +5,7 @@ from .utils import liwc
 from .utils import find_ngrams, freq_dict
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
+from collections import OrderedDict
 import pickle
 
 # Authors: Chris Emmery, Mike Kestemont
@@ -17,6 +18,7 @@ def identity(x):
 
 
 class Featurizer:
+
     """
     Parameters
     -----
@@ -36,8 +38,8 @@ class Featurizer:
     For an explanation regarding the frog features, please refer either to
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
-    def __init__(self, raws, frogs, features):
 
+    def __init__(self, raws, frogs, features):
         self.frog = frogs
         self.raw = raws
         self.helpers = features
@@ -111,6 +113,7 @@ class SimpleStats:
 
 
 class Ngrams:
+
     """
     Calculate token ngram frequencies.
 
@@ -118,6 +121,7 @@ class Ngrams:
 
     max_feats : limit on how many features will be generated
     """
+
     def __init__(self, level='token', n_list=[2], max_feats=None):
         self.name = level+'_ngram'
         self.feats = {}
@@ -155,6 +159,7 @@ class Ngrams:
 
 
 class FuncWords:
+
     """
     Function Word Featurizer
     ======
@@ -178,6 +183,7 @@ class FuncWords:
     Implemented by: Ben Verhoeven
     Quality check: Chris Emmery
     """
+
     def __init__(self):
         self.name = 'func_words'
         self.feats = None
@@ -227,9 +233,11 @@ class FuncWords:
 
 
 class TokenPCA():
+
     """
     Tryout: transforms unigram counts to PCA matrix
     """
+
     def __init__(self, dimensions=3, max_tokens=10):
         self.name = 'token_pca'
         self.pca = PCA(n_components=dimensions)
@@ -251,9 +259,11 @@ class TokenPCA():
 
 
 class LiwcCategories():
+
     """
     Compute relative frequencies for the LIWC categories.
     """
+
     def __init__(self):
         self.name = 'liwc'
 
@@ -275,6 +285,7 @@ class LiwcCategories():
 
 
 class SentimentFeatures():
+
     """
     Calculates four features related to sentiment: average polarity, number of
     positive, negative and neutral words. Counts based on the Duoman and
@@ -282,15 +293,19 @@ class SentimentFeatures():
 
     Based on code by Cynthia Van Hee, Marjan Van de Kauter, Orphee De Clercq
     """
+
     def __init__(self):
         print(os.getcwd())
-        self.lexiconDict = pickle.load(open('profl/sentilexicons.cpickle','r'))
+        self.lexiconDict = pickle.load(open('profl/sentilexicons.cpickle',
+                                            'r'))
 
     def fit(self, raw_data, frog_data):
         return self
 
-    def update_values(self, token, polarityScore, posTokens, negTokens, neutTokens):
-        """Updates all feature values based on a token of which polarity is extracted from the lexicon"""
+    def update_values(self, token, polarityScore,
+                      posTokens, negTokens, neutTokens):
+        """Updates all feature values based on a token of which polarity is
+            extracted from the lexicon"""
         token_polarity = self.lexiconDict[token]
         polarityScore += token_polarity
         if token_polarity > 0:
@@ -310,6 +325,11 @@ class SentimentFeatures():
         posTokens = 0.0
         negTokens = 0.0
         neutTokens = 0.0
+        tok_dict = OrderedDict({
+            'SPEC(vreemd)': 'f', 'BW()': b, 'N(': 'n', 'TWS()': 'i',
+            'ADJ(': 'a', 'WW(od'
+                })
+        print(tok_dict)
         for token in instance:
             word, pos, lemma, sent_index = token
             word = word.lower()
