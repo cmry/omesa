@@ -1,5 +1,5 @@
 import re
-import HTMLParser
+from html.parser import HTMLParser
 
 
 def floodings(text):
@@ -34,7 +34,7 @@ def restore_html_symbols(text):
         &lt; --> <
         &gt; --> >
     """
-    html_parser = HTMLParser.HTMLParser()
+    html_parser = HTMLParser()
     return html_parser.unescape(text)
 
 
