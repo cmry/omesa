@@ -40,77 +40,47 @@ class Featurizer:
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
 
-    def __init__(self, raws, frogs, features):
+    def __init__(self, raws, frogs, features, preprocess):
         self.frog = frogs
         self.raw = raws
         self.helpers = features
 
     def loop_helpers(self, func):
         features = {}
-        for h in self.helpers:
-            func(h, features)
+        for helper in self.helpers:
+            if helper.name in ['token_pca']:
+                func(helper, features)
+            else:
+                for raw, frog in zip(self.raw, self.frog):
+                    func(helper, raw, frog)
+                    # left off here, check below scope
+            if func == self.func_fit:
+                helper.close_fit()
+            else:
+                features[helper.name] = np.array(helper.instances)
         submatrices = [features[ft] for ft in sorted(features.keys())]
         X = np.hstack(submatrices)
         return X
 
-    def func_transform(self, h, features):
-        if not h.feats:
-            raise ValueError('There are no features for ' + h.name + ' to \
-                              transform the data with. You probably did \
-                              not fit before transforming.')
-        features[h.name] = h.transform(self.raw, self.frog)
+    def func_fit(self, helper, raw, frog):
+        helper.fit(raw, frog)
 
-    def func_fit_transform(self, h, features):
-        h.fit(self.raw, self.frog)
-        features[h.name] = h.transform(self.raw, self.frog)
+    def func_transform(self, helper, raw, frog):
+        if not helper.feats:
+            raise ValueError('There are no features for ' + helper.name + ' to\
+                               transform the data with. You probably did \
+                              not fit before transforming.')
+        helper.transform(raw, frog)
+
+    def fit(self):
+        return self.loop_helpers(self.func_fit)
 
     def transform(self):
         return self.loop_helpers(self.func_transform)
 
     def fit_transform(self):
-        return self.loop_helpers(self.func_fit_transform)
-
-
-class BlueprintFeature:
-
-    def __init__(self):
-        # etc.
-        pass
-
-    def fit(self, raw, frog):
-        # get feature types
-        pass
-
-    def some_function(self, input_vector):
-        # do some stuff to input_vector
-        pass
-
-    def transform(self, raw, frog):
-        instances = []
-        for input_vector in raw:
-            your_feature_vector = self.some_function(input_vector)
-            instances.append(your_feature_vector)
-        return instances
-
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
-        return self.transform(raw_data, frog_data)
-
-
-class SimpleStats:
-
-    def __init__(self):
-        pass
-
-    def fit(self):
-        pass
-
-    def transform(self):
-        pass
-
-    def fit_transform(self):
         self.fit()
-        self.transform()
+        return self.transform()
 
 
 class Ngrams:
@@ -126,37 +96,33 @@ class Ngrams:
     def __init__(self, level='token', n_list=[2], max_feats=None):
         self.name = level+'_ngram'
         self.feats = {}
+        self.instances = []
         self.n_list = n_list
         self.max_feats = max_feats
         self.level = level
         self.i = 0 if level == 'token' else 2
 
-    # bug: fit errors if run two times with reinitiating profl
-    def fit(self, raw_data, frog_data):
-        data = raw_data if self.level == 'char' else frog_data
-        for inst in data:
-            needle = list(inst) if self.level == 'char' else inst[self.i]
-            for n in self.n_list:
-                self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
-                                             item in find_ngrams(needle, n)]))
+    def close_fit(self):
         self.feats = [i for i, j in sorted(self.feats.items(), reverse=True,
-                      key=operator.itemgetter(1))][:self.max_feats]
+              key=operator.itemgetter(1))][:self.max_feats]
+
+    # bug: fit errors if run two times with reinitiating profl
+    def fit(self, raw, frog):
+        inst = raw if self.level == 'char' else frog
+        needle = list(inst) if self.level == 'char' else inst[self.i]
+        for n in self.n_list:
+            self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
+                                         item in find_ngrams(needle, n)]))
 
     def transform(self, raw_data, frog_data):
-        data = raw_data if self.level == 'char' else frog_data
-        instances = []
-        for inst in data:
-            dct = {}
-            needle = list(inst) if self.level == 'char' else inst[self.i]
-            for n in self.n_list:
-                dct.update(freq_dict([self.level+"-"+"_".join(item) for item
-                                      in find_ngrams(needle, n)]))
-            instances.append([dct.get(f, 0) for f in self.feats])
-        return np.array(instances)
+        inst = raw_data if self.level == 'char' else frog_data
 
-    def fit_transform(self, raw_data, frog_data, n_list, max_feats=None):
-        self.fit(raw_data, frog_data, n_list, max_feats=max_feats)
-        return self.transform(raw_data, frog_data)
+        dct = {}
+        needle = list(inst) if self.level == 'char' else inst[self.i]
+        for n in self.n_list:
+            dct.update(freq_dict([self.level+"-"+"_".join(item) for item
+                                  in find_ngrams(needle, n)]))
+        self.instances.append([dct.get(f, 0) for f in self.feats])
 
 
 class FuncWords:
@@ -187,7 +153,8 @@ class FuncWords:
 
     def __init__(self):
         self.name = 'func_words'
-        self.feats = None
+        self.feats = {}
+        self.instances = []
 
     def func_freq(self, frogstring):
         """
@@ -215,22 +182,15 @@ class FuncWords:
                   in functors]
         return freq_dict(tokens)
 
-    def fit(self, raw_data, frog_data):
-        feats = {}
-        for inst in frog_data:
-            feats.update(self.func_freq(inst))
-        self.feats = feats.keys()
+    def close_fit(self):
+        self.feats = self.feats.keys()
 
-    def transform(self, raw_data, frog_data):
-        instances = []
-        for inst in frog_data:
-            func_dict = self.func_freq(inst)
-            instances.append([func_dict.get(f, 0) for f in self.feats])
-        return np.array(instances)
+    def fit(self, raw, frog):
+        self.feats.update(self.func_freq(frog))
 
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
-        return self.transform(raw_data, frog_data)
+    def transform(self, raw, frog):
+        func_dict = self.func_freq(frog)
+        self.instances.append([func_dict.get(f, 0) for f in self.feats])
 
 
 class TokenPCA():
@@ -254,10 +214,6 @@ class TokenPCA():
         X = self.vectorizer.transform(raw_data).toarray()
         return self.pca.transform(X)
 
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data)
-        return self.transform(raw_data)
-
 
 class LiwcCategories():
 
@@ -267,22 +223,17 @@ class LiwcCategories():
 
     def __init__(self):
         self.name = 'liwc'
+        self.feats = {}
+        self.instances = []
 
-    def fit(self, raw_data, frog_data):
+    def fit(self, raw, frog):
         self.feats = liwc.liwc_nl_dict.keys()
         return self
 
-    def transform(self, raw_data, frog_data):
-        instances = []
-        tok_data = [dat.split() for dat in raw_data]  # adapt to frog words
-        for inst in tok_data:
-            liwc_dict = liwc.liwc_nl(inst)
-            instances.append([liwc_dict[f] for f in self.feats])
-        return np.array(instances)
-
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
-        return self.transform(raw_data, frog_data)
+    def transform(self, raw, frog):
+        # tok_data = [dat.split() for dat in raw_data]  # adapt to frog words
+        liwc_dict = liwc.liwc_nl(frog)  # TODO: token index
+        self.instances.append([liwc_dict[f] for f in self.feats])
 
 
 class SentimentFeatures():
@@ -296,11 +247,11 @@ class SentimentFeatures():
     """
 
     def __init__(self):
-        print(os.getcwd())
         self.lexiconDict = pickle.load(open('profl/sentilexicons.cpickle',
                                             'r'))
+        self.instances = []
 
-    def fit(self, raw_data, frog_data):
+    def fit(self, raw, frog):
         return self
 
     def calculate_sentiment(self, instance):
@@ -331,13 +282,5 @@ class SentimentFeatures():
                     # note: might still want to get the token numbers here
         return polarity_score
 
-    def transform(self, raw_data, frog_data):
-        instances = []
-        for instance in frog_data:
-            instances.append(self.calculate_sentiment(instance))
-        print(instances)
-        return np.array(instances)
-
-    def fit_transform(self, raw_data, frog_data):
-        self.fit(raw_data, frog_data)
-        return self.transform(raw_data, frog_data)
+    def transform(self, raw, frog):
+        self.instances.append(self.calculate_sentiment(frog))
