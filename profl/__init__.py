@@ -94,9 +94,9 @@ features = [
 ]
 
 
-class Profl:
+class Env:
 
-    def __init__(name, dev=None):
+    def __init__(self, name, dev=None):
         # env
         self.name = name
         self.dir = path.dirname(path.realpath(__file__))
@@ -106,25 +106,25 @@ class Profl:
         self.featurizer = None
         self.model = None
 
-    def load(data=['./profl/data/test3.csv'], target_label='age',
+    def load(self, data=['./profl/data/test3.csv'], target_label='age',
              max_n=None, shuffle=True, rnd_seed=666, reset=False):
         print("Setting reader...", end='')
         if not self.reader:
             self.reader = Datareader(data=data, max_n=max_n, shuffle=shuffle,
                                      rnd_seed=rnd_seed, label=target_label)
         if reset:
-            self.reader.data = data
+            self.reader.file_list = data
         print(" done!")
 
     # def preprocess():
     #    pass
 
-    def fit_transform(features, fit=True):
-        if not self.raw:
+    def fit_transform(self, features, fit=True):
+        if not self.reader:
             raise ValueError("There's not data to fit, please 'load' first.")
 
         print("Loading data...", end='')
-        labels, raw, frog = self.reader.load(data, dict_format=True)
+        labels, raw, frog = self.reader.load(dict_format=True)
         print(" succes!")
 
         print("Creating features...", end='')
@@ -134,11 +134,11 @@ class Profl:
 
         return space, labels
 
-    def train(model, space, labels):
+    def train(self, model, space, labels):
         self.model = model
         self.model.fit(space, labels)
 
-    def test(space, labels):
+    def test(self, space, labels):
         if not self.model:
             raise EnvironmentError("There is no trained model to test.")
         self.featurizer.fit

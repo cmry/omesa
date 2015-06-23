@@ -106,10 +106,11 @@ class Ngrams:
         self.feats = [i for i, j in sorted(self.feats.items(), reverse=True,
                       key=operator.itemgetter(1))][:self.max_feats]
 
-    # bug: fit errors if run two times with reinitiating profl
     def fit(self, raw, frog):
         inst = raw if self.level == 'char' else frog
         needle = list(inst) if self.level == 'char' else inst[self.i]
+        if self.feats:
+            self.feats = {}  # solves bug
         for n in self.n_list:
             self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
                                          item in find_ngrams(needle, n)]))

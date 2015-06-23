@@ -68,7 +68,7 @@ class Datareader:
 
         rnd.seed(self.rnd_seed)
 
-    def load(self, file_list, dict_format=False):
+    def load(self, dict_format=False):
         """
         Raw data loader
         =====
