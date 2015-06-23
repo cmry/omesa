@@ -19,6 +19,9 @@ class Datareader:
 
     Parameters
     ------
+    data : list of strings
+        List with document directories to be loaded.
+
     max_n : int, optional, default False
         Maximum number of data instances *per dataset* user wants to work with.
 
@@ -52,8 +55,9 @@ class Datareader:
     -----
     Interactive use has been deprecated in this version.
     """
-    def __init__(self, max_n=False, shuffle=True, rnd_seed=99, label=None):
+    def __init__(self, data, max_n, shuffle, rnd_seed, label):
 
+        self.file_list = data
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
@@ -75,9 +79,6 @@ class Datareader:
 
         Parameters
         -----
-        file_list : list of strings
-            List with document directories to be loaded.
-
         dict_format : bool, optional, default False
             Set to True if the datasets should be divided in a dictionary where
             their key is the filename and the value the data matrix.
@@ -93,7 +94,7 @@ class Datareader:
         frogs : list
             The frog data, list is empty if no data is found.
         """
-        data = [row for filename in file_list for row
+        data = [row for filename in self.file_list for row
                 in self.load_data_linewise(filename)]
         if self.shuffle:
             rnd.shuffle(data)
