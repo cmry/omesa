@@ -137,4 +137,5 @@ class Env:
     def test(self, space, labels):
         if not self.model:
             raise EnvironmentError("There is no trained model to test.")
-        self.model.predict(instance)
+        res = self.model.predict(space)
+        return res
