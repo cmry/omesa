@@ -22,6 +22,24 @@ class Datareader:
     data : list of strings
         List with document directories to be loaded.
 
+    proc : string or function, [None (default), 'text', 'label', 'both', \
+                                function]
+        If you want any label or text conversion, you can indicate this
+        here with a string, or either supply your own to apply to the row
+        object. These are constructed as list[label, text, frog].
+
+        'text':
+            Apply a generic normalization and preprocessing process to the
+            input data.
+        'label':
+            Do a general categorization based on the labels that is
+            provided if need be. Age will for example be splitted into
+            several clases.
+        'both':
+            All of the above.
+        function:
+            Specify your own function by which you want to edit the row.
+
     max_n : int, optional, default False
         Maximum number of data instances *per dataset* user wants to work with.
 
@@ -47,17 +65,18 @@ class Datareader:
 
     Examples
     -----
-    >>> reader = Datareader(max_n=1000)
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
-    >>> dataset = reader.load(data, dict_format=True)
+    >>> reader = Datareader(data, max_n=1000)
+    >>> labels, raw, frog = reader.load(data, dict_format=True)
 
     Notes
     -----
     Interactive use has been deprecated in this version.
     """
-    def __init__(self, data, max_n, shuffle, rnd_seed, label):
+    def __init__(self, data, proc, max_n, shuffle, rnd_seed, label):
 
         self.file_list = data
+        self.proc = proc
         self.max_n = max_n
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
@@ -94,12 +113,47 @@ class Datareader:
         frogs : list
             The frog data, list is empty if no data is found.
         """
-        data = [row for filename in self.file_list for row
-                in self.load_data_linewise(filename)]
+        data = [self.preprocess(row) for file_name in self.file_list
+                for row in self.load_data_linewise(file_name)]
         if self.shuffle:
             rnd.shuffle(data)
         labels, raw, frogs = zip(*data)
         return list(labels), list(raw), list(frogs)
+
+    def label_convert(self, label_field):
+        if self.label == 'age':
+            age = {range(15):      'child',
+                   range(15, 18):  'teen',
+                   range(18, 21):  'post-teen',
+                   range(21, 26):  'young adult',
+                   range(26, 100): 'adult'}
+            for r in age.keys():
+                if int(label_field) in r:
+                    return age[r]
+
+    def preprocess(self, row):
+        """
+        Text and label preprocessor
+        =====
+
+        Parameters
+        -----
+        row : list
+            Row pruned to include only the selected label, raw data and decoded
+            frog data.
+
+        Returns
+        -----
+        """
+        if self.proc == 'label' or self.proc == 'both':
+            new_label = self.label_convert(row[0])
+            row[0] = new_label
+        if self.proc == 'text' or self.proc == 'both':
+            new_text = row[1].lower()
+            row[1] = new_text
+        if self.proc and type(self.proc) != str:
+            row = self.proc(row)
+        return row
 
     def extract_row(self, line):
         """
@@ -183,5 +237,7 @@ class Datareader:
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
-                    rows.append(self.extract_row(line))
+                    row = self.extract_row(line)
+                    if row[0]:  # if label
+                        rows.append(row)
         return rows

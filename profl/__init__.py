@@ -81,12 +81,14 @@ from os import path
 __all__ = ['models']
 
 features = [
-    SimpleStats(),
-    Ngrams(),
+    # SimpleStats(),
+    # Ngrams('pos'),
+    # Ngrams('char'),
+    # Ngrams('token'),
     # FuncWords(),
     # LiwcCategories(),
     # SentimentFeatures(),
-    # TokenPCA()
+    TokenPCA()
 ]
 
 
@@ -103,17 +105,15 @@ class Env:
         self.model = None
 
     def load(self, data=['./profl/data/test3.csv'], target_label='age',
-             max_n=None, shuffle=True, rnd_seed=666):
+             proc=None, max_n=None, shuffle=True, rnd_seed=666):
         print("Setting reader...", end='')
         if not self.reader:
-            self.reader = Datareader(data=data, max_n=max_n, shuffle=shuffle,
-                                     rnd_seed=rnd_seed, label=target_label)
+            self.reader = Datareader(data=data, proc=proc, max_n=max_n,
+                                     shuffle=shuffle, rnd_seed=rnd_seed,
+                                     label=target_label)
         else:
             self.reader.file_list = data
         print(" done!")
-
-    # def preprocess():
-    #    pass
 
     def fit_transform(self, features=features, fit=True):
         if not self.reader:

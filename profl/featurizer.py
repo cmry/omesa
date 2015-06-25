@@ -108,12 +108,15 @@ class Ngrams:
 
     def fit(self, raw, frog):
         inst = raw if self.level == 'char' else frog
-        needle = list(inst) if self.level == 'char' else inst[self.i]
-        if self.feats:
-            self.feats = {}  # solves bug
-        for n in self.n_list:
-            self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
-                                         item in find_ngrams(needle, n)]))
+        try:
+            needle = list(inst) if self.level == 'char' else inst[self.i]
+            # if self.feats:
+            #     self.feats = {}  # solves bug
+            for n in self.n_list:
+                self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
+                                             item in find_ngrams(needle, n)]))
+        except IndexError:
+            pass
 
     def transform(self, raw_data, frog_data):
         inst = raw_data if self.level == 'char' else frog_data
@@ -200,7 +203,7 @@ class TokenPCA():
     Tryout: transforms unigram counts to PCA matrix
     """
 
-    def __init__(self, dimensions=3, max_tokens=10):
+    def __init__(self, dimensions=100, max_tokens=1000):
         self.name = 'token_pca'
         self.pca = PCA(n_components=dimensions)
         self.vectorizer = TfidfVectorizer(analyzer=identity, use_idf=False,
@@ -284,8 +287,8 @@ class SentimentFeatures():
             word, pos, lemma, sent_index = token
             for regx, param in token_dict.items():
                 if re.search(regx, token):
-                    if (word.lower(), param[0]) in self.lexiconDict or \
-                       (lemma.lower(), param[1]) in self.lexiconDict:
+                    if (word, param[0]) in self.lexiconDict or \
+                       (lemma, param[1]) in self.lexiconDict:
                         polarity_score += self.lexiconDict[token]
                     break
                     # note: might still want to get the token numbers here
