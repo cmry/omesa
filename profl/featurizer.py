@@ -415,6 +415,13 @@ class SimpleStats:
 
     def transform(self, raw, frog):
         fts = self.text_based_feats(raw) + \
-              self.token_based_feats([f[0] for f in frog]) + \
-              [self.avg_sent_length([f[3] for f in frog])]
+              self.token_based_feats([f[0] for f in frog])
+        # bug was introduced with the blogs, this fixes it
+        inst = []
+        for f in frog:
+            try:
+                inst.append(f[3])
+            except IndexError:
+                inst.append(0)
+        fts += [self.avg_sent_length(inst)]
         self.instances.append(fts)
