@@ -104,21 +104,26 @@ class Datareader:
 
         Returns
         -----
-        labels : list
-            Labels for each of the instances in raw, labels should be
-            maintained in the same position for e.g. sklearn evaluation.
-        raw : list
-            The raw data comes in an array where each entry represents a text
-            instance in the data file.
-        frogs : list
-            The frog data, list is empty if no data is found.
+        p_row : list
+            Has the following objects from 0-2:
+
+            labels : list
+                Labels for each of the instances in raw, labels should be
+                maintained in the same position for e.g. sklearn evaluation.
+            raw : list
+                The raw data comes in an array where each entry represents a
+                text instance in the data file.
+            frogs : list
+                The frog data, list is empty if no data is found.
         """
-        data = [self.preprocess(row) for file_name in self.file_list
-                for row in self.load_data_linewise(file_name)]
-        if self.shuffle:
-            rnd.shuffle(data)
-        labels, raw, frogs = zip(*data)
-        return list(labels), list(raw), list(frogs)
+        for file_name in self.file_list:
+            for row in self.load_data_linewise(file_name):
+                p_row = self.preprocess(row)
+                if p_row:
+                    yield p_row
+        # if self.shuffle:
+        #     rnd.shuffle(data)
+        # return data
 
     def label_convert(self, label_field):
         if self.label == 'age':
@@ -153,7 +158,8 @@ class Datareader:
             row[1] = new_text
         if self.proc and type(self.proc) != str:
             row = self.proc(row)
-        return row
+        if not None in row and len(row[0]) > 0 and len(row[2]) > 3:
+            return row
 
     def extract_row(self, line):
         """

@@ -82,13 +82,13 @@ __all__ = ['models']
 
 features = [
     # SimpleStats(),
-    # Ngrams('pos'),
-    # Ngrams('char'),
-    # Ngrams('token'),
+    # Ngrams(level='pos'),
+    Ngrams(level='char'),
+    # Ngrams(level='token'),
     # FuncWords(),
     # LiwcCategories(),
     # SentimentFeatures(),
-    TokenPCA()
+    # TokenPCA()
 ]
 
 
@@ -114,20 +114,20 @@ class Env:
         else:
             self.reader.file_list = data
         print(" done!")
+        print("Configuring loader...", end='')
+        loader = self.reader.load
+        print(" succes!")
+        return loader
 
-    def fit_transform(self, features=features, fit=True):
+    def fit_transform(self, loader, features=features, fit=True):
         if not self.reader:
             raise ValueError("There's not data to fit, please 'load' first.")
-
-        print("Loading data...", end='')
-        labels, raw, frog = self.reader.load(dict_format=True)
-        print(" succes!")
-
         print("Creating features...", end='')
-        self.featurizer = Featurizer(raw, frog, features)
-        space = self.featurizer.fit_transform()
+        self.featurizer = Featurizer(features)
+        self.featurizer.fit(loader())
+        space = self.featurizer.transform(loader())
+        labels = self.featurizer.labels
         print(" transformed!")
-
         return space, labels
 
     def train(self, model, space, labels):

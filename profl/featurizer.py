@@ -40,19 +40,23 @@ class Featurizer:
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
 
-    def __init__(self, raws, frogs, features):
-        self.frog = frogs
-        self.raw = raws
+    def __init__(self, features):
+        self.labels = []
         self.helpers = features
 
-    def loop_helpers(self, func):
+    def loop_helpers(self, stream, func):
         features = {}
+        for label, raw, frog in stream:
+            for helper in self.helpers:
+                func(helper, raw, frog)
+            if func == self.func_transform:
+                self.labels.append(label)
         for helper in self.helpers:
-            if helper.name in ['token_pca']:
-                func(helper, self.raw, self.frog)
-            else:
-                for raw, frog in zip(self.raw, self.frog):
-                    func(helper, raw, frog)
+            # TODO: reimplement PCA so that it is called within a complete space
+            #       class that inherits a fit/transform method but keeps the
+            #       entire feature space only in this higher order class
+            # if helper.name in ['token_pca']:
+            #     func(helper, self.raw, self.frog)
             if func == self.func_fit:
                 helper.close_fit()
             else:
@@ -72,15 +76,11 @@ class Featurizer:
                               not fit before transforming.')
         helper.transform(raw, frog)
 
-    def fit(self):
-        return self.loop_helpers(self.func_fit)
+    def fit(self, stream):
+        return self.loop_helpers(stream, self.func_fit)
 
-    def transform(self):
-        return self.loop_helpers(self.func_transform)
-
-    def fit_transform(self):
-        self.fit()
-        return self.transform()
+    def transform(self, stream):
+        return self.loop_helpers(stream, self.func_transform)
 
 
 class Ngrams:
@@ -110,8 +110,6 @@ class Ngrams:
         inst = raw if self.level == 'char' else frog
         try:
             needle = list(inst) if self.level == 'char' else inst[self.i]
-            # if self.feats:
-            #     self.feats = {}  # solves bug
             for n in self.n_list:
                 self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
                                              item in find_ngrams(needle, n)]))
@@ -120,7 +118,6 @@ class Ngrams:
 
     def transform(self, raw_data, frog_data):
         inst = raw_data if self.level == 'char' else frog_data
-
         dct = {}
         needle = list(inst) if self.level == 'char' else inst[self.i]
         for n in self.n_list:
