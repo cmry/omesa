@@ -1,3 +1,8 @@
+"""
+Data handling functions.
+
+More stuff here.
+"""
 import random as rnd
 import sys
 import csv
@@ -9,9 +14,10 @@ from .utils import frog
 
 
 class Datareader:
+
     """
     Datareader
-    ======
+    =====
     Container of datasets to be passed on to a featurizer. Can convert .csv
     files into a dataset with a chosen key. Envisioned for training:
     - can return combined datasets with any combinations of keys
@@ -41,7 +47,8 @@ class Datareader:
             Specify your own function by which you want to edit the row.
 
     max_n : int, optional, default False
-        Maximum number of data instances *per dataset* user wants to work with.
+        Maximum number of data instances *per dataset* user wants to work
+        with.
 
     shuffle : bool, optional, default True
         If the order of the dataset should be randomized.
@@ -50,18 +57,19 @@ class Datareader:
         A seed number used for reproducing the random order.
 
     label : str, optional, default 2nd header
-        Name of the label header row that should be retrieved. If not set, the
-        second column will be asummed to be a label column.
+        Name of the label header row that should be retrieved. If not set,
+        the second column will be asummed to be a label column.
 
     Attributes
     -----
     datasets : dict
-        Dictionary where key is the name of a dataset, and the value its rows.
-        Will not be filled if data is streamed.
+        Dictionary where key is the name of a dataset, and the value its
+        rows. Will not be filled if data is streamed.
 
     headers : list
-        List of headers / labels if they were found present in the datasets. If
-        not, standard AMiCA list is provided. Might introduce bugs.
+        List of headers / labels if they were found present in the
+        datasets. If not, standard AMiCA list is provided. Might
+        introduce bugs.
 
     Examples
     -----
@@ -73,8 +81,8 @@ class Datareader:
     -----
     Interactive use has been deprecated in this version.
     """
-    def __init__(self, data, proc, max_n, shuffle, rnd_seed, label):
 
+    def __init__(self, data, proc, max_n, shuffle, rnd_seed, label):
         self.file_list = data
         self.proc = proc
         self.max_n = max_n
@@ -82,12 +90,13 @@ class Datareader:
         self.rnd_seed = rnd_seed
         self.label = label
         self.headers = "user_id age gender loc_country loc_region \
-                       loc_city education pers_big5 pers_mbti text".split()
+                       loc_city education pers_big5 pers_mbti text \
+                       frog".split()
         self.datasets = {}
 
         rnd.seed(self.rnd_seed)
 
-    def load(self, dict_format=False):
+    def load(self):
         """
         Raw data loader
         =====
@@ -95,12 +104,6 @@ class Datareader:
         which labels are present in the input data, and will isolate any
         specified label. Please note that frog data **must** be under a 'frogs'
         header, otherwise it won't parse it.
-
-        Parameters
-        -----
-        dict_format : bool, optional, default False
-            Set to True if the datasets should be divided in a dictionary where
-            their key is the filename and the value the data matrix.
 
         Returns
         -----
@@ -121,6 +124,22 @@ class Datareader:
         return list(labels), list(raw), list(frogs)
 
     def label_convert(self, label_field):
+        """
+        Label converter
+        =====
+        Converts whatever field it is given to some format specified according
+        to the self.label.
+
+        Parameters
+        -----
+        label_field : string
+            The data entry of the label, to be converted.
+
+        Returns
+        -----
+        converted_label : string
+            The converted label.
+        """
         if self.label == 'age':
             age = {range(15):      'child',
                    range(15, 18):  'teen',
@@ -135,6 +154,7 @@ class Datareader:
         """
         Text and label preprocessor
         =====
+
 
         Parameters
         -----
