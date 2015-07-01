@@ -88,7 +88,7 @@ class Ngrams:
     """
     Calculate token ngram frequencies.
 
-    nlist : list with n's one wants to ADD
+    n_list : list with n's one wants to ADD
 
     max_feats : limit on how many features will be generated
     """
