@@ -102,27 +102,33 @@ class Ngrams:
         self.level = level
         self.i = 0 if level == 'token' else 2
 
+    def find_ngrams(self, input_list, n):
+        """
+        Calculate n-grams from a list of tokens/characters with added begin and
+        end items. Based on the implementation by Scott Triglia http://locally
+        optimal.com/blog/2013/01/20/elegant-n-gram-generation-in-python/
+        """
+        inp = [''] + input_list + ['']
+        return zip(*[inp[i:] for i in range(n)])
+
     def close_fit(self):
         self.feats = [i for i, j in sorted(self.feats.items(), reverse=True,
                       key=operator.itemgetter(1))][:self.max_feats]
 
     def fit(self, raw, frog):
         inst = raw if self.level == 'char' else frog
-        try:
-            needle = list(inst) if self.level == 'char' else inst[self.i]
-            for n in self.n_list:
-                self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
-                                             item in find_ngrams(needle, n)]))
-        except IndexError:
-            pass
+        needle = list(inst) if self.level == 'char' else [x[self.i] for x in inst]
+        for n in self.n_list:
+            self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
+                                         item in self.find_ngrams(needle, n)]))
 
     def transform(self, raw_data, frog_data):
         inst = raw_data if self.level == 'char' else frog_data
         dct = {}
-        needle = list(inst) if self.level == 'char' else inst[self.i]
+        needle = list(inst) if self.level == 'char' else [x[self.i] for x in inst]
         for n in self.n_list:
             dct.update(freq_dict([self.level+"-"+"_".join(item) for item
-                                  in find_ngrams(needle, n)]))
+                                  in self.find_ngrams(needle, n)]))
         self.instances.append([dct.get(f, 0) for f in self.feats])
 
 

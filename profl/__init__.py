@@ -106,7 +106,7 @@ class Env:
 
     def load(self, data=['./profl/data/test3.csv'], target_label='age',
              proc=None, max_n=None, shuffle=True, rnd_seed=666):
-        print("Setting reader...", end='')
+        print("Setting reader...")
         if not self.reader:
             self.reader = Datareader(data=data, proc=proc, max_n=max_n,
                                      shuffle=shuffle, rnd_seed=rnd_seed,
@@ -114,7 +114,7 @@ class Env:
         else:
             self.reader.file_list = data
         print(" done!")
-        print("Configuring loader...", end='')
+        print("Configuring loader...")
         loader = self.reader.load
         print(" succes!")
         return loader
@@ -122,7 +122,7 @@ class Env:
     def fit_transform(self, loader, features=features, fit=True):
         if not self.reader:
             raise ValueError("There's not data to fit, please 'load' first.")
-        print("Creating features...", end='')
+        print("Creating features...")
         self.featurizer = Featurizer(features)
         self.featurizer.fit(loader())
         space = self.featurizer.transform(loader())
