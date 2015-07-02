@@ -17,7 +17,6 @@ import pickle
 def identity(x):
     return x
 
-
 class Featurizer:
 
     """
@@ -43,37 +42,41 @@ class Featurizer:
     def __init__(self, features):
         self.labels = []
         self.helpers = features
+        self.space_based = ['TokenPCA', 'Doc2Vec', 'L-LDA']
+        self.X = np.array([])
+        self.Y = np.array([])
 
     def loop_helpers(self, stream, func):
-        features = {}
         for label, raw, frog in stream:
             for helper in self.helpers:
-                func(helper, raw, frog)
+                if helper.name in self.space_based:
+                    np.append(self.X, [raw])
+                    np.append(self.Y, [label])
+                else:
+                    func(helper, raw, frog)
             if func == self.func_transform:
                 self.labels.append(label)
+        submatrices = []
         for helper in self.helpers:
-            # TODO: reimplement PCA so that it is called within a complete space
-            #       class that inherits a fit/transform method but keeps the
-            #       entire feature space only in this higher order class
-            # if helper.name in ['token_pca']:
-            #     func(helper, self.raw, self.frog)
             if func == self.func_fit:
                 helper.close_fit()
-            else:
-                features[helper.name] = np.array(helper.instances)
+            if func == self.func_transform:
+                submatrices.append(helper.instances)
         if func == self.func_transform:
-            submatrices = [features[ft] for ft in sorted(features.keys())]
             X = np.hstack(submatrices)
             return X
+
+    @staticmethod
+    def empty_inst(helper, lo):
+        try:
+            helper.instances.ndim
+        except AttributeError:
+            helper.instances = np.empty((0, len(lo)))
 
     def func_fit(self, helper, raw, frog):
         helper.fit(raw, frog)
 
     def func_transform(self, helper, raw, frog):
-        if not helper.feats:
-            raise ValueError('There are no features for ' + helper.name + ' to\
-                               transform the data with. You probably did \
-                              not fit before transforming.')
         helper.transform(raw, frog)
 
     def fit(self, stream):
@@ -96,7 +99,7 @@ class Ngrams:
     def __init__(self, level='token', n_list=[2], max_feats=None):
         self.name = level+'_ngram'
         self.feats = {}
-        self.instances = []
+        self.instances = None
         self.n_list = n_list
         self.max_feats = max_feats
         self.level = level
@@ -129,7 +132,10 @@ class Ngrams:
         for n in self.n_list:
             dct.update(freq_dict([self.level+"-"+"_".join(item) for item
                                   in self.find_ngrams(needle, n)]))
-        self.instances.append([dct.get(f, 0) for f in self.feats])
+        Featurizer.empty_inst(self, self.feats)
+        self.instances = np.append(self.instances,
+                                   [[dct.get(f, 0) for f in self.feats]],
+                                   axis=0)
 
 
 class FuncWords:
@@ -161,7 +167,7 @@ class FuncWords:
     def __init__(self):
         self.name = 'func_words'
         self.feats = {}
-        self.instances = []
+        self.instances = None
 
     def func_freq(self, frogstring):
         """
@@ -197,7 +203,10 @@ class FuncWords:
 
     def transform(self, raw, frog):
         func_dict = self.func_freq(frog)
-        self.instances.append([func_dict.get(f, 0) for f in self.feats])
+        Featurizer.empty_inst(self, self.feats)
+        self.instances = np.append(self.instances,
+                               [[func_dict.get(f, 0) for f in self.feats]],
+                               axis=0)
 
 
 class TokenPCA():
@@ -212,7 +221,7 @@ class TokenPCA():
         self.vectorizer = TfidfVectorizer(analyzer=identity, use_idf=False,
                                           max_features=max_tokens)
         self.feats = None
-        self.instances = []
+        self.instances = None
 
     def close_fit(self):
         pass
@@ -237,7 +246,7 @@ class LiwcCategories():
     def __init__(self):
         self.name = 'liwc'
         self.feats = {}
-        self.instances = []
+        self.instances = None
 
     def close_fit(self):
         pass
@@ -248,8 +257,9 @@ class LiwcCategories():
 
     def transform(self, raw, frog):
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        self.instances.append([liwc_dict[f] for f in self.feats])
-
+        Featurizer.empty_inst(self, self.feats)
+        self.instances = np.append(self.instances,
+                               [[liwc_dict[f] for f in self.feats]], axis=0)
 
 class SentimentFeatures():
 
@@ -264,7 +274,7 @@ class SentimentFeatures():
     def __init__(self):
         self.lexiconDict = pickle.load(open('profl/sentilexicons.cpickle',
                                             'r'))
-        self.instances = []
+        self.instances = None
 
     def fit(self, raw, frog):
         return self
@@ -298,7 +308,9 @@ class SentimentFeatures():
         return polarity_score
 
     def transform(self, raw, frog):
-        self.instances.append(self.calculate_sentiment(frog))
+        Featurizer.empty_inst(self, '1')
+        self.instances = np.append(self.instances,
+                                  [[self.calculate_sentiment(frog)]], axis=0)
 
 
 class SimpleStats:
@@ -312,7 +324,7 @@ class SimpleStats:
         self.regex_caps = r'^[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$' if not \
                           regex_caps else regex_caps
         self.feats = None
-        self.instances = []
+        self.instances = None
 
     def close_fit(self):
         pass
@@ -427,4 +439,5 @@ class SimpleStats:
             except IndexError:
                 inst.append(0)
         fts += [self.avg_sent_length(inst)]
-        self.instances.append(fts)
+        Featurizer.empty_inst(self, fts)
+        self.instances = np.append(self.instances, [[fts]], axis=0)
