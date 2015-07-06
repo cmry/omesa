@@ -75,22 +75,14 @@ be set except for a name.
 """
 
 from .datareader import Datareader
-from .featurizer import *
+from .featurizer import Featurizer, Ngrams
 from os import path
 
 __all__ = ['models']
 
-features = [
-    # SimpleStats(),
-    # Ngrams(level='pos'),
-    Ngrams(level='char'),
-    # Ngrams(level='token'),
-    # FuncWords(),
-    # LiwcCategories(),
-    # SentimentFeatures(),
-    # TokenPCA()
+FEATURES = [
+        Ngrams(level='pos', n_list=[1], max_feats=2000)
 ]
-
 
 class Env:
 
@@ -119,7 +111,7 @@ class Env:
         print(" succes!")
         return loader
 
-    def fit_transform(self, loader, features=features, fit=True):
+    def fit_transform(self, loader, features=FEATURES, fit=True):
         if not self.reader:
             raise ValueError("There's not data to fit, please 'load' first.")
         print("Creating features...")

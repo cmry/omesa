@@ -9,9 +9,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import OrderedDict, Counter
 import pickle
 
-# Authors: Chris Emmery, Mike Kestemont
-# Contributors: Ben Verhoeven, Florian Kunneman, Janneke van de Loo
-# License: BSD 3-Clause
+# Author:       Chris Emmery
+# Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
+#               Janneke van de Loo
+# License:      BSD 3-Clause
 
 
 def identity(x):
@@ -43,15 +44,15 @@ class Featurizer:
         self.labels = []
         self.helpers = features
         self.space_based = ['TokenPCA', 'Doc2Vec', 'L-LDA']
-        self.X = np.array([])
-        self.Y = np.array([])
+        self.X = []
+        self.Y = []
 
     def loop_helpers(self, stream, func):
         for label, raw, frog in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
-                    np.append(self.X, [raw])
-                    np.append(self.Y, [label])
+                    self.X.append(raw)
+                    self.Y.append(label)
                 else:
                     func(helper, raw, frog)
             if func == self.func_transform:
@@ -59,7 +60,10 @@ class Featurizer:
         submatrices = []
         for helper in self.helpers:
             if func == self.func_fit:
-                helper.close_fit()
+                if helper.name not in self.space_based:
+                    helper.close_fit()
+                else:
+                    helper.fit(self.X, self.Y)
             if func == self.func_transform:
                 submatrices.append(helper.instances)
         if func == self.func_transform:
@@ -93,7 +97,12 @@ class Ngrams:
 
     n_list : list with n's one wants to ADD
 
-    max_feats : limit on how many features will be generated
+    max_feats : limit on how many features will be generated\
+
+    Notes
+    -----
+    Initial code: Ben Verhoeven
+    Refactoring: Chris Emmery
     """
 
     def __init__(self, level='token', n_list=[2], max_feats=None):
@@ -213,6 +222,11 @@ class TokenPCA():
 
     """
     Tryout: transforms unigram counts to PCA matrix
+
+    Notes
+    -----
+    Implemented by: Mike Kestemont
+    Quality check: Chris Emmery
     """
 
     def __init__(self, dimensions=100, max_tokens=1000):
@@ -241,6 +255,10 @@ class LiwcCategories():
 
     """
     Compute relative frequencies for the LIWC categories.
+
+    Notes
+    -----
+    Implemented by: Ben Verhoeven
     """
 
     def __init__(self):
@@ -268,13 +286,21 @@ class SentimentFeatures():
     positive, negative and neutral words. Counts based on the Duoman and
     Pattern sentiment lexicons.
 
+    Notes
+    -----
     Based on code by Cynthia Van Hee, Marjan Van de Kauter, Orphee De Clercq
+
+    Implemented by: Chris Emmery
     """
 
     def __init__(self):
-        self.lexiconDict = pickle.load(open('profl/sentilexicons.cpickle',
-                                            'r'))
+        self.name = 'sentiment'
+        self.lexiconDict = pickle.load(open('./profl/data/'\
+                                            'sentilexicons.cpickle', 'rb'))
         self.instances = None
+
+    def close_fit(self):
+        pass
 
     def fit(self, raw, frog):
         return self
@@ -297,12 +323,13 @@ class SentimentFeatures():
             r'WW\(': ('v', 'v')
         })
         for token in instance:
-            word, pos, lemma, sent_index = token
+            word, lemma, pos, sent_index = token
             for regx, param in token_dict.items():
-                if re.search(regx, token):
-                    if (word, param[0]) in self.lexiconDict or \
-                       (lemma, param[1]) in self.lexiconDict:
-                        polarity_score += self.lexiconDict[token]
+                if re.search(regx, pos):
+                    if (word, param[0]) in self.lexiconDict:
+                        polarity_score += self.lexiconDict[(word, param[0])]
+                    elif (lemma, param[1]) in self.lexiconDict:
+                        polarity_score += self.lexiconDict[(lemma, param[1])]
                     break
                     # note: might still want to get the token numbers here
         return polarity_score
@@ -314,6 +341,13 @@ class SentimentFeatures():
 
 
 class SimpleStats:
+
+    """
+    Notes
+    -----
+    Code by: Janneke van de Loo
+    Implemented by: Chris Emmery
+    """
 
     def __init__(self, regex_punc=None, regex_word=None, regex_caps=None):
         self.name = 'simple_stats'
@@ -440,4 +474,4 @@ class SimpleStats:
                 inst.append(0)
         fts += [self.avg_sent_length(inst)]
         Featurizer.empty_inst(self, fts)
-        self.instances = np.append(self.instances, [[fts]], axis=0)
+        self.instances = np.append(self.instances, [fts], axis=0)
