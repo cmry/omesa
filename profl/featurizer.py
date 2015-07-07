@@ -338,6 +338,7 @@ class SentimentFeatures():
         Featurizer.empty_inst(self, '1')
         self.instances = np.append(self.instances,
                                   [[self.calculate_sentiment(frog)]], axis=0)
+        print(self.instances)
 
 
 class SimpleStats:
@@ -420,7 +421,8 @@ class SimpleStats:
         return [tok for tok in tokens if re.search(self.regex_word, tok)]
 
     def avg_word_len(self, words):
-        return np.mean([len(w) for w in words])
+        avg = np.mean([len(w) for w in words])
+        return avg if str(avg) != 'nan' else 0.0
 
     def num_allcaps_words(self, words):
         return sum([1 for w in words if re.search(self.regex_caps, w)])
@@ -463,6 +465,8 @@ class SimpleStats:
         return avg_len
 
     def transform(self, raw, frog):
+        # TODO: have to remove completely empty rows because they might
+        # introduce errors within this function.
         fts = self.text_based_feats(raw) + \
               self.token_based_feats([f[0] for f in frog])
         # bug was introduced with the blogs, this fixes it
@@ -474,4 +478,5 @@ class SimpleStats:
                 inst.append(0)
         fts += [self.avg_sent_length(inst)]
         Featurizer.empty_inst(self, fts)
+        print(fts)
         self.instances = np.append(self.instances, [fts], axis=0)
