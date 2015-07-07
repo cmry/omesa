@@ -338,7 +338,6 @@ class SentimentFeatures():
         Featurizer.empty_inst(self, '1')
         self.instances = np.append(self.instances,
                                   [[self.calculate_sentiment(frog)]], axis=0)
-        print(self.instances)
 
 
 class SimpleStats:

@@ -99,12 +99,9 @@ class Env:
     def load(self, data=['./profl/data/test3.csv'], target_label='age',
              proc=None, max_n=None, shuffle=True, rnd_seed=666):
         print("Setting reader...")
-        if not self.reader:
-            self.reader = Datareader(data=data, proc=proc, max_n=max_n,
-                                     shuffle=shuffle, rnd_seed=rnd_seed,
-                                     label=target_label)
-        else:
-            self.reader.file_list = data
+        self.reader = Datareader(data=data, proc=proc, max_n=max_n,
+                                 shuffle=shuffle, rnd_seed=rnd_seed,
+                                 label=target_label)
         print(" done!")
         print("Configuring loader...")
         loader = self.reader.load
