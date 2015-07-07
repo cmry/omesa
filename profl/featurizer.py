@@ -478,5 +478,4 @@ class SimpleStats:
                 inst.append(0)
         fts += [self.avg_sent_length(inst)]
         Featurizer.empty_inst(self, fts)
-        print(fts)
         self.instances = np.append(self.instances, [fts], axis=0)
