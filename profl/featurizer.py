@@ -3,7 +3,6 @@ import operator
 import re
 from .utils import liwc
 from .utils import preproc_netlog as pnet
-from .utils import *  # probably covers everything?
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import OrderedDict, Counter
@@ -15,24 +14,21 @@ import pickle
 # License:      BSD 3-Clause
 
 
-def identity(x):
-    return x
-
 class Featurizer:
 
     """
+    Featurizer
+    =====
+    Wrapper to call helper classes which extract different features from text
+    data. Given a list of initialized feature extractor classes, correctly
+    streams or dumps instances along these classes. Also provides an interface
+    to fit and transform methods.
+
     Parameters
     -----
-
-    raws : list
-        The raw data comes in an array where each entry represents a text
-        instance in the data file.
-
-    frogs : list
-        The frog data ...
-
-    features : dict
-        Subset any of the entries in the following dictionary:
+    features : list
+        List of initialized feature extractor classes. The classes can be
+        found within this module.
 
     Notes
     -----
@@ -48,6 +44,9 @@ class Featurizer:
         self.Y = []
 
     def loop_helpers(self, stream, func):
+        """
+        ... docs
+        """
         for label, raw, frog in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
@@ -232,10 +231,13 @@ class TokenPCA():
     def __init__(self, dimensions=100, max_tokens=1000):
         self.name = 'token_pca'
         self.pca = PCA(n_components=dimensions)
-        self.vectorizer = TfidfVectorizer(analyzer=identity, use_idf=False,
+        self.vectorizer = TfidfVectorizer(analyzer=self.identity, use_idf=False,
                                           max_features=max_tokens)
         self.feats = None
         self.instances = None
+
+    def identity(self, x):
+        return x
 
     def close_fit(self):
         pass
@@ -349,7 +351,7 @@ class SimpleStats:
     Implemented by: Chris Emmery
     """
 
-    def __init__(self, regex_punc=None, regex_word=None, regex_caps=None):
+    def __init__(self, text=(), regex_punc=None, regex_word=None, regex_caps=None):
         self.name = 'simple_stats'
         self.regex_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]' if not \
                           regex_punc else regex_punc
@@ -465,16 +467,9 @@ class SimpleStats:
 
     def transform(self, raw, frog):
         # TODO: have to remove completely empty rows because they might
-        # introduce errors within this function.
+        # introduce errors within this function. upd: think this is fixed?
         fts = self.text_based_feats(raw) + \
-              self.token_based_feats([f[0] for f in frog])
-        # bug was introduced with the blogs, this fixes it
-        inst = []
-        for f in frog:
-            try:
-                inst.append(f[3])
-            except IndexError:
-                inst.append(0)
-        fts += [self.avg_sent_length(inst)]
+              self.token_based_feats([f[0] for f in frog]) + \
+             [self.avg_sent_length([f[3] for f in frog if len(frog) > 3])]
         Featurizer.empty_inst(self, fts)
         self.instances = np.append(self.instances, [fts], axis=0)
