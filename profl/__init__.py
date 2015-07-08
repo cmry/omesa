@@ -75,7 +75,7 @@ be set except for a name.
 """
 
 from .datareader import Datareader
-from .featurizer import Featurizer, Ngrams
+from .featurizer import _Featurizer, Ngrams
 from os import path
 
 __all__ = ['models']
@@ -83,6 +83,7 @@ __all__ = ['models']
 FEATURES = [
         Ngrams(level='pos', n_list=[1], max_feats=2000)
 ]
+
 
 class Env:
 
@@ -112,7 +113,7 @@ class Env:
         if not self.reader:
             raise ValueError("There's not data to fit, please 'load' first.")
         print("Creating features...")
-        self.featurizer = Featurizer(features)
+        self.featurizer = _Featurizer(features)
         self.featurizer.fit(loader())
         space = self.featurizer.transform(loader())
         labels = self.featurizer.labels

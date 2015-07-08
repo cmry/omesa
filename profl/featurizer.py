@@ -1,3 +1,12 @@
+"""Text feature extraction module.
+
+This module contains several helper classes for extracting textual features
+used in Text Mining applications, partly based on instances parsed with Frog.
+It also includes a wrapper class to cleverly hanlde this within the profl
+environment.
+
+"""
+
 import numpy as np
 import operator
 import re
@@ -14,21 +23,27 @@ import pickle
 # License:      BSD 3-Clause
 
 
-class Featurizer:
+class _Featurizer:
 
-    """
-    Featurizer
-    =====
-    Wrapper to call helper classes which extract different features from text
-    data. Given a list of initialized feature extractor classes, correctly
-    streams or dumps instances along these classes. Also provides an interface
-    to fit and transform methods.
+    """Wrapper for looping feature extractors in fit and transform operations.
 
-    Parameters
-    -----
-    features : list
-        List of initialized feature extractor classes. The classes can be
-        found within this module.
+    Calls helper classes which extract different features from text data. Given
+    a list of initialized feature extractor classes, correctly streams or dumps
+    instances along these classes. Also provides an interface to fit and
+    transform methods.
+
+    Examples
+    --------
+    During training with a full space and a generator:
+    >>> loader = reader.load  # assumes that this is a generator
+    >>> features = [Ngrams(level='char', n_list=[1,2])]
+    >>> ftr = _Featurizer(features)
+    >>> ftr.fit(loader())
+    X, Y = ftr.transform(loader()), ftr.labels
+
+    During testing with only one instance:
+    >>> new_data = 'this is some string to test'
+    >>> tex, tey = ftr.transform(new_data), ftr.labels
 
     Notes
     -----
@@ -37,6 +52,14 @@ class Featurizer:
     """
 
     def __init__(self, features):
+        """Initialize the wrapper and set the provided features to a var.
+
+        Parameters
+        ----------
+        features : list
+            List of initialized feature extractor classes. The classes can be
+            found within this module.
+        """
         self.labels = []
         self.helpers = features
         self.space_based = ['TokenPCA', 'Doc2Vec', 'L-LDA']
@@ -44,8 +67,19 @@ class Featurizer:
         self.Y = []
 
     def loop_helpers(self, stream, func):
-        """
-        ... docs
+        """Call all the helpers to extract features.
+
+        Parameters
+        ----------
+        stream : generator
+            Yields an instance with (label, raw, frog).
+        func : function
+            Function object from etiher the fit or transform method.
+
+        Returns
+        -------
+        X : numpy array of shape [n_samples, n_features]
+            Training data returns when applying the transform function.
         """
         for label, raw, frog in stream:
             for helper in self.helpers:
@@ -71,6 +105,7 @@ class Featurizer:
 
     @staticmethod
     def empty_inst(helper, lo):
+        """Declare an empty matrix if there is none yet."""
         try:
             helper.instances.ndim
         except AttributeError:
@@ -83,20 +118,24 @@ class Featurizer:
         helper.transform(raw, frog)
 
     def fit(self, stream):
+        """Fit the extractors according to their requirements."""
         return self.loop_helpers(stream, self.func_fit)
 
     def transform(self, stream):
+        """Transform an instance according to the fitted extractors."""
         return self.loop_helpers(stream, self.func_transform)
 
 
 class Ngrams:
 
     """
-    Calculate token ngram frequencies.
+    Calculate ngram frequencies.
+
+    Extract for
 
     n_list : list with n's one wants to ADD
 
-    max_feats : limit on how many features will be generated\
+    max_feats : limit on how many features will be generated
 
     Notes
     -----
