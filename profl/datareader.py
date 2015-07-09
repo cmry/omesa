@@ -9,7 +9,8 @@ import csv
 
 from .utils import frog
 
-# Authors: Chris Emmery, Florian Kunneman
+# Author: Chris Emmery
+# Co-author: Florian Kunneman
 # License: BSD 3-Clause
 
 
@@ -115,15 +116,15 @@ class Datareader:
         rnd.seed(self.rnd_seed)
 
     def load(self):
-        """Raw data loader.
+        """Raw data generator.
 
         This is now the main way to load in your .csv files. It will check
         which labels are present in the input data, and will isolate any
         specified label. Please note that frog data **must** be under a 'frogs'
         header, otherwise it will try to retag it as new data!
 
-        Returns
-        -------
+        Yields
+        ------
         p_row : list
             Has the following objects from 0-2:
 
@@ -137,7 +138,7 @@ class Datareader:
                 The frog data, list is empty if no data is found.
         """
         for file_name in self.file_list:
-            for row in self.load_data_linewise(file_name):
+            for row in self._load_data_linewise(file_name):
                 p_row = self._preprocess(row)
                 if p_row:
                     yield p_row
@@ -226,28 +227,13 @@ class Datareader:
         row = [label_data, text_data, frog_data]
         return row
 
-    def check_header(self, filename):
-        """
-        Header checker.
-
-        Sniffs if a .csv file has a header.
-
-        Parameters
-        -----
-        filename : str
-            Directory of a .csv file to be sniffed.
-
-        Returns
-        -----
-        has_header : bool
-            True if a header was sniffed in the file.
-        """
+    def _check_header(self, filename):
+        """Sniff if a .csv file has a header."""
         with open(filename, 'r') as sniff_file:
-            has_header = True if csv.Sniffer().has_header(
-                    sniff_file.read(200)) else False
-        return has_header
+            if csv.Sniffer().has_header(sniff_file.read(200)):
+                return True
 
-    def load_data_linewise(self, filename):
+    def _load_data_linewise(self, filename):
         """
         Csv reader.
 
@@ -258,7 +244,7 @@ class Datareader:
         filename : str
             Directory of a .csv file to be stored into a list.
 
-        Returns
+        Yields
         -----
         rows : list
             List of lists where each row is an instance and column a label
@@ -266,21 +252,16 @@ class Datareader:
 
         """
         csv.field_size_limit(sys.maxsize)
-        rows, has_header = [], self.check_header(filename)
-        # check if provided file has a label
         with open(filename, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             for i, line in enumerate(csv_reader):
-                # if there's a header, set it, if no label, 2nd header = label
-                if has_header and i == 0:
+                if self._check_header(filename) and not i:
                     self.headers = line
                     if not self.label:
                         self.label = self.headers[1]
-                # stop if we reached max_n
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
                     row = self._extract_row(line)
                     if row[0]:  # if label
-                        rows.append(row)
-        return rows
+                        yield row

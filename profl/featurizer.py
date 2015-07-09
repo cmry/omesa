@@ -10,7 +10,7 @@ environment.
 import numpy as np
 import operator
 import re
-from .utils import liwc, freq_dict
+from .utils import liwc
 from .utils import preproc_netlog as pnet
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -34,6 +34,8 @@ class _Featurizer:
 
     Examples
     --------
+    Note: this is just for local use only.
+
     During training with a full space and a generator:
     >>> loader = reader.load  # assumes that this is a generator
     >>> features = [Ngrams(level='char', n_list=[1,2])]
@@ -62,7 +64,7 @@ class _Featurizer:
         """
         self.labels = []
         self.helpers = features
-        self.space_based = ['TokenPCA', 'Doc2Vec', 'L-LDA']
+        self.space_based = ['TfPCA', 'Doc2Vec', 'L-LDA']
         self.X = []
         self.Y = []
 
@@ -100,6 +102,7 @@ class _Featurizer:
             if func == self.func_transform:
                 submatrices.append(helper.instances)
         if func == self.func_transform:
+            # pylint: disable=E1103
             X = np.hstack(submatrices)
             return X
 
@@ -131,19 +134,32 @@ class Ngrams:
     """
     Calculate ngram frequencies.
 
-    Extract for
+    Can either be applied on token, POS or character level. The fit method
+    iteratively builds a list with gram occurences, the transform method uses
+    these to count their frequencies in a new instance.
 
-    n_list : list with n's one wants to ADD
+    Parameters
+    ----------
+    n_list : list of integers
+        Amount of grams that have to be extracted, can be multiple. Say that
+        uni and bigrams have to be extracted, n_list has to be [1, 2].
 
-    max_feats : limit on how many features will be generated
+    max_feats : integers
+        Limit on how many features will be generated.
+
+    Examples
+    --------
+    Token-level uni and bigrams with a maximum of 2000 feats per n:
+    >>> Ngrams(level='token', n_list=[1, 2], max_feats=2000)
 
     Notes
     -----
-    Initial code: Ben Verhoeven
+    Implemented by: Ben Verhoeven
     Refactoring: Chris Emmery
     """
 
     def __init__(self, level='token', n_list=[2], max_feats=None):
+        """Set parameters for N-gram extraction."""
         self.name = level+'_ngram'
         self.feats = {}
         self.instances = None
@@ -152,8 +168,9 @@ class Ngrams:
         self.level = level
         self.i = 0 if level == 'token' else 2
 
-    def find_ngrams(self, input_list, n):
-        """
+    def _find_ngrams(self, input_list, n):
+        """Magic n-gram function.
+
         Calculate n-grams from a list of tokens/characters with added begin and
         end items. Based on the implementation by Scott Triglia http://locally
         optimal.com/blog/2013/01/20/elegant-n-gram-generation-in-python/
@@ -161,25 +178,30 @@ class Ngrams:
         inp = [''] + input_list + ['']
         return zip(*[inp[i:] for i in range(n)])
 
-    def close_fit(self):
-        self.feats = [i for i, j in sorted(self.feats.items(), reverse=True,
+    def _close_fit(self):
+        self.feats = [i for i, _ in sorted(self.feats.items(), reverse=True,
                       key=operator.itemgetter(1))][:self.max_feats]
 
     def fit(self, raw, frog):
+        """Find the possible grams in the provided instance."""
         inst = raw if self.level == 'char' else frog
-        needle = list(inst) if self.level == 'char' else [x[self.i] for x in inst]
+        needle = list(inst) if self.level == 'char' \
+            else [x[self.i] for x in inst]
         for n in self.n_list:
-            self.feats.update(freq_dict([self.level+"-"+"_".join(item) for
-                                         item in self.find_ngrams(needle, n)]))
+            self.feats.update(
+                Counter([self.level+"-"+"_".join(item) for
+                         item in self._find_ngrams(needle, n)]))
 
     def transform(self, raw_data, frog_data):
+        """Given a set of strings, look up the fitted gram frequencies."""
         inst = raw_data if self.level == 'char' else frog_data
         dct = {}
-        needle = list(inst) if self.level == 'char' else [x[self.i] for x in inst]
+        needle = list(inst) if self.level == 'char' \
+            else [x[self.i] for x in inst]
         for n in self.n_list:
-            dct.update(freq_dict([self.level+"-"+"_".join(item) for item
-                                  in self.find_ngrams(needle, n)]))
-        Featurizer.empty_inst(self, self.feats)
+            dct.update(Counter([self.level+"-"+"_".join(item) for item
+                                in self._find_ngrams(needle, n)]))
+        _Featurizer.empty_inst(self, self.feats)
         self.instances = np.append(self.instances,
                                    [[dct.get(f, 0) for f in self.feats]],
                                    axis=0)
@@ -188,8 +210,8 @@ class Ngrams:
 class FuncWords:
 
     """
-    Function Word Featurizer
-    ======
+    Extract function word frequencies.
+
     Computes relative frequencies of function words according to Frog data,
     and adds the respective frequencies as a feature.
 
@@ -207,19 +229,21 @@ class FuncWords:
 
     Notes
     -----
-    Implemented by: Ben Verhoeven
-    Quality check: Chris Emmery
+    Implemented by: Ben Verhoeven, Chris Emmery
     """
 
-    def __init__(self):
+    def __init__(self, relative=False):
+        """Set parameters for function word extraction."""
         self.name = 'func_words'
         self.feats = {}
         self.instances = None
+        self.relative = relative
+        self.sum = 0
 
     def func_freq(self, frogstring):
         """
-        Function Word frequencies
-        =====
+        Count word frequencies.
+
         Return a frequency dictionary of the function words in the text.
         Input is a string of frog output. Selects based on relevant functors
         the words that are function words from this input.
@@ -232,34 +256,40 @@ class FuncWords:
 
         Returns
         -----
-        freq_dict(tokens): Counter
+        Counter
             Frequency dictionary with the function words from the training set.
         """
+        # TODO: proposing a close_transform for doing relative frequency calcs
         functors = {'VNW': 'pronouns', 'LID': 'determiners',
                     'VZ': 'prepositions', 'BW': 'adverbs', 'TW': 'quantifiers',
                     'VG': 'conjunction'}
         tokens = [item[0] for item in frogstring if item[2].split('(')[0]
                   in functors]
-        return freq_dict(tokens)
+        return Counter(tokens)
 
     def close_fit(self):
+        """Get function words from Counter."""
         self.feats = self.feats.keys()
 
-    def fit(self, raw, frog):
+    def fit(self, _, frog):
+        """Fit possible function words."""
         self.feats.update(self.func_freq(frog))
 
-    def transform(self, raw, frog):
+    def transform(self, _, frog):
+        """Extract frequencies for fitted function word possibilites."""
         func_dict = self.func_freq(frog)
-        Featurizer.empty_inst(self, self.feats)
+        _Featurizer.empty_inst(self, self.feats)
         self.instances = np.append(self.instances,
-                               [[func_dict.get(f, 0) for f in self.feats]],
-                               axis=0)
+                                   [[func_dict.get(f, 0) for f in self.feats]],
+                                   axis=0)
 
 
-class TokenPCA():
+class TfPCA():
 
     """
-    Tryout: transforms unigram counts to PCA matrix
+    Term frequency Prinicple Component Analysis.
+
+    Tryout: transforms unigram counts to PCA matrix.
 
     Notes
     -----
@@ -268,26 +298,32 @@ class TokenPCA():
     """
 
     def __init__(self, dimensions=100, max_tokens=1000):
-        self.name = 'token_pca'
+        """Initialize the sklearn class with a TF matrix."""
+        self.name = 'tf_pca'
         self.pca = PCA(n_components=dimensions)
-        self.vectorizer = TfidfVectorizer(analyzer=self.identity, use_idf=False,
+        self.vectorizer = TfidfVectorizer(analyzer=self.identity,
+                                          use_idf=False,
                                           max_features=max_tokens)
         self.feats = None
         self.instances = None
 
     def identity(self, x):
+        """Placeholder for identity."""
         return x
 
     def close_fit(self):
+        """Placeholder for close fit."""
         pass
 
-    def fit(self, raw_data, frog_data):
+    def fit(self, raw_data, _):
+        """Fit PCA to the TF matrix."""
         X = self.vectorizer.fit_transform(raw_data).toarray()
         self.pca.fit(X)
         self.feats = True
         return self
 
-    def transform(self, raw_data, frog_data):
+    def transform(self, raw_data, _):
+        """Reduce the space by means of PCA."""
         X = self.vectorizer.transform(raw_data).toarray()
         self.instances = self.pca.transform(X)
 
@@ -295,7 +331,7 @@ class TokenPCA():
 class LiwcCategories():
 
     """
-    Compute relative frequencies for the LIWC categories.
+    Compute frequencies for the LIWC categories.
 
     Notes
     -----
@@ -303,26 +339,34 @@ class LiwcCategories():
     """
 
     def __init__(self):
+        """Initialize empty class variables."""
         self.name = 'liwc'
         self.feats = {}
         self.instances = None
 
     def close_fit(self):
+        """Placeholder for close fit."""
         pass
 
-    def fit(self, raw, frog):
+    def fit(self, _, frog):
+        """Fit by extracting keys from liwc dict."""
         self.feats = liwc.liwc_nl_dict.keys()
         return self
 
-    def transform(self, raw, frog):
+    def transform(self, _, frog):
+        """Count the raw frequencies for the liwc words."""
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        Featurizer.empty_inst(self, self.feats)
+        _Featurizer.empty_inst(self, self.feats)
         self.instances = np.append(self.instances,
-                               [[liwc_dict[f] for f in self.feats]], axis=0)
+                                   [[liwc_dict[f] for f in self.feats]],
+                                   axis=0)
+
 
 class SentimentFeatures():
 
     """
+    Lexicon based sentiment features.
+
     Calculates four features related to sentiment: average polarity, number of
     positive, negative and neutral words. Counts based on the Duoman and
     Pattern sentiment lexicons.
@@ -335,21 +379,25 @@ class SentimentFeatures():
     """
 
     def __init__(self):
+        """Load the sentiment lexicon."""
         self.name = 'sentiment'
-        self.lexiconDict = pickle.load(open('./profl/data/'\
+        self.lexiconDict = pickle.load(open('./profl/data/' +
                                             'sentilexicons.cpickle', 'rb'))
         self.instances = None
 
     def close_fit(self):
+        """Placeholder for close fit."""
         pass
 
-    def fit(self, raw, frog):
+    def fit(self, _, frog):
+        """Placeholder for fit."""
         return self
 
     def calculate_sentiment(self, instance):
         """
-        Calculates four features for the input instance.
-        instance is a list of word-pos-lemma tuples that represent a token.
+        Calculate four features for the input instance.
+
+        Instance is a list of word-pos-lemma tuples that represent a token.
         """
         polarity_score = 0.0
         token_dict = OrderedDict({
@@ -364,7 +412,7 @@ class SentimentFeatures():
             r'WW\(': ('v', 'v')
         })
         for token in instance:
-            word, lemma, pos, sent_index = token
+            word, lemma, pos, _ = token
             for regx, param in token_dict.items():
                 if re.search(regx, pos):
                     if (word, param[0]) in self.lexiconDict:
@@ -372,42 +420,99 @@ class SentimentFeatures():
                     elif (lemma, param[1]) in self.lexiconDict:
                         polarity_score += self.lexiconDict[(lemma, param[1])]
                     break
-                    # note: might still want to get the token numbers here
+                    # FIXME: reinclude the token numbers here
         return polarity_score
 
-    def transform(self, raw, frog):
-        Featurizer.empty_inst(self, '1')
+    def transform(self, _, frog):
+        """Get the sentiment belonging to the words in the frog string."""
+        _Featurizer.empty_inst(self, '1')
         self.instances = np.append(self.instances,
-                                  [[self.calculate_sentiment(frog)]], axis=0)
+                                   [[self.calculate_sentiment(frog)]], axis=0)
 
 
 class SimpleStats:
 
-    """
+    r"""
+    Word and token based features.
+
+    Parameters
+    ----------
+    text : list, ['all' (default), 'flood', 'char', 'emo']
+        Text-based features to be extracted, can include:
+
+        'flood':
+            Includes flooding properties regarding total amount of flooding,
+            and individually punctuation and alphanumeric stats.
+        'char':
+            Include frequency of punctuation and number sequences.
+        'emo':
+            Detect and include emoticon frequencies.
+        'all':
+            Every feature listed above.
+
+    token : list, ['all' (default), 'wlen', 'capw', 'scapw', 'urls', 'photo', \
+                   'vid']
+        Token-based features to be extracted, can include:
+
+        'wlen':
+            Word lengths.
+        'capw':
+            Number of all CAPITAL words.
+        'scapw':
+            Number Of Start Capital Words.
+        'urls':
+            Occurence of URLs.
+        'photo':
+            Occurence of links to pictures.
+        'vid':
+            Occurence of links to videos.
+        'all':
+            Every feature listed above.
+
+    sentence_lenth : integer, optional, default True
+        Add the sentence length as a feature.
+
+    regex_punc : pattern
+        A pattern that captures all punctuation. Default is provided.
+
+    regex_word : pattern
+        A pattern that captures all alphanumerics. Default is provided.
+
+    regex_punc : pattern
+        A pattern that captures all capital sequences. Default is provided.
+
     Notes
     -----
     Code by: Janneke van de Loo
     Implemented by: Chris Emmery
     """
 
-    def __init__(self, text=(), regex_punc=None, regex_word=None, regex_caps=None):
+    def __init__(self, text=['all'], token=['all'], sentence_length=True,
+                 regex_punc=None, regex_word=None, regex_caps=None):
+        """Initialize all parameters to extract simple stats."""
         self.name = 'simple_stats'
+        self.feats = None
+        self.instances = None
         self.regex_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]' if not \
                           regex_punc else regex_punc
         self.regex_word = r'^[a-zA-Z\-0-9]*[a-zA-Z][a-zA-Z\-0-9]*$' if not \
                           regex_word else regex_word
         self.regex_caps = r'^[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$' if not \
                           regex_caps else regex_caps
-        self.feats = None
-        self.instances = None
+        self.text = text
+        self.token = token
+        self.sentence_length = sentence_length
 
     def close_fit(self):
+        """Placeholder for close fit."""
         pass
 
-    def fit(self, raw, frog):
+    def fit(self, _, frog):
+        """Placeholder for fit."""
         self.feats = True
 
     def preprocess(self, text):
+        """Preprocess data based on Netlog issues."""
         text = pnet.restore_html_symbols(text)
         text = pnet.replace_netlog_tags(text)
         text = pnet.replace_url_email(text)
@@ -415,19 +520,23 @@ class SimpleStats:
         return text
 
     def only_alph(self, floodings):
+        """Include only alphanumeric flooding stats."""
         return [fl for fl in floodings if re.search(r'^[a-zA-Z]+$', fl[1])]
 
     def only_punc(self, floodings):
+        """Include only punctuation related floodings."""
         return [fl for fl in floodings if re.search(self.regex_punc, fl[1])]
 
     def avg_fl_len(self, floodings):
+        """Average length of flooding."""
         if floodings:
-            avg_len = np.mean([len(fl) for fl, char in floodings])
+            avg_len = np.mean([len(fl) for fl, _ in floodings])
         else:
             avg_len = 0
         return avg_len
 
     def flooding_stats(self, text):
+        """Some stats related to arbitrary repetion of keystrokes."""
         vector = []
         fl = pnet.floodings(text)
         fl_alph = self.only_alph(fl)
@@ -441,53 +550,69 @@ class SimpleStats:
         return vector
 
     def num_punc_seqs(self, text):
+        """Punctuation sequences such as ..,,,!!!."""
         regex_punc_seq = self.regex_punc+'+'
         return len(re.findall(regex_punc_seq, text))
 
     def num_num_seqs(self, text):
+        """Number sequences such as 9782189421."""
         regex_num_seq = r'[0-9]+'
         return len(re.findall(regex_num_seq, text))
 
     def char_type_stats(self, text):
+        """Number of punctuation and number sequences."""
         vector = []
         vector.append(self.num_punc_seqs(text))
         vector.append(self.num_num_seqs(text))
         return vector
 
     def num_emoticons(self, text):
+        """Number of _EMOTICON_ tags found."""
         return len(re.findall(r'_EMOTICON_', text))
 
     def get_words(self, tokens):
+        """Retrieve what is declared to be a word."""
         return [tok for tok in tokens if re.search(self.regex_word, tok)]
 
     def avg_word_len(self, words):
+        """Average word length of input string."""
         avg = np.mean([len(w) for w in words])
         return avg if str(avg) != 'nan' else 0.0
 
     def num_allcaps_words(self, words):
+        """Number of words that are all CAPITALIZED."""
         return sum([1 for w in words if re.search(self.regex_caps, w)])
 
     def num_startcap_words(self, words):
+        """Number Of Words That Start With A Capital."""
         return sum([1 for w in words if re.search(r'^[A-Z]', w)])
 
     def num_urls(self, tokens):
+        """Number of URLs in given string."""
         return sum([1 for tok in tokens if tok == '_URL_'])
 
     def num_photos(self, tokens):
+        """Number of photos in given string."""
         return sum([1 for tok in tokens if tok == '_PHOTO_'])
 
     def num_videos(self, tokens):
+        """Number of videos in given string."""
         return sum([1 for tok in tokens if tok == '_VIDEO_'])
 
     def text_based_feats(self, text):
+        """Include features that are based on the raw text."""
         vector = []
         text = self.preprocess(text)
-        vector.extend(self.flooding_stats(text))
-        vector.extend(self.char_type_stats(text))
-        vector.append(self.num_emoticons(text))
+        if any(['flood', 'all']) in self.text:
+            vector.extend(self.flooding_stats(text))
+        if any(['char', 'all']) in self.text:
+            vector.extend(self.char_type_stats(text))
+        if any(['emo', 'all']) in self.text:
+            vector.append(self.num_emoticons(text))
         return vector
 
     def token_based_feats(self, tokens):
+        """Include features that are based on certain tokens."""
         vector = []
         words = self.get_words(tokens)
         vector.append(self.avg_word_len(words))
@@ -505,10 +630,8 @@ class SimpleStats:
         return avg_len
 
     def transform(self, raw, frog):
-        # TODO: have to remove completely empty rows because they might
-        # introduce errors within this function. upd: think this is fixed?
         fts = self.text_based_feats(raw) + \
               self.token_based_feats([f[0] for f in frog]) + \
              [self.avg_sent_length([f[3] for f in frog if len(frog) > 3])]
-        Featurizer.empty_inst(self, fts)
+        _Featurizer.empty_inst(self, fts)
         self.instances = np.append(self.instances, [fts], axis=0)

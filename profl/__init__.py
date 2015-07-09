@@ -1,6 +1,5 @@
 """
-The Main Thing
-=====
+The Main Thing.
 
 The idea of this module is to provide an interface for loading data, training
 and testing models, storing well performing model versions with their
@@ -8,7 +7,7 @@ associated data and feature combinations, and the ability to load these all
 back in again to test on new data.
 
 Examples
------
+--------
 
 Say that we are starting session in which we would like to train on some data.
 We need a config name, a list of data, and what kind of features we whish to
@@ -42,7 +41,7 @@ or providing one from another module (currently only sklearn).
 Given this, the model can either be dumped for later, or tested:
 
     >>> test_data = [getcwd()+'/data/data.csv']
-    >>> tspace, tlabels = env.load(test_data, test=True)
+    >>> tspace, tlabels = env.load(test_data)
     >>> env.test(tspace, tlabels)
 
 Please note that there is no n-fold cross-validation in the test() module, as
@@ -78,10 +77,8 @@ from .datareader import Datareader
 from .featurizer import _Featurizer, Ngrams
 from os import path
 
-__all__ = ['models']
-
 FEATURES = [
-        Ngrams(level='pos', n_list=[1], max_feats=2000)
+    Ngrams(level='pos', n_list=[1], max_feats=2000)
 ]
 
 
@@ -99,25 +96,20 @@ class Env:
 
     def load(self, data=['./profl/data/test3.csv'], target_label='age',
              proc=None, max_n=None, shuffle=True, rnd_seed=666):
-        print("Setting reader...")
         self.reader = Datareader(data=data, proc=proc, max_n=max_n,
                                  shuffle=shuffle, rnd_seed=rnd_seed,
                                  label=target_label)
-        print(" done!")
-        print("Configuring loader...")
         loader = self.reader.load
-        print(" succes!")
         return loader
 
     def fit_transform(self, loader, features=FEATURES, fit=True):
         if not self.reader:
-            raise ValueError("There's not data to fit, please 'load' first.")
-        print("Creating features...")
+            raise EnvironmentError("There's not data to fit, please 'load'" +
+                                   " first.")
         self.featurizer = _Featurizer(features)
         self.featurizer.fit(loader())
         space = self.featurizer.transform(loader())
         labels = self.featurizer.labels
-        print(" transformed!")
         return space, labels
 
     def train(self, model, space, labels):
