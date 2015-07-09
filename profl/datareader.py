@@ -1,7 +1,7 @@
-"""
-Data handling functions.
+"""Data handling functions.
 
-More stuff here.
+Used to open a stream, and activate certain preprocessing options such as
+label conversion.
 """
 import random as rnd
 import sys
@@ -15,16 +15,14 @@ from .utils import frog
 
 class Datareader:
 
-    """
-    Datareader
-    =====
-    Container of datasets to be passed on to a featurizer. Can convert .csv
-    files into a dataset with a chosen key. Envisioned for training:
-    - can return combined datasets with any combinations of keys
-    - works with a specified number of lines
+    r"""Classification data handler.
+
+    Can convert headed .csv files to an instance based streaming of the raw
+    data and the specified label in the header. Given that frog is installed,
+    it can also convert a new untagged instance to a tagged format.
 
     Parameters
-    ------
+    ----------
     data : list of strings
         List with document directories to be loaded.
 
@@ -61,7 +59,7 @@ class Datareader:
         the second column will be asummed to be a label column.
 
     Attributes
-    -----
+    ----------
     datasets : dict
         Dictionary where key is the name of a dataset, and the value its
         rows. Will not be filled if data is streamed.
@@ -72,20 +70,40 @@ class Datareader:
         introduce bugs.
 
     Examples
-    -----
+    --------
     >>> data = ['~/Documents/data1.csv', '~/Documents/data2.csv']
-    >>> reader = Datareader(data, max_n=1000)
-    >>> labels, raw, frog = reader.load(data, dict_format=True)
+    >>> reader = Datareader(data, max_n=1)
+    >>> labels, raw, frog = zip(*reader.load(data))
+    >>> pp(labels, raw, frog)
+    (('38',),
+     ("'lieve schat we kunnen miss beter wel eentje gaan drinken samen xxx'",),
+     ([["'", "'", 'LET()', '0'],
+       ['lieve', 'lief', 'ADJ(prenom,basis,met-e,stan)', '0'],
+       ['schat', 'schat', 'N(soort,ev,basis,zijd,stan)', '0'],
+       ['we', 'we', 'VNW(pers,pron,nomin,red,1,mv)', '0'],
+       ['kunnen', 'kunnen', 'WW(pv,tgw,mv)', '0'],
+       ['miss', 'miss', 'SPEC(vreemd)', '0'],
+       ['beter', 'goed', 'ADJ(vrij,comp,zonder)', '0'],
+       ['wel', 'wel', 'BW()', '0'],
+       ['eentje', 'een', 'TW(hoofd,nom,zonder-n,dim)', '0'],
+       ['gaan', 'gaan', 'WW(inf,vrij,zonder)', '0'],
+       ['drinken', 'drinken', 'WW(inf,vrij,zonder)', '0'],
+       ['samen', 'samen', 'BW()', '0'],
+       ['xxx', 'xxx', 'SPEC(vreemd)', '0'],
+       ["'", "'", 'LET()', '0']],))
 
     Notes
     -----
-    Interactive use has been deprecated in this version.
+    Interactive use has been deprecated in this version. Changed its scope in
+    the pipeline to public.
     """
 
-    def __init__(self, data, proc, max_n, shuffle, rnd_seed, label):
+    def __init__(self, data, proc='both', max_n=10, shuffle=True,
+                 rnd_seed=666, label='age'):
+        """Initialize the reader with restrivtive parameters."""
         self.file_list = data
         self.proc = proc
-        self.max_n = max_n
+        self.max_n = max_n+1  # due to offset
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
         self.label = label
@@ -97,16 +115,15 @@ class Datareader:
         rnd.seed(self.rnd_seed)
 
     def load(self):
-        """
-        Raw data loader
-        =====
+        """Raw data loader.
+
         This is now the main way to load in your .csv files. It will check
         which labels are present in the input data, and will isolate any
         specified label. Please note that frog data **must** be under a 'frogs'
-        header, otherwise it won't parse it.
+        header, otherwise it will try to retag it as new data!
 
         Returns
-        -----
+        -------
         p_row : list
             Has the following objects from 0-2:
 
@@ -121,27 +138,24 @@ class Datareader:
         """
         for file_name in self.file_list:
             for row in self.load_data_linewise(file_name):
-                p_row = self.preprocess(row)
+                p_row = self._preprocess(row)
                 if p_row:
                     yield p_row
-        # if self.shuffle:
-        #     rnd.shuffle(data)
-        # return data
 
-    def label_convert(self, label_field):
+    def _label_convert(self, label_field):
         """
-        Label converter
-        =====
+        Label converter.
+
         Converts whatever field it is given to some format specified according
         to the self.label.
 
         Parameters
-        -----
+        ----------
         label_field : string
             The data entry of the label, to be converted.
 
         Returns
-        -----
+        -------
         converted_label : string
             The converted label.
         """
@@ -155,45 +169,48 @@ class Datareader:
                 if int(label_field) in r:
                     return age[r]
 
-    def preprocess(self, row):
+    def _preprocess(self, row):
         """
-        Text and label preprocessor
-        =====
+        Text and label preprocessor.
 
+        Sends the input to either the label processor, or, for now, only does
+        text.lower() as text preprocessing.
 
         Parameters
-        -----
+        ----------
         row : list
             Row pruned to include only the selected label, raw data and decoded
             frog data.
 
         Returns
-        -----
+        -------
+        row : list
+            Either preprocessed raw, a converted label or both.
         """
         if self.proc == 'label' or self.proc == 'both':
-            new_label = self.label_convert(row[0])
+            new_label = self._label_convert(row[0])
             row[0] = new_label
         if self.proc == 'text' or self.proc == 'both':
             new_text = row[1].lower()
             row[1] = new_text
         if self.proc and type(self.proc) != str:
             row = self.proc(row)
-        if not None in row and len(row[0]) > 0 and len(row[2]) > 3:
+        if None not in row and len(row[0]) > 0 and len(row[2]) > 3:
             return row
 
-    def extract_row(self, line):
+    def _extract_row(self, line):
         """
-        Data extractor
-        =====
+        Data extractor.
+
         Fetches required data from data files. Handles frog data correctly.
 
         Parameters
-        -----
+        ----------
         line : list
             List with .csv frow.
 
         Returns
-        -----
+        -------
         rows : list
             Row pruned to include only the selected label, raw data and decoded
             frog data.
@@ -211,8 +228,8 @@ class Datareader:
 
     def check_header(self, filename):
         """
-        Header checker
-        =====
+        Header checker.
+
         Sniffs if a .csv file has a header.
 
         Parameters
@@ -232,8 +249,8 @@ class Datareader:
 
     def load_data_linewise(self, filename):
         """
-        Csv reader
-        =====
+        Csv reader.
+
         Reads a csv file by pathname, extracts headers and returns matrix.
 
         Parameters
@@ -263,7 +280,7 @@ class Datareader:
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
-                    row = self.extract_row(line)
+                    row = self._extract_row(line)
                     if row[0]:  # if label
                         rows.append(row)
         return rows

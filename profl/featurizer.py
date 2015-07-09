@@ -10,7 +10,7 @@ environment.
 import numpy as np
 import operator
 import re
-from .utils import liwc
+from .utils import liwc, freq_dict
 from .utils import preproc_netlog as pnet
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
