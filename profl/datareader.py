@@ -9,14 +9,16 @@ import csv
 
 from .utils import frog
 
-# Author: Chris Emmery
-# Co-author: Florian Kunneman
-# License: BSD 3-Clause
+# Author:       Chris Emmery
+# Co-author:    Florian Kunneman
+# License:      BSD 3-Clause
+# pylint:       disable=E1103
 
 
 class Datareader:
 
-    r"""Classification data handler.
+    r"""
+    Classification data handler.
 
     Can convert headed .csv files to an instance based streaming of the raw
     data and the specified label in the header. Given that frog is installed,
@@ -99,12 +101,12 @@ class Datareader:
     the pipeline to public.
     """
 
-    def __init__(self, data, proc='both', max_n=10, shuffle=True,
+    def __init__(self, data, proc='both', max_n=None, shuffle=True,
                  rnd_seed=666, label='age'):
         """Initialize the reader with restrivtive parameters."""
         self.file_list = data
         self.proc = proc
-        self.max_n = max_n+1  # due to offset
+        self.max_n = max_n+1 if max_n else None  # due to offset
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
         self.label = label
@@ -116,7 +118,8 @@ class Datareader:
         rnd.seed(self.rnd_seed)
 
     def load(self):
-        """Raw data generator.
+        """
+        Raw data generator.
 
         This is now the main way to load in your .csv files. It will check
         which labels are present in the input data, and will isolate any

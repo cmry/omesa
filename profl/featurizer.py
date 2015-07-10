@@ -26,12 +26,33 @@ import pickle
 
 class Featurizer:
 
-    """Wrapper for looping feature extractors in fit and transform operations.
+    """
+    Wrapper for looping feature extractors in fit and transform operations.
 
     Calls helper classes which extract different features from text data. Given
     a list of initialized feature extractor classes, correctly streams or dumps
     instances along these classes. Also provides an interface to fit and
     transform methods.
+
+    Parameters
+    ----------
+    features : list
+        List of initialized feature extractor classes. The classes can be
+        found within this module.
+
+    Attributes
+    ----------
+    helper : list of classes
+        Store for the provided features.
+
+    space_based : list of strings
+        Classnames that need the complete data in memory.
+
+    X : list of lists of shape [n_samples, n_words]
+        All data instances used by space_based featurizer helpers.
+
+    Y : list of labels
+        Labels for X.
 
     Examples
     --------
@@ -54,18 +75,12 @@ class Featurizer:
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
 
-    def __init__(self, features):
-        """Initialize the wrapper and set the provided features to a var.
-
-        Parameters
-        ----------
-        features : list
-            List of initialized feature extractor classes. The classes can be
-            found within this module.
-        """
+    def __init__(self, features, fit=True):
+        """Initialize the wrapper and set the provided features to a var."""
         self.labels = []
         self.helpers = features
-        self.space_based = ['TfPCA', 'Doc2Vec', 'L-LDA']
+        self.do_fit = fit
+        self.space_based = ['tf_pca', 'doc2vec', 'llda']
         self.X = []
         self.Y = []
 
@@ -84,6 +99,8 @@ class Featurizer:
         X : numpy array of shape [n_samples, n_features]
             Training data returns when applying the transform function.
         """
+        if func == self._func_transform:
+            self.X, self.Y = [], []
         for label, raw, frog in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
@@ -100,10 +117,13 @@ class Featurizer:
                     helper.close_fit()
                 else:
                     helper.fit(self.X, self.Y)
-            if func == self._func_transform:
+            else:
+                if helper.name in self.space_based:
+                    helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
         if func == self._func_transform:
             X = np.hstack(submatrices)
+            self.helpers = []
             return X
 
     @staticmethod
@@ -216,18 +236,6 @@ class FuncWords:
     Computes relative frequencies of function words according to Frog data,
     and adds the respective frequencies as a feature.
 
-    Parameters
-    -----
-    None
-
-    Attributes
-    -----
-    name : string
-        String representation of the featurizer.
-
-    feats : list
-        List with the function words that occur in the training set.
-
     Notes
     -----
     Implemented by: Ben Verhoeven, Chris Emmery
@@ -292,13 +300,22 @@ class TfPCA():
 
     Tryout: transforms unigram counts to PCA matrix.
 
+    Attributes
+    ----------
+
+    dimensions : int
+        Number of remaining dimensions.
+
+    max_tokens : int, optional, default 1000
+        Maximum amount of tokens used in PCA analysis.
+
     Notes
     -----
     Implemented by: Mike Kestemont
     Quality check: Chris Emmery
     """
 
-    def __init__(self, dimensions=100, max_tokens=1000):
+    def __init__(self, dimensions, max_tokens=1000):
         """Initialize the sklearn class with a TF matrix."""
         self.name = 'tf_pca'
         self.pca = PCA(n_components=dimensions)
