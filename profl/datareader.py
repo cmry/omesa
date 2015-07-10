@@ -61,6 +61,11 @@ class Datareader:
         Name of the label header row that should be retrieved. If not set,
         the second column will be asummed to be a label column.
 
+    meta : list of str, optional, default empty
+        If you'd like to extract features from the dataset itself, this can
+        be used to specify the headers or the indices in which these are
+        located.
+
     Attributes
     ----------
     datasets : dict
@@ -102,8 +107,8 @@ class Datareader:
     """
 
     def __init__(self, data, proc='both', max_n=None, shuffle=True,
-                 rnd_seed=666, label='age'):
-        """Initialize the reader with restrivtive parameters."""
+                 rnd_seed=666, label='age', meta=[]):
+        """Initialize the reader with restrictive parameters."""
         self.file_list = data
         self.proc = proc
         self.max_n = max_n+1 if max_n else None  # due to offset
@@ -113,6 +118,7 @@ class Datareader:
         self.headers = "user_id age gender loc_country loc_region \
                        loc_city education pers_big5 pers_mbti text \
                        frog".split()
+        self.meta = meta
         self.datasets = {}
 
         rnd.seed(self.rnd_seed)
@@ -129,7 +135,7 @@ class Datareader:
         Yields
         ------
         p_row : list
-            Has the following objects from 0-2:
+            Has the following objects from 0-3:
 
             labels : list
                 Labels for each of the instances in raw, labels should be
@@ -139,6 +145,8 @@ class Datareader:
                 text instance in the data file.
             frogs : list
                 The frog data, list is empty if no data is found.
+            meta : list
+                A list of meta-information features if these were specified.
         """
         for file_name in self.file_list:
             for row in self._load_data_linewise(file_name):
