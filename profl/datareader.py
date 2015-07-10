@@ -52,10 +52,10 @@ class Datareader:
     shuffle : bool, optional, default True
         If the order of the dataset should be randomized.
 
-    rnd_seed : int, optional, default 99
+    rnd_seed : int, optional, default 666
         A seed number used for reproducing the random order.
 
-    label : str, optional, default 2nd header
+    label : str, optional, default age header
         Name of the label header row that should be retrieved. If not set,
         the second column will be asummed to be a label column.
 
@@ -194,7 +194,7 @@ class Datareader:
         if self.proc == 'text' or self.proc == 'both':
             new_text = row[1].lower()
             row[1] = new_text
-        if self.proc and type(self.proc) != str:
+        if self.proc and not isinstance(self.proc, str):
             row = self.proc(row)
         if None not in row and len(row[0]) > 0 and len(row[2]) > 3:
             return row

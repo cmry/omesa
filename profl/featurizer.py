@@ -21,9 +21,10 @@ import pickle
 # Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
 #               Janneke van de Loo
 # License:      BSD 3-Clause
+# pylint:       disable=E1103
 
 
-class _Featurizer:
+class Featurizer:
 
     """Wrapper for looping feature extractors in fit and transform operations.
 
@@ -90,19 +91,18 @@ class _Featurizer:
                     self.Y.append(label)
                 else:
                     func(helper, raw, frog)
-            if func == self.func_transform:
+            if func == self._func_transform:
                 self.labels.append(label)
         submatrices = []
         for helper in self.helpers:
-            if func == self.func_fit:
+            if func == self._func_fit:
                 if helper.name not in self.space_based:
                     helper.close_fit()
                 else:
                     helper.fit(self.X, self.Y)
-            if func == self.func_transform:
+            if func == self._func_transform:
                 submatrices.append(helper.instances)
-        if func == self.func_transform:
-            # pylint: disable=E1103
+        if func == self._func_transform:
             X = np.hstack(submatrices)
             return X
 
@@ -114,19 +114,19 @@ class _Featurizer:
         except AttributeError:
             helper.instances = np.empty((0, len(lo)))
 
-    def func_fit(self, helper, raw, frog):
+    def _func_fit(self, helper, raw, frog):
         helper.fit(raw, frog)
 
-    def func_transform(self, helper, raw, frog):
+    def _func_transform(self, helper, raw, frog):
         helper.transform(raw, frog)
 
     def fit(self, stream):
         """Fit the extractors according to their requirements."""
-        return self.loop_helpers(stream, self.func_fit)
+        return self.loop_helpers(stream, self._func_fit)
 
     def transform(self, stream):
         """Transform an instance according to the fitted extractors."""
-        return self.loop_helpers(stream, self.func_transform)
+        return self.loop_helpers(stream, self._func_transform)
 
 
 class Ngrams:
@@ -178,7 +178,8 @@ class Ngrams:
         inp = [''] + input_list + ['']
         return zip(*[inp[i:] for i in range(n)])
 
-    def _close_fit(self):
+    def close_fit(self):
+        """Set frequencies from fitted Ngrams."""
         self.feats = [i for i, _ in sorted(self.feats.items(), reverse=True,
                       key=operator.itemgetter(1))][:self.max_feats]
 
@@ -201,7 +202,7 @@ class Ngrams:
         for n in self.n_list:
             dct.update(Counter([self.level+"-"+"_".join(item) for item
                                 in self._find_ngrams(needle, n)]))
-        _Featurizer.empty_inst(self, self.feats)
+        Featurizer.empty_inst(self, self.feats)
         self.instances = np.append(self.instances,
                                    [[dct.get(f, 0) for f in self.feats]],
                                    axis=0)
@@ -278,7 +279,7 @@ class FuncWords:
     def transform(self, _, frog):
         """Extract frequencies for fitted function word possibilites."""
         func_dict = self.func_freq(frog)
-        _Featurizer.empty_inst(self, self.feats)
+        Featurizer.empty_inst(self, self.feats)
         self.instances = np.append(self.instances,
                                    [[func_dict.get(f, 0) for f in self.feats]],
                                    axis=0)
@@ -356,7 +357,7 @@ class LiwcCategories():
     def transform(self, _, frog):
         """Count the raw frequencies for the liwc words."""
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        _Featurizer.empty_inst(self, self.feats)
+        Featurizer.empty_inst(self, self.feats)
         self.instances = np.append(self.instances,
                                    [[liwc_dict[f] for f in self.feats]],
                                    axis=0)
@@ -425,7 +426,7 @@ class SentimentFeatures():
 
     def transform(self, _, frog):
         """Get the sentiment belonging to the words in the frog string."""
-        _Featurizer.empty_inst(self, '1')
+        Featurizer.empty_inst(self, '1')
         self.instances = np.append(self.instances,
                                    [[self.calculate_sentiment(frog)]], axis=0)
 
@@ -434,6 +435,9 @@ class SimpleStats:
 
     r"""
     Word and token based features.
+
+    By default, this class returns ALL features. To explicitly exclude these,
+    use empty lists in the function.
 
     Parameters
     ----------
@@ -480,6 +484,17 @@ class SimpleStats:
 
     regex_punc : pattern
         A pattern that captures all capital sequences. Default is provided.
+
+    Examples
+    --------
+    All features:
+    >>> SimpleStats()
+
+    Only sentence length:
+    >>> SimpleStats(text=[], token=[])
+
+    Only text features:
+    >>> SimpleStats(text=['all'], token=[], sentence_length=False)
 
     Notes
     -----
@@ -615,23 +630,33 @@ class SimpleStats:
         """Include features that are based on certain tokens."""
         vector = []
         words = self.get_words(tokens)
-        vector.append(self.avg_word_len(words))
-        vector.append(self.num_allcaps_words(words))
-        vector.append(self.num_startcap_words(words))
-        vector.append(self.num_urls(tokens))
-        vector.append(self.num_photos(tokens))
-        vector.append(self.num_videos(tokens))
+        if any(['wlen', 'all']) in self.token:
+            vector.append(self.avg_word_len(words))
+        if any(['capw', 'all']) in self.token:
+            vector.append(self.num_allcaps_words(words))
+        if any(['scapw', 'all']) in self.token:
+            vector.append(self.num_startcap_words(words))
+        if any(['urls', 'all']) in self.token:
+            vector.append(self.num_urls(tokens))
+        if any(['photo', 'all']) in self.token:
+            vector.append(self.num_photos(tokens))
+        if any(['vid', 'all']) in self.token:
+            vector.append(self.num_videos(tokens))
         return vector
 
     def avg_sent_length(self, sent_nums):
+        """Calculate average sentence length."""
         sent_len_dict = Counter(sent_nums)
-        sent_lengths = [val for key, val in sent_len_dict.items()]
+        sent_lengths = [val for _, val in sent_len_dict.items()]
         avg_len = np.mean(sent_lengths)
         return avg_len
 
     def transform(self, raw, frog):
+        """Transform given instance into simple text features."""
         fts = self.text_based_feats(raw) + \
-              self.token_based_feats([f[0] for f in frog]) + \
-             [self.avg_sent_length([f[3] for f in frog if len(frog) > 3])]
-        _Featurizer.empty_inst(self, fts)
+            self.token_based_feats([f[0] for f in frog])
+        if self.sentence_length:
+            fts += [self.avg_sent_length(
+                [f[3] for f in frog if len(frog) > 3])]
+        Featurizer.empty_inst(self, fts)
         self.instances = np.append(self.instances, [fts], axis=0)
