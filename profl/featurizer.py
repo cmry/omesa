@@ -14,7 +14,8 @@ from .utils import liwc
 from .utils import preproc_netlog as pnet
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
-from collections import OrderedDict, Counter
+from sklearn.preprocessing import LabelEncoder
+from collections import OrderedDict, Counter, defaultdict
 import pickle
 
 # Author:       Chris Emmery
@@ -78,6 +79,7 @@ class Featurizer:
     def __init__(self, features, fit=True):
         """Initialize the wrapper and set the provided features to a var."""
         self.labels = []
+        self.metaf = defaultdict(list)
         self.helpers = features
         self.do_fit = fit
         self.space_based = ['tf_pca', 'doc2vec', 'llda']
@@ -101,7 +103,7 @@ class Featurizer:
         """
         if func == self._func_transform:
             self.X, self.Y = [], []
-        for label, raw, frog in stream:
+        for label, raw, frog, meta in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
                     self.X.append(raw)
@@ -110,6 +112,9 @@ class Featurizer:
                     func(helper, raw, frog)
             if func == self._func_transform:
                 self.labels.append(label)
+                for meta_inst in meta:
+                    self.metaf[meta.index(meta_inst)].append(meta_inst)
+
         submatrices = []
         for helper in self.helpers:
             if func == self._func_fit:
@@ -121,6 +126,8 @@ class Featurizer:
                 if helper.name in self.space_based:
                     helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
+        for item in self.metaf.items():
+            submatrices.append(LabelEncoder().fit_transform(item))
         if func == self._func_transform:
             X = np.hstack(submatrices)
             self.helpers = []

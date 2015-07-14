@@ -64,8 +64,8 @@ class Profiler:
         self.featurizer = None
         self.model = None
 
-    def load(self, data=['./profl/data/test3.csv'], target_label='age',
-             proc=None, max_n=None, shuffle=True, rnd_seed=666):
+    def load(self, data=['./profl/data/test3.csv'], proc=None, max_n=None,
+             shuffle=True, rnd_seed=666, target_label='age', meta=[]):
         r"""
         Wrapper for the data loader.
 
@@ -109,6 +109,11 @@ class Profiler:
             Name of the label header row that should be retrieved. If not set,
             the second column will be asummed to be a label column.
 
+        meta : list of str, optional, default empty
+            If you'd like to extract features from the dataset itself, this can
+            be used to specify the headers or the indices in which these are
+            located. Include 'file' if you want the filename to be a feature.
+
         Returns
         -------
         loader : generator
@@ -131,7 +136,7 @@ class Profiler:
         """
         self.reader = Datareader(data=data, proc=proc, max_n=max_n,
                                  shuffle=shuffle, rnd_seed=rnd_seed,
-                                 label=target_label)
+                                 label=target_label, meta=meta)
         loader = self.reader.load
         return loader
 

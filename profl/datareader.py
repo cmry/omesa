@@ -64,7 +64,7 @@ class Datareader:
     meta : list of str, optional, default empty
         If you'd like to extract features from the dataset itself, this can
         be used to specify the headers or the indices in which these are
-        located.
+        located. Include 'file' if you want the filename to be a feature.
 
     Attributes
     ----------
@@ -180,6 +180,8 @@ class Datareader:
             for r in age.keys():
                 if int(label_field) in r:
                     return age[r]
+        else:
+            return label_field
 
     def _preprocess(self, row):
         """
@@ -210,7 +212,7 @@ class Datareader:
         if None not in row and len(row[0]) > 0 and len(row[2]) > 3:
             return row
 
-    def _extract_row(self, line):
+    def _extract_row(self, line, filename):
         """
         Data extractor.
 
@@ -221,6 +223,9 @@ class Datareader:
         line : list
             List with .csv frow.
 
+        filename : str
+            Directory of a .csv file to be stored as a feature.
+
         Returns
         -------
         rows : list
@@ -230,12 +235,17 @@ class Datareader:
         """
         label_data = line[self.headers.index(self.label)]
         text_data = line[self.headers.index('text')]
+        meta_data = []
+        if 'file' in self.meta:
+            self.meta.remove('file')
+            meta_data += [filename]
+        meta_data += [line[self.headers.index(x)] for x in self.meta]
         try:
             head = self.headers.index('frogs')
             frog_data = frog.decode_frogstring_train(line[head])
         except ValueError:
             frog_data = []
-        row = [label_data, text_data, frog_data]
+        row = [label_data, text_data, frog_data, meta_data]
         return row
 
     def _check_header(self, filename):
@@ -273,6 +283,6 @@ class Datareader:
                 elif self.max_n and i >= self.max_n:
                     break
                 else:
-                    row = self._extract_row(line)
+                    row = self._extract_row(line, filename)
                     if row[0]:  # if label
                         yield row
