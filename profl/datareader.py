@@ -51,6 +51,11 @@ class Datareader:
         Maximum number of data instances *per dataset* user wants to work
         with.
 
+    skip : range, optional, default False
+        Range of indices that need to be skipped in the data. Can be used
+        for splitting as in tenfold cross-validation, whilst retaining the
+        iterative functionality and therefore keeping memory consumption low.
+
     shuffle : bool, optional, default True
         If the order of the dataset should be randomized.
 
@@ -106,12 +111,13 @@ class Datareader:
     the pipeline to public.
     """
 
-    def __init__(self, data, proc='both', max_n=None, shuffle=True,
-                 rnd_seed=666, label='age', meta=[]):
+    def __init__(self, data, proc='both', max_n=None, skip=False,
+                 shuffle=True, rnd_seed=666, label='age', meta=[]):
         """Initialize the reader with restrictive parameters."""
         self.file_list = data
         self.proc = proc
         self.max_n = max_n+1 if max_n else None  # due to offset
+        self.skip = skip
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
         self.label = label
@@ -276,13 +282,14 @@ class Datareader:
         with open(filename, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             for i, line in enumerate(csv_reader):
-                if self._check_header(filename) and not i:
-                    self.headers = line
-                    if not self.label:
-                        self.label = self.headers[1]
-                elif self.max_n and i >= self.max_n:
-                    break
-                else:
-                    row = self._extract_row(line, filename)
-                    if row[0]:  # if label
-                        yield row
+                if i not in self.skip:
+                    if self._check_header(filename) and not i:
+                        self.headers = line
+                        if not self.label:
+                            self.label = self.headers[1]
+                    elif self.max_n and i >= self.max_n:
+                        break
+                    else:
+                        row = self._extract_row(line, filename)
+                        if row[0]:  # if label
+                            yield row

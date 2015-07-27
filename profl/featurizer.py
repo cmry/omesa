@@ -126,8 +126,9 @@ class Featurizer:
                 if helper.name in self.space_based:
                     helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
-        for item in self.metaf.items():
-            submatrices.append(LabelEncoder().fit_transform(item))
+        for value in self.metaf.values():
+            submatrices.append(
+                np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))
         if func == self._func_transform:
             X = np.hstack(submatrices)
             self.helpers = []
