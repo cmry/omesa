@@ -92,7 +92,7 @@ class Featurizer:
         Parameters
         ----------
         stream : generator
-            Yields an instance with (label, raw, frog).
+            Yields an instance with (label, raw, frog, meta).
         func : function
             Function object from etiher the fit or transform method.
 
