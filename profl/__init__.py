@@ -1,98 +1,90 @@
 """
-The Main Thing
-=====
+The Main Thing.
 
-The idea of this module is to provide an interface for loading data, training
-and testing models, storing well performing model versions with their
-associated data and feature combinations, and the ability to load these all
-back in again to test on new data. As such, it will combine an interactive
-set-up with a passive one.
+profl is currently used to conduct Author Profiling experiments. This text
+mining task usually relies on custom language features. Constructing these
+by hand can be a time-consuming task. Therefore, this module aims to make
+loading and featurizing existing, as well as new data a bit easier. It is
+specifically intended for Dutch, but just replacing the Frog module with an
+language-specific tagger (from NLTK for example) would make it broadly usable.
 
 Examples
------
+--------
+Say that we are starting session in which we would like to train on some
+data. We need a config name, a list of data, and what kind of features we
+whish to extract from for this.
 
-Say that we are starting session in which we would like to train on some data.
-We need a config name, a list of data, a label field we want to predict from
-it, and what kind of features we whish to use for this.
-
-    >>> from profl import make
+    >>> import profl
     >>> from os import getcwd
 
     >>> data = [getcwd()+'/data/data.csv', getcwd()+'/data/data2.csv']
 
-    >>> data_conf = make(name='bayes_age_v1', data=data, target_label='age',
-                         features=['pca', 'liwc'])
+    >>> from profl.featurizer import *
+    >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-The config will make sure that whatever model we store can be retrieved under
-the same name with exactly the same configuration, without having to re-load
-data and featurizers on it. Therefore, every parameter is optional except for
-the `name`, and the make function will always return an AMiCA configuation
-class object. After, the object can be either trained, tested or dumped. If
-your config is a new one, model_conf['state'] will return 0, and 1 if it has
-been trained. Training will just consist of calling a classifier and its
-parameters:
+    >>> env = profl.Profiler(name='bayes_age_v1')
+    >>> loader = env.load(data=data, target_label='age')
+    >>> space, labels = env.fit_transform(loader, features)
 
-    >>> from profl.models import NaiveBayes
-    >>> model = NaiveBayes(...(1))
-    >>> nvb = model.train(data_conf)
+The `env` config `name` will make sure that whatever model we store can be
+retrieved under the same name with exactly the same configuration, without
+having to re-load data and featurizers on it. Therefore, every parameter is
+optional except for the `name`, and the make function will always return an
+AMiCA configuation class object. After, the object can be either trained,
+tested or dumped. If your config is a new one, env.model should return
+None. Training will just consist of either calling a classifier and its
+parameters, or providing one from another module (currently only sklearn).
+
+    >>> from sklearn.naive_bayes import GaussianNB
+    >>> clf = GaussianNB()
+    >>> env.train(clf, space, labels)
 
 Given this, the model can either be dumped for later, or tested:
 
     >>> test_data = [getcwd()+'/data/data.csv']
-    >>> report = nvb.test(test_data)
+    >>> loader = env.load(data=test_data, target_label='age')
+    >>> tspace, tlabels = env.fit_transform(loader, features, fit=False)
+    >>> env.test(tspace, tlabels)
 
-Please note that there is no n-fold cross-validation in the test() module, as
-it requires the model to train multiple times. For this, one would want to do
-the following:
+Conceptual ----------------------------------------------------------------
 
-    >>> from profl.models import fold
-    >>> report = fold(model, data_conf, f=10)
+Please note that there is no n-fold cross-validation in the test() module,
+as it requires the model to train multiple times. For this, one would want
+to do the following:
 
-We now have a classification report stored in res, from which we can extract
-the desired scores:
+    >>> report = env.fold(model, space, labels, f=10)
+
+We now have a classification report stored in res, from which we can
+extract the desired scores:
 
     >>> report.fscore()
     0.54321
 
-If we're satisfied with the results, we can store the whole thing as a pickle
-object:
+If we're satisfied with the results, we can store the whole thing as a
+pickle object:
 
-    >>> nvb.save()
+    >>> env.save()
 
 Later, it should be retrievable as a classifier with the make function:
 
     >>> query = 'this is some text that we received as input'
-    >>> model = make('bayes_age_v1')
-    >>> model.classify(query)
+    >>> env = profl.Env('bayes_age_v1')
+    >>> model.predict(list(query))
     age = 21-100, confidence = 9001%
 
-...
+---------------------------------------------------------------------------
 
-(1) params go here
+If your model does not exist yet, and you just want to quickly train on a
+toy dataset, you can call each function without optinal parameters.
 
-If your model does not exist yet, and you just want to quickly train on a toy
-dataset, you can specify `dev=True`, which will not require any parameters to
-be set except for a name.
+Have fun,
+Chris
+
 """
 
-from .datareader import Datareader
-from .featurizer import Featurizer
+from .environment import Profiler
 
-__all__ = ['models']
-
-
-def make(name, data=['./profl/data/test3.csv'], dev=None, target_label='age',
-         features={'liwc': {}, 'token_pca': {'dimensions': 2,'max_tokens': 10}}, 
-         max_n=None, shuffle=True, rnd_seed=666):
-
-    print("::: loading datasets :::")
-    reader = Datareader(max_n=max_n, shuffle=shuffle, rnd_seed=rnd_seed,
-                        label=target_label)
-    labels, raw, frog = reader.load(data, dict_format=True)
-
-    print("::: creating features :::")
-    featurizer = Featurizer(raw, frog, features)
-    space = featurizer.fit_transform()
-    print(space)
-    # config = {k: v for k, v in args}
-    # return config, space
+__author__ = 'Chris Emmery'
+__contrb__ = 'Mike Kestemont, Ben Verhoeven, Florian Kunneman,' \
+             'Janneke van de Loo'
+__license__ = 'BSD 3-Clause'
