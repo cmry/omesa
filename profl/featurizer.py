@@ -131,7 +131,6 @@ class Featurizer:
                 np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))
         if func == self._func_transform:
             X = np.hstack(submatrices)
-            self.helpers = []
             return X
 
     @staticmethod

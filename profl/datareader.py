@@ -247,7 +247,7 @@ class Datareader:
             meta_data += [filename]
         meta_data += [line[self.headers.index(x)] for x in self.meta]
         try:
-            head = self.headers.index('frogs')
+            head = self.headers.index('frog')  # bugs out to frogs?
             frog_data = frog.decode_frogstring_train(line[head])
         except ValueError:
             frog_data = []
