@@ -76,12 +76,11 @@ class Featurizer:
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
 
-    def __init__(self, features, fit=True):
+    def __init__(self, features):
         """Initialize the wrapper and set the provided features to a var."""
         self.labels = []
         self.metaf = defaultdict(list)
         self.helpers = features
-        self.do_fit = fit
         self.space_based = ['tf_pca', 'doc2vec', 'llda']
         self.X = []
         self.Y = []
@@ -103,6 +102,7 @@ class Featurizer:
         """
         if func == self._func_transform:
             self.X, self.Y = [], []
+            self.labels = []
         for label, raw, frog, meta in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
@@ -126,6 +126,7 @@ class Featurizer:
                 if helper.name in self.space_based:
                     helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
+                helper.instances = None
         for value in self.metaf.values():
             submatrices.append(
                 np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))

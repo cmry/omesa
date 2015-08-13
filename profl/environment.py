@@ -161,12 +161,14 @@ class Profiler:
             Featurizer helper class instances and parameters found in
             featurizer.py.
         """
+        print("Starting fitting ...")
         if type(loader) == MethodType:
             loader = loader
         self.featurizer = Featurizer(features)
         self.featurizer.fit(loader)
+        print("done!")
 
-    def transform(self, loader, ft=False):
+    def transform(self, loader):
         """
         Transform the test data according to the fitted features.
 
@@ -184,12 +186,14 @@ class Profiler:
         labels : list of shape [n_labels]
             List of labels for data instances.
         """
+        print("Starting transforming ...")
         if type(loader) == MethodType:
             loader = loader()
         if not self.featurizer:
             raise EnvironmentError("Data is not fitted yet.")
         space = self.featurizer.transform(loader)
         labels = self.featurizer.labels
+        print("done!")
         return space, labels
 
     def fit_transform(self, loader, features=Ngrams()):

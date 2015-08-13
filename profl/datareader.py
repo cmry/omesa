@@ -155,6 +155,7 @@ class Datareader:
                 A list of meta-information features if these were specified.
         """
         for file_name in self.file_list:
+            print('\t Reading from', file_name, '...')
             for row in self._load_data_linewise(file_name):
                 p_row = self._preprocess(row)
                 if p_row:
