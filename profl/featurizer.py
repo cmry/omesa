@@ -76,12 +76,11 @@ class Featurizer:
     utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
     """
 
-    def __init__(self, features, fit=True):
+    def __init__(self, features):
         """Initialize the wrapper and set the provided features to a var."""
         self.labels = []
         self.metaf = defaultdict(list)
         self.helpers = features
-        self.do_fit = fit
         self.space_based = ['tf_pca', 'doc2vec', 'llda']
         self.X = []
         self.Y = []
@@ -103,6 +102,7 @@ class Featurizer:
         """
         if func == self._func_transform:
             self.X, self.Y = [], []
+            self.labels = []
         for label, raw, frog, meta in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
@@ -126,21 +126,13 @@ class Featurizer:
                 if helper.name in self.space_based:
                     helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
+                helper.instances = None
         for value in self.metaf.values():
             submatrices.append(
                 np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))
         if func == self._func_transform:
             X = np.hstack(submatrices)
-            self.helpers = []
             return X
-
-    @staticmethod
-    def empty_inst(helper, lo):
-        """Declare an empty matrix if there is none yet."""
-        try:
-            helper.instances.ndim
-        except AttributeError:
-            helper.instances = np.empty((0, len(lo)))
 
     def _func_fit(self, helper, raw, frog):
         helper.fit(raw, frog)
@@ -190,7 +182,7 @@ class Ngrams:
         """Set parameters for N-gram extraction."""
         self.name = level+'_ngram'
         self.feats = {}
-        self.instances = None
+        self.instances = []
         self.n_list = n_list
         self.max_feats = max_feats
         self.level = level
@@ -230,10 +222,7 @@ class Ngrams:
         for n in self.n_list:
             dct.update(Counter([self.level+"-"+"_".join(item) for item
                                 in self._find_ngrams(needle, n)]))
-        Featurizer.empty_inst(self, self.feats)
-        self.instances = np.append(self.instances,
-                                   [[dct.get(f, 0) for f in self.feats]],
-                                   axis=0)
+        self.instances.append([dct.get(f, 0) for f in self.feats])
 
 
 class FuncWords:
@@ -253,7 +242,7 @@ class FuncWords:
         """Set parameters for function word extraction."""
         self.name = 'func_words'
         self.feats = {}
-        self.instances = None
+        self.instances = []
         self.relative = relative
         self.sum = 0
 
@@ -295,10 +284,7 @@ class FuncWords:
     def transform(self, _, frog):
         """Extract frequencies for fitted function word possibilites."""
         func_dict = self.func_freq(frog)
-        Featurizer.empty_inst(self, self.feats)
-        self.instances = np.append(self.instances,
-                                   [[func_dict.get(f, 0) for f in self.feats]],
-                                   axis=0)
+        self.instances.append([func_dict.get(f, 0) for f in self.feats])
 
 
 class TfPCA():
@@ -368,7 +354,7 @@ class LiwcCategories():
         """Initialize empty class variables."""
         self.name = 'liwc'
         self.feats = {}
-        self.instances = None
+        self.instances = []
 
     def close_fit(self):
         """Placeholder for close fit."""
@@ -382,10 +368,7 @@ class LiwcCategories():
     def transform(self, _, frog):
         """Count the raw frequencies for the liwc words."""
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        Featurizer.empty_inst(self, self.feats)
-        self.instances = np.append(self.instances,
-                                   [[liwc_dict[f] for f in self.feats]],
-                                   axis=0)
+        self.instances.append([liwc_dict[f] for f in self.feats])
 
 
 class SentimentFeatures():
@@ -409,7 +392,7 @@ class SentimentFeatures():
         self.name = 'sentiment'
         self.lexiconDict = pickle.load(open('./profl/data/' +
                                             'sentilexicons.cpickle', 'rb'))
-        self.instances = None
+        self.instances = []
 
     def close_fit(self):
         """Placeholder for close fit."""
@@ -451,9 +434,7 @@ class SentimentFeatures():
 
     def transform(self, _, frog):
         """Get the sentiment belonging to the words in the frog string."""
-        Featurizer.empty_inst(self, '1')
-        self.instances = np.append(self.instances,
-                                   [[self.calculate_sentiment(frog)]], axis=0)
+        self.instances.append([self.calculate_sentiment(frog)])
 
 
 class SimpleStats:
@@ -532,15 +513,15 @@ class SimpleStats:
         """Initialize all parameters to extract simple stats."""
         self.name = 'simple_stats'
         self.feats = None
-        self.instances = None
+        self.instances = []
         self.regex_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]' if not \
                           regex_punc else regex_punc
         self.regex_word = r'^[a-zA-Z\-0-9]*[a-zA-Z][a-zA-Z\-0-9]*$' if not \
                           regex_word else regex_word
         self.regex_caps = r'^[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$' if not \
                           regex_caps else regex_caps
-        self.text = text
-        self.token = token
+        self.text = set(text)
+        self.token = set(token)
         self.sentence_length = sentence_length
 
     def close_fit(self):
@@ -643,11 +624,11 @@ class SimpleStats:
         """Include features that are based on the raw text."""
         vector = []
         text = self.preprocess(text)
-        if any(['flood', 'all']) in self.text:
+        if self.text.intersection(set(['flood', 'all'])):
             vector.extend(self.flooding_stats(text))
-        if any(['char', 'all']) in self.text:
+        if self.text.intersection(set(['char', 'all'])):
             vector.extend(self.char_type_stats(text))
-        if any(['emo', 'all']) in self.text:
+        if self.text.intersection(set(['emo', 'all'])):
             vector.append(self.num_emoticons(text))
         return vector
 
@@ -655,17 +636,17 @@ class SimpleStats:
         """Include features that are based on certain tokens."""
         vector = []
         words = self.get_words(tokens)
-        if any(['wlen', 'all']) in self.token:
+        if self.text.intersection(set(['wlen', 'all'])):
             vector.append(self.avg_word_len(words))
-        if any(['capw', 'all']) in self.token:
+        if self.text.intersection(set(['capw', 'all'])):
             vector.append(self.num_allcaps_words(words))
-        if any(['scapw', 'all']) in self.token:
+        if self.text.intersection(set(['scapw', 'all'])):
             vector.append(self.num_startcap_words(words))
-        if any(['urls', 'all']) in self.token:
+        if self.text.intersection(set(['urls', 'all'])):
             vector.append(self.num_urls(tokens))
-        if any(['photo', 'all']) in self.token:
+        if self.text.intersection(set(['photo', 'all'])):
             vector.append(self.num_photos(tokens))
-        if any(['vid', 'all']) in self.token:
+        if self.text.intersection(set(['vid', 'all'])):
             vector.append(self.num_videos(tokens))
         return vector
 
@@ -683,5 +664,6 @@ class SimpleStats:
         if self.sentence_length:
             fts += [self.avg_sent_length(
                 [f[3] for f in frog if len(frog) > 3])]
-        Featurizer.empty_inst(self, fts)
-        self.instances = np.append(self.instances, [fts], axis=0)
+        if len(self.instances) is 0:
+            print(fts)
+        self.instances.append(fts)

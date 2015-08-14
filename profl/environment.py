@@ -10,6 +10,7 @@ back in again to test on new data.
 from .datareader import Datareader
 from .featurizer import Featurizer, Ngrams
 from os import path
+from types import MethodType
 
 # Author:       Chris Emmery
 # Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
@@ -65,7 +66,7 @@ class Profiler:
         self.model = None
 
     def load(self, data=['./profl/data/test3.csv'], proc=None,
-             max_n=None, skip=False, shuffle=True, rnd_seed=666,
+             max_n=None, skip=range(0, 0), shuffle=True, rnd_seed=666,
              target_label='age', meta=[]):
         r"""
         Wrapper for the data loader.
@@ -160,8 +161,12 @@ class Profiler:
             Featurizer helper class instances and parameters found in
             featurizer.py.
         """
+        print("Starting fitting ...")
+        if type(loader) == MethodType:
+            loader = loader()
         self.featurizer = Featurizer(features)
-        self.featurizer.fit(loader())
+        self.featurizer.fit(loader)
+        print("done!")
 
     def transform(self, loader):
         """
@@ -181,17 +186,20 @@ class Profiler:
         labels : list of shape [n_labels]
             List of labels for data instances.
         """
+        print("Starting transforming ...")
+        if type(loader) == MethodType:
+            loader = loader()
         if not self.featurizer:
             raise EnvironmentError("Data is not fitted yet.")
-        space = self.featurizer.transform(loader())
+        space = self.featurizer.transform(loader)
         labels = self.featurizer.labels
+        print("done!")
         return space, labels
 
     def fit_transform(self, loader, features=Ngrams()):
         """Shorthand for fit and transform methods."""
-        self.fit(loader, features)
-        space = self.featurizer.transform(loader)
-        labels = self.featurizer.labels
+        self.fit(loader(), features)
+        space, labels = self.transform(loader())
         return space, labels
 
     def train(self, model, space, labels):
