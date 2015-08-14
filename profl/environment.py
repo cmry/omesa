@@ -66,7 +66,7 @@ class Profiler:
         self.model = None
 
     def load(self, data=['./profl/data/test3.csv'], proc=None,
-             max_n=None, skip=(0, 0), shuffle=True, rnd_seed=666,
+             max_n=None, skip=range(0, 0), shuffle=True, rnd_seed=666,
              target_label='age', meta=[]):
         r"""
         Wrapper for the data loader.
@@ -163,7 +163,7 @@ class Profiler:
         """
         print("Starting fitting ...")
         if type(loader) == MethodType:
-            loader = loader
+            loader = loader()
         self.featurizer = Featurizer(features)
         self.featurizer.fit(loader)
         print("done!")

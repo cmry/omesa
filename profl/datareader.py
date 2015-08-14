@@ -111,7 +111,7 @@ class Datareader:
     the pipeline to public.
     """
 
-    def __init__(self, data, proc='both', max_n=None, skip=False,
+    def __init__(self, data, proc='both', max_n=None, skip=range(0, 0),
                  shuffle=True, rnd_seed=666, label='age', meta=[]):
         """Initialize the reader with restrictive parameters."""
         self.file_list = data
@@ -248,7 +248,10 @@ class Datareader:
             meta_data += [filename]
         meta_data += [line[self.headers.index(x)] for x in self.meta]
         try:
-            head = self.headers.index('frog')  # bugs out to frogs?
+            if 'frog' in self.headers:
+                head = self.headers.index('frog')  # bugs out to frogs?
+            else:
+                head = self.headers.index('frogs')
             frog_data = frog.decode_frogstring_train(line[head])
         except ValueError:
             frog_data = []
