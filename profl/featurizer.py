@@ -111,6 +111,8 @@ class Featurizer:
                 else:
                     func(helper, raw, frog)
             if func == self._func_transform:
+                if not self.labels:
+                    print("sample:", label, raw)
                 self.labels.append(label)
                 for meta_inst in meta:
                     self.metaf[meta.index(meta_inst)].append(meta_inst)
@@ -222,7 +224,10 @@ class Ngrams:
         for n in self.n_list:
             dct.update(Counter([self.level+"-"+"_".join(item) for item
                                 in self._find_ngrams(needle, n)]))
-        self.instances.append([dct.get(f, 0) for f in self.feats])
+        inst = [dct.get(f, 0) for f in self.feats]
+        if len(self.instances) is 0:
+            print(self.level, "ngram:", np.asarray(inst))
+        self.instances.append(inst)
 
 
 class FuncWords:
@@ -284,7 +289,10 @@ class FuncWords:
     def transform(self, _, frog):
         """Extract frequencies for fitted function word possibilites."""
         func_dict = self.func_freq(frog)
-        self.instances.append([func_dict.get(f, 0) for f in self.feats])
+        inst = [func_dict.get(f, 0) for f in self.feats]
+        if len(self.instances) is 0:
+            print("func:", inst)
+        self.instances.append(inst)
 
 
 class TfPCA():
@@ -368,7 +376,10 @@ class LiwcCategories():
     def transform(self, _, frog):
         """Count the raw frequencies for the liwc words."""
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        self.instances.append([liwc_dict[f] for f in self.feats])
+        inst = [liwc_dict[f] for f in self.feats]
+        if len(self.instances) is 0:
+            print("liwc:", inst)
+        self.instances.append(inst)
 
 
 class SentimentFeatures():
@@ -434,7 +445,10 @@ class SentimentFeatures():
 
     def transform(self, _, frog):
         """Get the sentiment belonging to the words in the frog string."""
-        self.instances.append([self.calculate_sentiment(frog)])
+        inst = [self.calculate_sentiment(frog)]
+        if len(self.instances) is 0:
+            print("sentiment:", inst)
+        self.instances.append(inst)
 
 
 class SimpleStats:
@@ -636,17 +650,17 @@ class SimpleStats:
         """Include features that are based on certain tokens."""
         vector = []
         words = self.get_words(tokens)
-        if self.text.intersection(set(['wlen', 'all'])):
+        if self.token.intersection(set(['wlen', 'all'])):
             vector.append(self.avg_word_len(words))
-        if self.text.intersection(set(['capw', 'all'])):
+        if self.token.intersection(set(['capw', 'all'])):
             vector.append(self.num_allcaps_words(words))
-        if self.text.intersection(set(['scapw', 'all'])):
+        if self.token.intersection(set(['scapw', 'all'])):
             vector.append(self.num_startcap_words(words))
-        if self.text.intersection(set(['urls', 'all'])):
+        if self.token.intersection(set(['urls', 'all'])):
             vector.append(self.num_urls(tokens))
-        if self.text.intersection(set(['photo', 'all'])):
+        if self.token.intersection(set(['photo', 'all'])):
             vector.append(self.num_photos(tokens))
-        if self.text.intersection(set(['vid', 'all'])):
+        if self.token.intersection(set(['vid', 'all'])):
             vector.append(self.num_videos(tokens))
         return vector
 

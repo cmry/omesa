@@ -1,4 +1,4 @@
-import frog
+# import frog
 
 
 def decode_frogstring_train(frogstring):
@@ -46,6 +46,7 @@ def process_raw_text(text):
         are present in the Amica csv-files, as well as the text and
         frogged column.
     """
+    import frog
     # initialize list
     # instance = [False] * 9  # empty fields
     # instance.append(text)
