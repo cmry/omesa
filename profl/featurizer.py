@@ -111,8 +111,6 @@ class Featurizer:
                 else:
                     func(helper, raw, frog)
             if func == self._func_transform:
-                if not self.labels:
-                    print("sample:", label, raw)
                 self.labels.append(label)
                 for meta_inst in meta:
                     self.metaf[meta.index(meta_inst)].append(meta_inst)
@@ -128,7 +126,7 @@ class Featurizer:
                 if helper.name in self.space_based:
                     helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
-                helper.instances = None
+                helper.instances = []
         for value in self.metaf.values():
             submatrices.append(
                 np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))
@@ -190,6 +188,13 @@ class Ngrams:
         self.level = level
         self.i = 0 if level == 'token' else 2
 
+    def __str__(self):
+        return """
+        feature:   %s
+        n_list:    %s
+        max_feat:  %s
+        """ % (self.name, self.n_list, self.max_feats)
+
     def _find_ngrams(self, input_list, n):
         """Magic n-gram function.
 
@@ -225,8 +230,6 @@ class Ngrams:
             dct.update(Counter([self.level+"-"+"_".join(item) for item
                                 in self._find_ngrams(needle, n)]))
         inst = [dct.get(f, 0) for f in self.feats]
-        if len(self.instances) is 0:
-            print(self.level, "ngram:", np.asarray(inst))
         self.instances.append(inst)
 
 
@@ -280,7 +283,7 @@ class FuncWords:
 
     def close_fit(self):
         """Get function words from Counter."""
-        self.feats = self.feats.keys()
+        self.feats = [k for k in self.feats.keys()]
 
     def fit(self, _, frog):
         """Fit possible function words."""
@@ -290,8 +293,6 @@ class FuncWords:
         """Extract frequencies for fitted function word possibilites."""
         func_dict = self.func_freq(frog)
         inst = [func_dict.get(f, 0) for f in self.feats]
-        if len(self.instances) is 0:
-            print("func:", inst)
         self.instances.append(inst)
 
 
@@ -370,15 +371,13 @@ class LiwcCategories():
 
     def fit(self, _, frog):
         """Fit by extracting keys from liwc dict."""
-        self.feats = liwc.liwc_nl_dict.keys()
+        self.feats = [k for k in liwc.liwc_nl_dict.keys()]
         return self
 
     def transform(self, _, frog):
         """Count the raw frequencies for the liwc words."""
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
         inst = [liwc_dict[f] for f in self.feats]
-        if len(self.instances) is 0:
-            print("liwc:", inst)
         self.instances.append(inst)
 
 
@@ -404,6 +403,11 @@ class SentimentFeatures():
         self.lexiconDict = pickle.load(open('./profl/data/' +
                                             'sentilexicons.cpickle', 'rb'))
         self.instances = []
+
+    def __str__(self):
+        return """
+        feature:   %s
+        """ % (self.name)
 
     def close_fit(self):
         """Placeholder for close fit."""
@@ -446,8 +450,6 @@ class SentimentFeatures():
     def transform(self, _, frog):
         """Get the sentiment belonging to the words in the frog string."""
         inst = [self.calculate_sentiment(frog)]
-        if len(self.instances) is 0:
-            print("sentiment:", inst)
         self.instances.append(inst)
 
 
@@ -678,6 +680,4 @@ class SimpleStats:
         if self.sentence_length:
             fts += [self.avg_sent_length(
                 [f[3] for f in frog if len(frog) > 3])]
-        if len(self.instances) is 0:
-            print(fts)
         self.instances.append(fts)

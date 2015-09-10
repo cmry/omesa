@@ -6,8 +6,9 @@ label conversion.
 import random as rnd
 import sys
 import csv
+from os import path
 
-from .utils import frog
+from .utils import frogger as frog
 
 # Author:       Chris Emmery
 # Co-author:    Florian Kunneman
@@ -111,9 +112,10 @@ class Datareader:
     the pipeline to public.
     """
 
-    def __init__(self, data, proc='both', max_n=None, skip=range(0, 0),
+    def __init__(self, backb, data, proc='both', max_n=None, skip=range(0, 0),
                  shuffle=True, rnd_seed=666, label='age', meta=[]):
         """Initialize the reader with restrictive parameters."""
+        self.backbone = backb
         self.file_list = data
         self.proc = proc
         self.max_n = max_n+1 if max_n else None  # due to offset
@@ -126,7 +128,7 @@ class Datareader:
                        frog".split()
         self.meta = meta
         self.datasets = {}
-
+        self.i = 0
         rnd.seed(self.rnd_seed)
 
     def load(self):
@@ -179,11 +181,15 @@ class Datareader:
             The converted label.
         """
         if self.label == 'age':
-            age = {range(15):      'child',
-                   range(15, 18):  'teen',
-                   range(18, 21):  'post-teen',
-                   range(21, 26):  'young adult',
+            age = {range(18):      'child',
+                   range(19, 26):  'young adult',
+                   # range(15, 18):  'teen',
+                   # range(18, 24):  'post-teen',
+                   # range(24, 34):  'young adult',
                    range(26, 100): 'adult'}
+            if not self.i:
+                print("\t", "labels:", str(age))
+                self.i = 1
             for r in age.keys():
                 if int(label_field) in r:
                     return age[r]
@@ -228,7 +234,7 @@ class Datareader:
         Parameters
         ----------
         line : list
-            List with .csv frow.
+            List with .csv row.
 
         filename : str
             Directory of a .csv file to be stored as a feature.
@@ -252,7 +258,7 @@ class Datareader:
                 head = self.headers.index('frog')  # bugs out to frogs?
             else:
                 head = self.headers.index('frogs')
-            frog_data = frog.decode_frogstring_train(line[head])
+            frog_data = self.backbone.decode(line[head])
         except ValueError:
             frog_data = []
         row = [label_data, text_data, frog_data, meta_data]
