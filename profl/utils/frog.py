@@ -1,12 +1,11 @@
-import frog
+"""Frog-related methods."""
 
 
 def decode_frogstring_train(frogstring):
-    """
-    Decoder of frogged data in the Amica csv-files
-    =====
-    function to convert frogged lines into a list with tokens as
-    [token, lemma, postag, sentence]
+    """Decoder of frogged data in the Amica csv-files.
+
+    Converts frogged lines into a list with tokens as
+    [token, lemma, postag, sentence].
 
     Parameters
     -----
@@ -26,10 +25,9 @@ def decode_frogstring_train(frogstring):
     return decoded
 
 
-def process_raw_text(text):
-    """
-    Extractor of frog tags
-    =====
+def process_raw_text(text, lmdir):
+    """Extract frog tags.
+
     Function to convert raw text into an instance list with frog column. Can be
     used for processing new inputs in a demo setting. Returns a list with
     values.
@@ -46,12 +44,9 @@ def process_raw_text(text):
         are present in the Amica csv-files, as well as the text and
         frogged column.
     """
-    # initialize list
-    # instance = [False] * 9  # empty fields
-    # instance.append(text)
-    # initialize frog
-    fo = frog.FrogOptions(parser=False)
-    frogger = frog.Frog(fo, "/vol/customopt/uvt-ru/etc/frog/frog-twitter.cfg")
+    import frog
+    fo = frog.FrogOptions(parser=False, ner=False)
+    frogger = frog.Frog(fo, lmdir + "LaMachine/lamachine/etc/frog/frog-twitter.cfg")
     # add frogged text
     data = frogger.process(text)
     tokens = []
@@ -66,8 +61,8 @@ def process_raw_text(text):
 
 def extract_tags(document, tags):
     """
-    Extractor of frog tags
-    =====
+    Extract frog tags.
+
     Function to extract a list of tags from a frogged document. Document is the
     frogged column of a single document. Tags is a list with any of 'token',
     'lemma', 'postag', or 'sentence' (can just be one of them).

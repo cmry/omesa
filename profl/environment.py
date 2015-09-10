@@ -9,8 +9,9 @@ back in again to test on new data.
 
 from .datareader import Datareader
 from .featurizer import Featurizer, Ngrams
+from .processor import Processor
 from os import path
-from types import MethodType
+import pickle
 
 # Author:       Chris Emmery
 # Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
@@ -57,11 +58,13 @@ class Profiler:
     >>> space, labels = env.fit_transform(loader(), features)
     """
 
-    def __init__(self, name):
+    def __init__(self, name, backbone='frog'):
         """Set environment variables."""
         self.name = name
         self.dir = path.dirname(path.realpath(__file__))
         self.reader = None
+        self.hook = backbone
+        self.backbone = Processor(backbone)
         self.featurizer = None
         self.model = None
 
@@ -141,10 +144,13 @@ class Profiler:
         >>> env = profl.Profiler(name='bayes_age_v1')
         >>> loader = env.load(data=data, max_n=2000, target_label='age')
         """
-        self.reader = Datareader(data=data, proc=proc, max_n=max_n, skip=skip,
+        if not self.backbone:
+            self.backbone = Processor(self.hook)
+        self.reader = Datareader(self.backbone, data=data,
+                                 proc=proc, max_n=max_n, skip=skip,
                                  shuffle=shuffle, rnd_seed=rnd_seed,
                                  label=target_label, meta=meta)
-        loader = self.reader.load
+        loader = self.reader.load()
         return loader
 
     def fit(self, loader, features=Ngrams()):
@@ -162,8 +168,6 @@ class Profiler:
             featurizer.py.
         """
         print("Starting fitting ...")
-        if type(loader) == MethodType:
-            loader = loader()
         self.featurizer = Featurizer(features)
         self.featurizer.fit(loader)
         print("done!")
@@ -187,8 +191,6 @@ class Profiler:
             List of labels for data instances.
         """
         print("Starting transforming ...")
-        if type(loader) == MethodType:
-            loader = loader()
         if not self.featurizer:
             raise EnvironmentError("Data is not fitted yet.")
         space = self.featurizer.transform(loader)
@@ -198,8 +200,8 @@ class Profiler:
 
     def fit_transform(self, loader, features=Ngrams()):
         """Shorthand for fit and transform methods."""
-        self.fit(loader(), features)
-        space, labels = self.transform(loader())
+        self.fit(loader, features)
+        space, labels = self.transform(loader)
         return space, labels
 
     def train(self, model, space, labels):
@@ -213,3 +215,17 @@ class Profiler:
             raise EnvironmentError("There is no trained model to test.")
         res = self.model.predict(space)
         return res
+
+    def classify(self, text):
+        """Small wrapper to quickly transform and predict a text instance."""
+        if not self.backbone:
+            self.backbone = Processor(self.hook)
+        v = [('', text, self.backbone.parse(text), '')]
+        x, _ = self.transform(v)
+        print(self.model.predict(x))
+
+    def save(self):
+        """Save the environment to a folder in model."""
+        self.backbone = None
+        file_loc = self.dir + '/models/' + self.name + '.pickle'
+        pickle.dump(self, open(file_loc, 'wb'))

@@ -126,7 +126,7 @@ class Featurizer:
                 if helper.name in self.space_based:
                     helper.transform(self.X, self.Y)
                 submatrices.append(helper.instances)
-                helper.instances = None
+                helper.instances = []
         for value in self.metaf.values():
             submatrices.append(
                 np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))
@@ -188,6 +188,13 @@ class Ngrams:
         self.level = level
         self.i = 0 if level == 'token' else 2
 
+    def __str__(self):
+        return """
+        feature:   %s
+        n_list:    %s
+        max_feat:  %s
+        """ % (self.name, self.n_list, self.max_feats)
+
     def _find_ngrams(self, input_list, n):
         """Magic n-gram function.
 
@@ -222,7 +229,8 @@ class Ngrams:
         for n in self.n_list:
             dct.update(Counter([self.level+"-"+"_".join(item) for item
                                 in self._find_ngrams(needle, n)]))
-        self.instances.append([dct.get(f, 0) for f in self.feats])
+        inst = [dct.get(f, 0) for f in self.feats]
+        self.instances.append(inst)
 
 
 class FuncWords:
@@ -275,7 +283,7 @@ class FuncWords:
 
     def close_fit(self):
         """Get function words from Counter."""
-        self.feats = self.feats.keys()
+        self.feats = [k for k in self.feats.keys()]
 
     def fit(self, _, frog):
         """Fit possible function words."""
@@ -284,7 +292,8 @@ class FuncWords:
     def transform(self, _, frog):
         """Extract frequencies for fitted function word possibilites."""
         func_dict = self.func_freq(frog)
-        self.instances.append([func_dict.get(f, 0) for f in self.feats])
+        inst = [func_dict.get(f, 0) for f in self.feats]
+        self.instances.append(inst)
 
 
 class TfPCA():
@@ -362,13 +371,14 @@ class LiwcCategories():
 
     def fit(self, _, frog):
         """Fit by extracting keys from liwc dict."""
-        self.feats = liwc.liwc_nl_dict.keys()
+        self.feats = [k for k in liwc.liwc_nl_dict.keys()]
         return self
 
     def transform(self, _, frog):
         """Count the raw frequencies for the liwc words."""
         liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        self.instances.append([liwc_dict[f] for f in self.feats])
+        inst = [liwc_dict[f] for f in self.feats]
+        self.instances.append(inst)
 
 
 class SentimentFeatures():
@@ -393,6 +403,11 @@ class SentimentFeatures():
         self.lexiconDict = pickle.load(open('./profl/data/' +
                                             'sentilexicons.cpickle', 'rb'))
         self.instances = []
+
+    def __str__(self):
+        return """
+        feature:   %s
+        """ % (self.name)
 
     def close_fit(self):
         """Placeholder for close fit."""
@@ -434,7 +449,8 @@ class SentimentFeatures():
 
     def transform(self, _, frog):
         """Get the sentiment belonging to the words in the frog string."""
-        self.instances.append([self.calculate_sentiment(frog)])
+        inst = [self.calculate_sentiment(frog)]
+        self.instances.append(inst)
 
 
 class SimpleStats:
@@ -636,17 +652,17 @@ class SimpleStats:
         """Include features that are based on certain tokens."""
         vector = []
         words = self.get_words(tokens)
-        if self.text.intersection(set(['wlen', 'all'])):
+        if self.token.intersection(set(['wlen', 'all'])):
             vector.append(self.avg_word_len(words))
-        if self.text.intersection(set(['capw', 'all'])):
+        if self.token.intersection(set(['capw', 'all'])):
             vector.append(self.num_allcaps_words(words))
-        if self.text.intersection(set(['scapw', 'all'])):
+        if self.token.intersection(set(['scapw', 'all'])):
             vector.append(self.num_startcap_words(words))
-        if self.text.intersection(set(['urls', 'all'])):
+        if self.token.intersection(set(['urls', 'all'])):
             vector.append(self.num_urls(tokens))
-        if self.text.intersection(set(['photo', 'all'])):
+        if self.token.intersection(set(['photo', 'all'])):
             vector.append(self.num_photos(tokens))
-        if self.text.intersection(set(['vid', 'all'])):
+        if self.token.intersection(set(['vid', 'all'])):
             vector.append(self.num_videos(tokens))
         return vector
 
@@ -664,6 +680,4 @@ class SimpleStats:
         if self.sentence_length:
             fts += [self.avg_sent_length(
                 [f[3] for f in frog if len(frog) > 3])]
-        if len(self.instances) is 0:
-            print(fts)
         self.instances.append(fts)
