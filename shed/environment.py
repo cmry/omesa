@@ -20,10 +20,10 @@ import pickle
 # pylint:       disable=E1103
 
 
-class Profiler:
+class Pipeline:
 
     """
-    Starts the profiling environment and initiates its namespace.
+    Starts the pipeline environment and initiates its namespace.
 
     Parameters
     ----------
@@ -70,7 +70,7 @@ class Profiler:
 
     def load(self, data=['./profl/data/test3.csv'], proc=None,
              max_n=None, skip=range(0, 0), shuffle=True, rnd_seed=666,
-             target_label='age', meta=[]):
+             target_label='dummylabel', meta=[]):
         r"""
         Wrapper for the data loader.
 
@@ -216,13 +216,15 @@ class Profiler:
         res = self.model.predict(space)
         return res
 
-    def classify(self, text):
+    def classify(self, text, backbone):
         """Small wrapper to quickly transform and predict a text instance."""
-        if not self.backbone:
-            self.backbone = Processor(self.hook)
+        if not self.backbone and not backbone:
+            self.backbone = Processor(self.hook, wake=True)
+        elif backbone:
+            self.backbone = backbone
         v = [('', text, self.backbone.parse(text), '')]
         x, _ = self.transform(v)
-        print(self.model.predict(x))
+        return (self.model.predict(x), self.model.predict_proba(x))
 
     def save(self):
         """Save the environment to a folder in model."""

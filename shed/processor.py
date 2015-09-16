@@ -5,13 +5,16 @@ from imp import reload
 
 class Processor:
 
-    def __init__(self, backbone):
-        self.config = {'frog': Frog(path.dirname(path.realpath(__file__)) +
-                                    '/../../'),
-                       'misc': NotImplemented,
-		       'none': None}
+    def __init__(self, backbone, wake=False):
+        if backbone == 'frog' or (backbone == 'sleepfrog' and wake):
+            self.backbone = Frog(path.dirname(path.realpath(__file__)) +
+                                 '/../../')
+        elif backbone == 'sleepfrog':
+            self.backbone = Frog(path.dirname(path.realpath(__file__)) +
+                                 '/../../', sleep=True)
+        else:
+            self.backbone = None
         self.hook = backbone
-        self.backbone = self.config[backbone]
 
     def parse(self, text):
         return self.backbone.parse(text)
@@ -22,14 +25,15 @@ class Processor:
 
 class Frog:
 
-    def __init__(self, lmdir):
+    def __init__(self, lmdir, sleep=False):
         """
 
         """
-        import frog
-        fo = frog.FrogOptions(parser=False, ner=False)
-        self.frogger = frog.Frog(fo, lmdir + "LaMachine/lamachine/etc/frog/" +
-                                 "frog-twitter.cfg")
+        if not sleep:
+            import frog
+            fo = frog.FrogOptions(parser=False, ner=False)
+            self.frogger = frog.Frog(fo, lmdir + "LaMachine/lamachine/etc/frog/" +
+                                     "frog-twitter.cfg")
 
     def decode(self, frogstring):
         """Decoder of frogged data in the Amica csv-files.
