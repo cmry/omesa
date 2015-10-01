@@ -36,7 +36,7 @@ class Frog:
                                      "frog-twitter.cfg")
 
     def decode(self, frogstring):
-        """Decoder of frogged data in the Amica csv-files.
+        """Decoder of frogged data in the shed csv-files.
 
         Converts frogged lines into a list with tokens as
         [token, lemma, postag, sentence].
@@ -74,7 +74,7 @@ class Frog:
         -----
         instance : list
             The 'row' of one instance, containing all metadata fields that
-            are present in the Amica csv-files, as well as the text and
+            are present in the shed csv-files, as well as the text and
             frogged column.
         """
         # add frogged text

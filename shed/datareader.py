@@ -78,7 +78,7 @@ class Datareader:
 
     headers : list
         List of headers / labels if they were found present in the
-        datasets. If not, standard AMiCA list is provided. Might
+        datasets. If not, standard list is provided. Might
         introduce bugs.
 
     Examples

@@ -1,12 +1,8 @@
 """
 The Main Thing.
 
-profl is currently used to conduct Author Profiling experiments. This text
-mining task usually relies on custom language features. Constructing these
-by hand can be a time-consuming task. Therefore, this module aims to make
-loading and featurizing existing, as well as new data a bit easier. It is
-specifically intended for Dutch, but just replacing the Frog module with an
-language-specific tagger (from NLTK for example) would make it broadly usable.
+shed is a framework that makes standard text mining research protocols less
+script heavy.
 
 Examples
 --------
@@ -14,23 +10,23 @@ Say that we are starting session in which we would like to train on some
 data. We need a config name, a list of data, and what kind of features we
 whish to extract from for this.
 
-    >>> import profl
+    >>> import shed
     >>> from os import getcwd
 
     >>> data = [getcwd()+'/data/data.csv', getcwd()+'/data/data2.csv']
 
-    >>> from profl.featurizer import *
+    >>> from shed.featurizer import *
     >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-    >>> env = profl.Profiler(name='bayes_age_v1')
+    >>> env = shed.Pipeline(name='bayes_age_v1')
     >>> loader = env.load(data=data, target_label='age')
     >>> space, labels = env.fit_transform(loader, features)
 
 The `env` config `name` will make sure that whatever model we store can be
 retrieved under the same name with exactly the same configuration, without
 having to re-load data and featurizers on it. Therefore, every parameter is
-optional except for the `name`, and the make function will always return an
-AMiCA configuation class object. After, the object can be either trained,
+optional except for the `name`, and the make function will always return a
+shed configuation class object. After, the object can be either trained,
 tested or dumped. If your config is a new one, env.model should return
 None. Training will just consist of either calling a classifier and its
 parameters, or providing one from another module (currently only sklearn).
@@ -68,7 +64,7 @@ pickle object:
 Later, it should be retrievable as a classifier with the make function:
 
     >>> query = 'this is some text that we received as input'
-    >>> env = profl.Env('bayes_age_v1')
+    >>> env = shed.Pipline('bayes_age_v1')
     >>> model.predict(list(query))
     age = 21-100, confidence = 9001%
 
@@ -82,7 +78,7 @@ Chris
 
 """
 
-from .environment import Profiler
+from .environment import Pipeline
 
 __author__ = 'Chris Emmery'
 __contrb__ = 'Mike Kestemont, Ben Verhoeven, Florian Kunneman,' \

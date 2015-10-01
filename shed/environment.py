@@ -14,16 +14,16 @@ from os import path
 import pickle
 
 # Author:       Chris Emmery
-# Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
+# Contributors: Mike Kestemont, Florian Kunneman, Ben Verhoeven,
 #               Janneke van de Loo
 # License:      BSD 3-Clause
 # pylint:       disable=E1103
 
 
-class Profiler:
+class Pipeline:
 
     """
-    Starts the profiling environment and initiates its namespace.
+    Starts the framework's environment and initiates its namespace.
 
     Parameters
     ----------
@@ -45,15 +45,15 @@ class Profiler:
     Examples
     --------
     Typical experiment:
-    >>> import profl
+    >>> import shed
     >>> from os import getcwd
 
     >>> data = [getcwd()+'/data/data.csv', getcwd()+'/data/data2.csv']
 
-    >>> from profl.featurizer import *
+    >>> from shed.featurizer import *
     >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-    >>> env = profl.Profiler(name='bayes_age_v1')
+    >>> env = shed.Pipeline(name='bayes_age_v1')
     >>> loader = env.load(data=data, target_label='age')
     >>> space, labels = env.fit_transform(loader(), features)
     """
@@ -68,7 +68,7 @@ class Profiler:
         self.featurizer = None
         self.model = None
 
-    def load(self, data=['./profl/data/test3.csv'], proc=None,
+    def load(self, data=['./shed/data/test3.csv'], proc=None,
              max_n=None, skip=range(0, 0), shuffle=True, rnd_seed=666,
              target_label='age', meta=[]):
         r"""
@@ -133,15 +133,15 @@ class Profiler:
         Examples
         --------
         Loading some data:
-        >>> import profl
+        >>> import shed
         >>> from os import getcwd
 
         >>> data = [getcwd()+'/data/data.csv', getcwd()+'/data/data2.csv']
 
-        >>> from profl.featurizer import *
+        >>> from shed.featurizer import *
         >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-        >>> env = profl.Profiler(name='bayes_age_v1')
+        >>> env = shed.Pipeline(name='bayes_age_v1')
         >>> loader = env.load(data=data, max_n=2000, target_label='age')
         """
         if not self.backbone:

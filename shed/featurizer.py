@@ -2,7 +2,7 @@
 
 This module contains several helper classes for extracting textual features
 used in Text Mining applications, partly based on instances parsed with Frog.
-It also includes a wrapper class to cleverly hanlde this within the profl
+It also includes a wrapper class to cleverly hanlde this within the shed
 environment.
 
 """
@@ -412,7 +412,7 @@ class SentimentFeatures():
     def __init__(self):
         """Load the sentiment lexicon."""
         self.name = 'sentiment'
-        self.lexiconDict = pickle.load(open('./profl/data/' +
+        self.lexiconDict = pickle.load(open('./shed/data/' +
                                             'sentilexicons.cpickle', 'rb'))
         self.instances = []
 
