@@ -82,9 +82,9 @@ Chris
 
 """
 
-from .environment import Pipeline
+from .environment import Profiler
 
 __author__ = 'Chris Emmery'
-__contrb__ = 'Mike Kestemont, Florian Kunneman, Ben Verhoeven' \
+__contrb__ = 'Mike Kestemont, Ben Verhoeven, Florian Kunneman,' \
              'Janneke van de Loo'
 __license__ = 'BSD 3-Clause'

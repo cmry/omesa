@@ -178,12 +178,15 @@ class Ngrams:
     Refactoring: Chris Emmery
     """
 
-    def __init__(self, level='token', n_list=[2], max_feats=None):
+    def __init__(self, level='token', n_list=[2], relative=False, cutoff=0,
+                 max_feats=None):
         """Set parameters for N-gram extraction."""
         self.name = level+'_ngram'
         self.feats = {}
         self.instances = []
         self.n_list = n_list
+        self.cutoff = cutoff
+        self.relative = relative
         self.max_feats = max_feats
         self.level = level
         self.i = 0 if level == 'token' else 2
@@ -210,25 +213,34 @@ class Ngrams:
         self.feats = [i for i, _ in sorted(self.feats.items(), reverse=True,
                       key=operator.itemgetter(1))][:self.max_feats]
 
-    def fit(self, raw, frog):
-        """Find the possible grams in the provided instance."""
+    def fit_ngram(self, d, raw, frog):
         inst = raw if self.level == 'char' else frog
         needle = list(inst) if self.level == 'char' \
             else [x[self.i] for x in inst]
         for n in self.n_list:
-            self.feats.update(
+            d.update(
                 Counter([self.level+"-"+"_".join(item) for
                          item in self._find_ngrams(needle, n)]))
+        return d
 
-    def transform(self, raw_data, frog_data):
+
+    def fit(self, raw, frog):
+        """Find the possible grams in the provided instance."""
+        self.fit_ngram(self.feats, raw, frog)
+
+    def transform(self, raw, frog):
         """Given a set of strings, look up the fitted gram frequencies."""
-        inst = raw_data if self.level == 'char' else frog_data
-        dct = {}
-        needle = list(inst) if self.level == 'char' \
-            else [x[self.i] for x in inst]
-        for n in self.n_list:
-            dct.update(Counter([self.level+"-"+"_".join(item) for item
-                                in self._find_ngrams(needle, n)]))
+        dct, inst = {}, []
+        dct = self.fit_ngram(dct, raw, frog)  # fit possible new grams
+        # for f in self.feats:
+        #     c = dct.get(f, 0)
+        #     if self.cutoff:
+        #         inst.append(0 if c != 0 and dct[f] >= self.cutoff else c)
+        #     else:
+        #         inst.append(c)
+        # s = np.sum(inst)
+        # if self.relative and s > 0:
+        #     inst = [x / s for x in inst]
         inst = [dct.get(f, 0) for f in self.feats]
         self.instances.append(inst)
 
@@ -681,3 +693,119 @@ class SimpleStats:
             fts += [self.avg_sent_length(
                 [f[3] for f in frog if len(frog) > 3])]
         self.instances.append(fts)
+
+import re
+from numpy import mean
+
+class TGedu:
+
+    """
+    Get education-related features.
+
+    Notes
+    -----
+    Implemented by: Chris Emmery
+    Code by: Tom De Smedt
+    """
+
+    def __init__(self):
+        """Initialize empty class variables."""
+        self.name = 'edu'
+        self.feats = {}
+        self.instances = []
+
+        self.diacritics = \
+            u"àáâãäåąāæçćčςďèéêëēěęģìíîïīłįķļľņñňńйðòóôõöøþřšťùúûüůųýÿўžż"
+
+        self.punctuation = \
+            ".,;:!?()[]{}`''\"@#$^&*+-|=~_"
+
+        self.flooding = \
+            re.compile(r"((.)\2{2,})", re.I) # ooo, xxx, !!!, ...
+
+        self.emoticons = set((
+            '*)', '*-)', '8)', '8-)', '8-D', ":'''(", ":'(", ':(', ':)', ':-(', ':-)',
+            ':-.', ':-/', ':-<', ':-D', ':-O', ':-P', ':-S', ':-[', ':-b', ':-c', ':-o',
+            ':-p', ':-s', ':-|', ':/', ':3', ':>', ':D', ':O', ':P', ':S', ':[', ':\\', ':]',
+            ':^)', ':b', ':c', ':c)', ':o', ':o)', ':p', ':s', ':{', ':|', ':}', ";'(", ';)',
+            ';-)', ';-]', ';D', ';]', ';^)', '<3', '=(', '=)', '=-D', '=/', '=D', '=]', '>.>',
+            '>:)', '>:/', '>:D', '>:P', '>:[', '>:\\', '>:o', '>;]', 'X-D', 'XD', 'o.O', 'o_O',
+            'x-D', 'xD', u'\xb0O\xb0', u'\xb0o\xb0', u'\u2665', u'\u2764', '^_^', '-_-'
+        ))
+
+        self.emoji = set((
+            u'\u263a', u'\u2764\ufe0f', u'\ud83d', u'\U0001f44c', u'\U0001f44d', u'\U0001f47f',
+            u'\U0001f495', u'\U0001f499', u'\U0001f49a', u'\U0001f49b', u'\U0001f49c', u'\U0001f600',
+            u'\U0001f601', u'\U0001f602', u'\U0001f603', u'\U0001f604', u'\U0001f605', u'\U0001f606',
+            u'\U0001f607', u'\U0001f608', u'\U0001f60a', u'\U0001f60b', u'\U0001f60c', u'\U0001f60d',
+            u'\U0001f60e', u'\U0001f60f', u'\U0001f610', u'\U0001f612', u'\U0001f613', u'\U0001f614',
+            u'\U0001f615', u'\U0001f61b', u'\U0001f61c', u'\U0001f61d', u'\U0001f61e', u'\U0001f61f',
+            u'\U0001f620', u'\U0001f621', u'\U0001f622', u'\U0001f625', u'\U0001f626', u'\U0001f627',
+            u'\U0001f629', u'\U0001f62a', u'\U0001f62b', u'\U0001f62c', u'\U0001f62d', u'\U0001f62e',
+            u'\U0001f62f', u'\U0001f633', u'\U0001f636', u'\U0001f63b', u'\U0001f63f', u'\U0001f640', u'\ude09'
+        ))
+
+        self.url = re.compile(r"https?://[^\s]+")           # http://www.textgain.com
+        self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I) # @tom_de_smedt
+
+    def close_fit(self):
+        """Placeholder for close fit."""
+        pass
+
+    def fit(self, bla, _):
+        pass
+
+    def atr_freq(self, attrib, inp):
+        i = 0
+        for x in attrib:
+            if x in inp:
+                i += 1
+        return i
+
+    def transform(self, raw, _):
+        """Add each metric to the feature vector."""
+        S = raw
+        s = raw.lower()
+        a = S.replace("\n", " ")
+        a = a.split(" ")
+        a = [w for w in a if w]
+        n = len(a) or 1
+        m = len(s) or 1
+        v = [
+            mean([len(i) for i in a]),                   # average word length   55%
+            self.flooding.search(s) is None,             # flooding ("cooool")   56%
+            sum(1 for w in a if w.isupper()) / n,        # shouting ("COOL!!")   57%
+            sum(1 for w in a if w == w.capitalize()),    # capitals ("Cool! ")
+            sum(1 for c in S if c.isupper()) / m
+        ]
+        #a = set(a)
+
+        v.append(self.atr_freq(self.punctuation, s))     # punctuation           66%
+        v.append(self.atr_freq(self.diacritics, s))      # diacritics            67%
+        v.append(self.atr_freq(self.emoticons, s))       # emoticons             70%
+        v.append(self.atr_freq(self.emoji, s))
+        # v.append(self.atr_freq((                         # utterances
+        #   "haha", "jaja", "jeje", "xoxo", "hmm"), s))
+        # v.append(self.atr_freq((
+        #   "happy", "love", "sweet", "lol", "lmao",       # sentiment.....        71%
+        #   "thanks", "thx", "merci", "bedankt",           # thanks
+        #   "fuck", "suck", "shit", "nigga",               # curses
+        #   "bitch", "ass", "cunt", "wtf",
+        #   "gvd", "kut", "kak", "rete"), s))
+        # v.append(self.atr_freq((                         # drama                 72%
+        #   "!!!!", "!!!", "!!", "! #",
+        #   "????", "???", "??", "? http"), s))
+        # v.append(self.atr_freq((
+        #   "plz", "pls", u"’", u"’s", "'s", "'l", "n't",  # contractions..........73%
+        #   "aaa", "eee", "iii", "ooo", "ooh", "uuu",      # flooding
+        #   "mmm", "rrr", "sss", "xxx", "xx" , "zzz"), s))
+        # v.append(self.atr_freq((
+        #   "for", "in", "of", "to", "with", "on",         # prepositions          74%
+        #   "i", "me", "you", "my", "we", "our",           # pronouns
+        #   "ich", "ik", "je", "tu", "io", "yo", "eu",
+        #   "is", "[...]", "i.e.", "e.g.", "cfr", "p."), s))
+
+        # s = self.ref.sub("@", s)
+        # s = self.url.sub("http://", s)
+        # s = s.replace("#", "")
+        self.instances.append(v)

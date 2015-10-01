@@ -110,19 +110,20 @@ class Datareader:
     the pipeline to public.
     """
 
-    # TODO: remember settings for load
-    def __init__(self, backb, data, proc, max_n, skip,
-                 shuffle, rnd_seed, label, meta):
+    def __init__(self, backb, data, proc='both', max_n=None, skip=range(0, 0),
+                 shuffle=True, rnd_seed=666, label='age', meta=[]):
         """Initialize the reader with restrictive parameters."""
         self.backbone = backb
         self.file_list = data
         self.proc = proc
-        self.max_n = max_n + 1 if max_n else None  # due to offset
+        self.max_n = max_n+1 if max_n else None  # due to offset
         self.skip = skip
         self.shuffle = shuffle
         self.rnd_seed = rnd_seed
         self.label = label
-        self.headers = ""
+        self.headers = "user_id age gender loc_country loc_region \
+                       loc_city education pers_big5 pers_mbti text \
+                       frog".split()
         self.meta = meta
         self.datasets = {}
         self.i = 0
@@ -257,7 +258,7 @@ class Datareader:
                 head = self.headers.index('frogs')
             frog_data = self.backbone.decode(line[head])
         except ValueError:
-            frog_data = self.backbone.parse(text_data)
+            frog_data = []
         row = [label_data, text_data, frog_data, meta_data]
         return row
 
@@ -300,5 +301,3 @@ class Datareader:
                         row = self._extract_row(line, filename)
                         if row[0]:  # if label
                             yield row
-                        else:
-                            print("AA")
