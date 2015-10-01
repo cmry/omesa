@@ -568,6 +568,15 @@ class SimpleStats:
         text = pnet.replace_emoticons(text)
         return text
 
+    def floodings(text):
+        '''
+        Returns a list of tuples (complete_flooding, flooded_item),
+        e.g.('iii', 'i')
+        '''
+        floodings = re.findall(r"((.)\2{2,})", text)
+        floodings = [tup for tup in floodings if tup[0] != '...']
+        return floodings
+
     def only_alph(self, floodings):
         """Include only alphanumeric flooding stats."""
         return [fl for fl in floodings if re.search(r'^[a-zA-Z]+$', fl[1])]

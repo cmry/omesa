@@ -1,9 +1,19 @@
 """Processor methods."""
 
+import re
 from os import path
-from imp import reload
 
-class Processor:
+# Author:       Chris Emmery
+# Co-authors:   Florian Kunneman, Janneke van de Loo
+# License:      BSD 3-Clause
+# pylint:       disable=W0142,F0401
+
+
+class Processor(object):
+
+    """
+    Routes to relevant backbone.
+    """
 
     def __init__(self, backbone, wake=False):
         if backbone == 'frog' or (backbone == 'sleepfrog' and wake):
@@ -17,46 +27,156 @@ class Processor:
         self.hook = backbone
 
     def parse(self, text):
+        """Route to the parse function of the backbone."""
         return self.backbone.parse(text)
 
     def decode(self, proc_format_string):
+        """Route to the decoding function of the backbone."""
         return self.backbone.decode(proc_format_string)
 
 
-class Frog:
+class Preprocessor(object):
 
-    def __init__(self, lmdir, sleep=False):
+    """
+    This is the prerpocessing part.
+    """
+
+    def __init__(self):
+        self.applied = []
+
+    def basic(self, text):
+        text = self.replace_url_email(text)
+        text = self.find_emoticons(text)
+        text = self.replace_bbcode_tags(text)
+        return text
+
+    def replace_bbcode_tags(self, text):
         """
+        Replace BBCode tags
+        ===================
+        Replace all tags with [], which are included in the Netlog data,
+        with a tag consisting of capital letters surrounded by underscores.
+        Typography tags such as [b], [/b], [u], [/u], [i], [/i] (for bold,
+        underlined and italics) are removed.
 
-        """
-        if not sleep:
-            import frog
-            fo = frog.FrogOptions(parser=False, ner=False)
-            self.frogger = frog.Frog(fo, lmdir + "LaMachine/lamachine/etc/frog/" +
-                                     "frog-twitter.cfg")
-
-    def decode(self, frogstring):
-        """Decoder of frogged data in the shed csv-files.
-
-        Converts frogged lines into a list with tokens as
-        [token, lemma, postag, sentence].
+        The new tags are:
+        - _PHOTO_, [photo]116157181[/photo]
+        - _VIDEO_, [video]nl-9159440[/video]
+        - _URL_, [url=http://www.adres.be/]Adres[/url] or [/url]
+        - _EMOTICON_, [love], [@hug], [#clap_anim]
 
         Parameters
         -----
-        frogstring : string
-            The frogged data of a single document.
+        text : string
+            Input text.
 
         Returns
         -----
-        decoded : list
-            The frogstring as list of lists.
+        text : string
+            The text in which the Netlog tags with [] have been replaced.
         """
-        lines = frogstring.split("\n")
-        decoded = []
-        for line in lines:
-            # add a tuple with (token,lemma,postag,sentence index)
-            decoded.append(line.split("\t"))
-        return decoded
+        self.applied.append('repl_bbcode')
+
+        url = re.compile(r"(?:\[url=[^\]]+\][^\[]+)?\[\/url\]")
+        photo = re.compile(r"\[photo\][^\]]+\[\/photo\]")
+        video = re.compile(r"\[video\][^\[\]]+\[\/video\]")
+        typo = re.compile(r"\[\/?[biu]\]")  # bold italics etc.
+        emos = re.compile(r"\[[^\[\]]+\]")  # leftovers are probably emots
+
+        text = url.sub('_URL_', text)
+        text = photo.sub('_PHOTO_', text)
+        text = video.sub('_VIDEO_', text)
+        text = typo.sub('', text)
+        text = emos.sub('_EMOTICON_', text)
+        return text
+
+    def replace_url_email(self, text, repl=('_URL_', '_EMAIL_')):
+        """Replace URLs and e-mail addresses.
+
+        Replace URLs with the tag _URL_
+        Replace e-mail addresses with the tag _EMAIL_
+
+        Parameters
+        -----
+        text : string
+            Input text.
+
+        Returns
+        -----
+        text : string
+            The text in which the URLs and e-mail addresses have been replaced.
+        """
+        self.applied.append('repl_url')
+        url = re.compile(r"(?:http[s]?://)www.(?:[a-zA-Z]|[0-9]|[$-_@.&+]|" +
+                         r"[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
+        email = re.compile(r"\S+\@[\w\.\-]+\.\w+")
+        text = re.sub(url, repl[0], text)
+        text = re.sub(email, repl[1], text)
+        return text
+
+    def find_emoticons(self, text, repl="_EMOTICON_"):
+        """Replace or find emoticons in given text.
+
+        Replace emoticons with a replacement string (default="_EMOTICON_").
+
+        Emoticons can be western (and flipped) -- :), :p, :(, o:, x: -- or
+        eastern ^_^.
+
+        Parameters
+        -----
+        text : string
+            Input text.
+
+        repl_str : string, default "_EMOTICON_"
+            String with which emoticons are replaced.
+
+        Returns
+        -----
+        re.sub : string
+            The text with the emoticons replaced by repl.
+        re.findall : list
+            If there is no specified replacement tag, will just return list of
+            emoticons.
+        """
+        if repl:
+            self.applied.append('repl_emoticons')
+        emoticon_string = r"""
+        (?:
+          [<>]?
+          [:;=8xX]                         # eyes L
+          [\-o\*\']?                       # nose L
+          [\)\]\(\[dDpPxXoOsS/\:\}\{@\|\\] # mouth L
+          |
+          [\)\]\(\[dDpPxXoOsS/\:\}\{@\|\\] # mouth R
+          [\-o\*\']?                       # nose R
+          [:;=8xX]                         # eyes R
+          [<>]?
+          |
+          [\~<>]?                          # hands
+          [\(] ?                           # body L
+          [\-Oo~\^]                        # eyes L
+          [\_\-\.]                         # mouth
+          [\-Oo~\^]                        # eyes R
+          [\)] ?                           # body R
+          [\~<>]?                          # hands
+        )"""
+        pat = re.compile(emoticon_string, re.VERBOSE | re.I | re.UNICODE)
+        return re.sub(pat, repl, text) if repl else re.findall(pat, text)
+
+
+class Frog(object):
+
+    """
+    Wrapper to python-frog, loaded from LaMachine.
+    """
+
+    def __init__(self, lmdir, sleep=False):
+        """Starts the frog server if the sleep function isn't on."""
+        if not sleep:
+            import frog
+            opts = frog.FrogOptions(parser=False, ner=False)
+            self.frogger = frog.Frog(opts, lmdir + "LaMachine/lamachine/etc/"
+                                     "frog/frog-twitter.cfg")
 
     def parse(self, text):
         """Extract frog tags.
@@ -79,8 +199,7 @@ class Frog:
         """
         # add frogged text
         data = self.frogger.process(text)
-        tokens = []
-        sentence = -1
+        tokens, sentence = [], -1
         for token in data:
             if token["index"] == '1':
                 sentence += 1
@@ -88,7 +207,27 @@ class Frog:
                            token["pos"], str(sentence)])
         return tokens
 
-    def extract_tags(self, document, tags):
+    @staticmethod
+    def decode(frogstring):
+        """Decoder of frogged data in the shed csv-files.
+
+        Converts frogged lines into a list with tokens as
+        [token, lemma, postag, sentence].
+
+        Parameters
+        -----
+        frogstring : string
+            The frogged data of a single document.
+
+        Returns
+        -----
+        decoded : list
+            The frogstring as list of lists.
+        """
+        return [line.split("\n") for line in frogstring.split("\n")]
+
+    @staticmethod
+    def extract_tags(document, tags):
         """
         Extract frog tags.
 

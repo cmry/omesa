@@ -7,6 +7,7 @@ import random as rnd
 import sys
 import csv
 from os import path
+from processor import Preprocessor
 
 # Author:       Chris Emmery
 # Co-author:    Florian Kunneman
@@ -212,11 +213,12 @@ class Datareader:
         row : list
             Either preprocessed raw, a converted label or both.
         """
+        proc = Preprocessor()
         if self.proc == 'label' or self.proc == 'both':
             new_label = self._label_convert(row[0])
             row[0] = new_label
         if self.proc == 'text' or self.proc == 'both':
-            new_text = row[1].lower()
+            new_text = proc.basic(row[0])
             row[1] = new_text
         if self.proc and not isinstance(self.proc, str):
             row = self.proc(row)
