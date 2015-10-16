@@ -7,7 +7,7 @@ import random as rnd
 import sys
 import csv
 from os import path
-from processor import Preprocessor
+from .processor import Preprocessor
 
 # Author:       Chris Emmery
 # Co-author:    Florian Kunneman

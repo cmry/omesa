@@ -10,8 +10,6 @@ environment.
 import numpy as np
 import operator
 import re
-from .utils import liwc
-from .utils import preproc_netlog as pnet
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
@@ -232,16 +230,18 @@ class Ngrams:
         """Given a set of strings, look up the fitted gram frequencies."""
         dct, inst = {}, []
         dct = self.fit_ngram(dct, raw, frog)  # fit possible new grams
-        # for f in self.feats:
-        #     c = dct.get(f, 0)
-        #     if self.cutoff:
-        #         inst.append(0 if c != 0 and dct[f] >= self.cutoff else c)
-        #     else:
-        #         inst.append(c)
-        # s = np.sum(inst)
-        # if self.relative and s > 0:
-        #     inst = [x / s for x in inst]
-        inst = [dct.get(f, 0) for f in self.feats]
+        if self.relative or self.cutoff:
+            for f in self.feats:
+                c = dct.get(f, 0)
+                if self.cutoff:
+                    inst.append(0 if c != 0 and dct[f] >= self.cutoff else c)
+                else:
+                    inst.append(c)
+            s = np.sum(inst)
+            if self.relative and s > 0:
+                inst = [x / s for x in inst]
+        else:
+            inst = [dct.get(f, 0) for f in self.feats]
         self.instances.append(inst)
 
 
@@ -359,38 +359,6 @@ class TfPCA():
         """Reduce the space by means of PCA."""
         X = self.vectorizer.transform(raw_data).toarray()
         self.instances = self.pca.transform(X)
-
-
-class LiwcCategories():
-
-    """
-    Compute frequencies for the LIWC categories.
-
-    Notes
-    -----
-    Implemented by: Ben Verhoeven
-    """
-
-    def __init__(self):
-        """Initialize empty class variables."""
-        self.name = 'liwc'
-        self.feats = {}
-        self.instances = []
-
-    def close_fit(self):
-        """Placeholder for close fit."""
-        pass
-
-    def fit(self, _, frog):
-        """Fit by extracting keys from liwc dict."""
-        self.feats = [k for k in liwc.liwc_nl_dict.keys()]
-        return self
-
-    def transform(self, _, frog):
-        """Count the raw frequencies for the liwc words."""
-        liwc_dict = liwc.liwc_nl([f[0] for f in frog])  # TODO: token index
-        inst = [liwc_dict[f] for f in self.feats]
-        self.instances.append(inst)
 
 
 class SentimentFeatures():
