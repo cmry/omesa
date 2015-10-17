@@ -671,8 +671,6 @@ class SimpleStats:
                 [f[3] for f in frog if len(frog) > 3])]
         self.instances.append(fts)
 
-import re
-from numpy import mean
 
 class TGedu:
 
@@ -749,40 +747,14 @@ class TGedu:
         n = len(a) or 1
         m = len(s) or 1
         v = [
-            mean([len(i) for i in a]),                   # average word length   55%
-            self.flooding.search(s) is None,             # flooding ("cooool")   56%
-            sum(1 for w in a if w.isupper()) / n,        # shouting ("COOL!!")   57%
-            sum(1 for w in a if w == w.capitalize()),    # capitals ("Cool! ")
+            np.mean([len(i) for i in a]),
+            self.flooding.search(s) is None,
+            sum(1 for w in a if w.isupper()) / n,
+            sum(1 for w in a if w == w.capitalize()),
             sum(1 for c in S if c.isupper()) / m
         ]
-        #a = set(a)
-
-        v.append(self.atr_freq(self.punctuation, s))     # punctuation           66%
-        v.append(self.atr_freq(self.diacritics, s))      # diacritics            67%
-        v.append(self.atr_freq(self.emoticons, s))       # emoticons             70%
+        v.append(self.atr_freq(self.punctuation, s))
+        v.append(self.atr_freq(self.diacritics, s))
+        v.append(self.atr_freq(self.emoticons, s))
         v.append(self.atr_freq(self.emoji, s))
-        # v.append(self.atr_freq((                         # utterances
-        #   "haha", "jaja", "jeje", "xoxo", "hmm"), s))
-        # v.append(self.atr_freq((
-        #   "happy", "love", "sweet", "lol", "lmao",       # sentiment.....        71%
-        #   "thanks", "thx", "merci", "bedankt",           # thanks
-        #   "fuck", "suck", "shit", "nigga",               # curses
-        #   "bitch", "ass", "cunt", "wtf",
-        #   "gvd", "kut", "kak", "rete"), s))
-        # v.append(self.atr_freq((                         # drama                 72%
-        #   "!!!!", "!!!", "!!", "! #",
-        #   "????", "???", "??", "? http"), s))
-        # v.append(self.atr_freq((
-        #   "plz", "pls", u"’", u"’s", "'s", "'l", "n't",  # contractions..........73%
-        #   "aaa", "eee", "iii", "ooo", "ooh", "uuu",      # flooding
-        #   "mmm", "rrr", "sss", "xxx", "xx" , "zzz"), s))
-        # v.append(self.atr_freq((
-        #   "for", "in", "of", "to", "with", "on",         # prepositions          74%
-        #   "i", "me", "you", "my", "we", "our",           # pronouns
-        #   "ich", "ik", "je", "tu", "io", "yo", "eu",
-        #   "is", "[...]", "i.e.", "e.g.", "cfr", "p."), s))
-
-        # s = self.ref.sub("@", s)
-        # s = self.url.sub("http://", s)
-        # s = s.replace("#", "")
         self.instances.append(v)

@@ -4,7 +4,7 @@ import re
 from os import path
 
 # Author:       Chris Emmery
-# Co-authors:   Florian Kunneman, Janneke van de Loo
+# Contributors: Florian Kunneman
 # License:      BSD 3-Clause
 # pylint:       disable=W0142,F0401
 
@@ -22,6 +22,8 @@ class Processor(object):
         elif backbone == 'sleepfrog':
             self.backbone = Frog(path.dirname(path.realpath(__file__)) +
                                  '/../../', sleep=True)
+        elif backbone == 'spacy':
+            self.backbone = Spacy()
         else:
             self.backbone = None
         self.hook = backbone
@@ -30,15 +32,16 @@ class Processor(object):
         """Route to the parse function of the backbone."""
         return self.backbone.parse(text)
 
-    def decode(self, proc_format_string):
-        """Route to the decoding function of the backbone."""
-        return self.backbone.decode(proc_format_string)
-
 
 class Preprocessor(object):
 
     """
-    This is the prerpocessing part.
+    Preprocess raw data.
+
+    This class should handle all the preprocessing done for both the labels
+    as well as the texts that are provided. Current implementations are the
+    standard replacement of bbcode, emoticons and urls with their own
+    __TOKENS__. These are placed in the `basic` preprocessing.
     """
 
     def __init__(self):
@@ -50,10 +53,42 @@ class Preprocessor(object):
         text = self.replace_bbcode_tags(text)
         return text
 
-    def replace_bbcode_tags(self, text):
+    def label_convert(self, label_field):
         """
-        Replace BBCode tags
-        ===================
+        Label converter.
+
+        Converts whatever field it is given to some format specified according
+        to the self.label.
+
+        Parameters
+        ----------
+        label_field : string
+            The data entry of the label, to be converted.
+
+        Returns
+        -------
+        converted_label : string
+            The converted label.
+        """
+        if self.label == 'age':
+            age = {range(18):      'child',
+                   range(19, 26):  'young adult',
+                   # range(15, 18):  'teen',
+                   # range(18, 24):  'post-teen',
+                   # range(24, 34):  'young adult',
+                   range(26, 100): 'adult'}
+            if not self.i:
+                print("\t", "labels:", str(age))
+                self.i = 1
+            for r in age.keys():
+                if int(label_field) in r:
+                    return age[r]
+        else:
+            return label_field
+
+    def replace_bbcode_tags(self, text):
+        """Replace BBCode tags.
+
         Replace all tags with [], which are included in the Netlog data,
         with a tag consisting of capital letters surrounded by underscores.
         Typography tags such as [b], [/b], [u], [/u], [i], [/i] (for bold,
@@ -164,10 +199,74 @@ class Preprocessor(object):
         return re.sub(pat, repl, text) if repl else re.findall(pat, text)
 
 
+class Spacy(object):
+
+    """
+    Wrapper to spaCy.io. From their docs @ http://http://spacy.io/docs/
+
+    "spaCy consists of a vocabulary table that stores lexical types, a
+    pipeline that produce annotations, and three classes to manipulate
+    document, span and token data. The annotations are predicted using
+    statistical models, according to specifications that follow common
+    practice in the research community."
+
+    spaCy is currently used in shed to provide the English part of the
+    backbone. It's faster than CoreNLP, and Python <3. While spaCy can also
+    extract things such as NER (it lacks sentiment and co-reference), this
+    is currently not enabled for shed.
+    """
+
+    def __init__(self, lmdir):
+        """Load up the spaCy pipeline."""
+        from spacy.en import English
+        self.spacy = English()
+
+    def parse(self, text):
+        """Extract spaCy tags.
+
+        Convert raw text instance into spaCy format. Currently only returns
+        token, lemma, POS.
+
+        Parameters
+        -----
+        text : string
+            A raw string of characters.
+
+        Returns
+        -----
+        instance : list
+            The token, lemma, POS list that can be used in featurizers.
+        """
+        doc = self.spacy(text, tag=True, parse=True)
+        return [[token.orth_, token.lemma_, token.pos_] for token in doc]
+
+
 class Frog(object):
 
     """
-    Wrapper to python-frog, loaded from LaMachine.
+    Wrapper to python-frog, loaded from LaMachine. Excerpt from the
+    documentation @ http://ilk.uvt.nl/frog/:
+
+    Frog is an integration of memory-based natural language processing (NLP)
+    modules developed for Dutch. All NLP modules are based on Timbl, the
+    Tilburg memory-based learning software package. Recently, a dependency
+    parser, a base phrase chunker, and a named-entity recognizer module were
+    added. Where possible, Frog makes use of multi-processor support to run
+    subtasks in parallel.
+
+    Frog is currently used in shed to provide the Dutch part of the backbone.
+    As the other backbones, it currently only uses a subset of features. Full
+    list of potential extractions (not enabled for shed) are:
+
+    - Morphological segmentation (according to MBMA).
+    - Confidence in the POS tag, a number between 0 and 1, representing the
+      probability mass assigned to the best guess tag in the tag distribution.
+    - Named entity type, identifying person (PER), organization (ORG), location
+      (LOC), product (PRO), event (EVE), and miscellaneous (MISC), using a BIO
+      (or IOB2) encoding.
+    - Base (non-embedded) phrase chunk in BIO encoding.
+    - Token number of head word in dependency graph (according to CSI-DP).
+    - Type of dependency relation with head word.
     """
 
     def __init__(self, lmdir, sleep=False):
@@ -181,9 +280,8 @@ class Frog(object):
     def parse(self, text):
         """Extract frog tags.
 
-        Function to convert raw text into an instance list with frog column.
-        Can be used for processing new inputs in a demo setting. Returns a list
-        with values.
+        Convert raw text instance into Frog format. Currently only returns
+        token, lemma, POS.
 
         Parameters
         -----
@@ -193,71 +291,7 @@ class Frog(object):
         Returns
         -----
         instance : list
-            The 'row' of one instance, containing all metadata fields that
-            are present in the shed csv-files, as well as the text and
-            frogged column.
+            The token, lemma, POS list that can be used in featurizers.
         """
-        # add frogged text
-        data = self.frogger.process(text)
-        tokens, sentence = [], -1
-        for token in data:
-            if token["index"] == '1':
-                sentence += 1
-            tokens.append([token["text"], token["lemma"],
-                           token["pos"], str(sentence)])
-        return tokens
-
-    @staticmethod
-    def decode(frogstring):
-        """Decoder of frogged data in the shed csv-files.
-
-        Converts frogged lines into a list with tokens as
-        [token, lemma, postag, sentence].
-
-        Parameters
-        -----
-        frogstring : string
-            The frogged data of a single document.
-
-        Returns
-        -----
-        decoded : list
-            The frogstring as list of lists.
-        """
-        return [line.split("\n") for line in frogstring.split("\n")]
-
-    @staticmethod
-    def extract_tags(document, tags):
-        """
-        Extract frog tags.
-
-        Function to extract a list of tags from a frogged document. Document is
-        the frogged column of a single document. Tags is a list with any of
-        'token', 'lemma', 'postag', or 'sentence' (can just be one of them).
-
-        Parameters
-        -----
-        document : list of tuples
-            Corresponding to all tokens in a single text. A token is a list
-            with the fields 'token', 'lemma', 'postag' and 'sentence'.
-        tags: list
-            List of tags to return from a document. Options:
-            - token
-            - lemma
-            - postag
-            - sentence
-
-        Returns
-        -----
-        extracted_tags : list
-            Sequence of the tokens in the document, with the selected tags
-            if the value of 'tags' is '[token, postag]', the output list will
-            be '[[token, postag], [token, postag], ...]'.
-        """
-        tagdict = {'token': 0, 'lemma': 1, 'postag': 2, 'sentence': 3}
-        taglists = [[token[tagdict[tag]] for token in document]
-                    for tag in tags]
-        if len(taglists) > 1:
-            return zip(*[taglists])
-        else:
-            return taglists[0]
+        doc = self.frogger.process(text)
+        return [[token["text"], token["lemma"], token["pos"]] for token in doc]

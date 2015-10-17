@@ -10,7 +10,7 @@ from os import path
 from .processor import Preprocessor
 
 # Author:       Chris Emmery
-# Co-author:    Florian Kunneman
+# Contributors: Florian Kunneman
 # License:      BSD 3-Clause
 # pylint:       disable=E1103
 
@@ -90,20 +90,20 @@ class Datareader:
     >>> pp(labels, raw, frog)
     (('38',),
      ("'lieve schat we kunnen miss beter wel eentje gaan drinken samen xxx'",),
-     ([["'", "'", 'LET()', '0'],
-       ['lieve', 'lief', 'ADJ(prenom,basis,met-e,stan)', '0'],
-       ['schat', 'schat', 'N(soort,ev,basis,zijd,stan)', '0'],
-       ['we', 'we', 'VNW(pers,pron,nomin,red,1,mv)', '0'],
-       ['kunnen', 'kunnen', 'WW(pv,tgw,mv)', '0'],
-       ['miss', 'miss', 'SPEC(vreemd)', '0'],
-       ['beter', 'goed', 'ADJ(vrij,comp,zonder)', '0'],
-       ['wel', 'wel', 'BW()', '0'],
-       ['eentje', 'een', 'TW(hoofd,nom,zonder-n,dim)', '0'],
-       ['gaan', 'gaan', 'WW(inf,vrij,zonder)', '0'],
-       ['drinken', 'drinken', 'WW(inf,vrij,zonder)', '0'],
-       ['samen', 'samen', 'BW()', '0'],
-       ['xxx', 'xxx', 'SPEC(vreemd)', '0'],
-       ["'", "'", 'LET()', '0']],))
+     ([["'", "'", 'LET()'],
+       ['lieve', 'lief', 'ADJ(prenom,basis,met-e,stan)'],
+       ['schat', 'schat', 'N(soort,ev,basis,zijd,stan)'],
+       ['we', 'we', 'VNW(pers,pron,nomin,red,1,mv)'],
+       ['kunnen', 'kunnen', 'WW(pv,tgw,mv)'],
+       ['miss', 'miss', 'SPEC(vreemd)'],
+       ['beter', 'goed', 'ADJ(vrij,comp,zonder)'],
+       ['wel', 'wel', 'BW()'],
+       ['eentje', 'een', 'TW(hoofd,nom,zonder-n,dim)'],
+       ['gaan', 'gaan', 'WW(inf,vrij,zonder)'],
+       ['drinken', 'drinken', 'WW(inf,vrij,zonder)'],
+       ['samen', 'samen', 'BW()'],
+       ['xxx', 'xxx', 'SPEC(vreemd)'],
+       ["'", "'", 'LET()']],))
 
     Notes
     -----
@@ -158,44 +158,11 @@ class Datareader:
         for file_name in self.file_list:
             print('\t Reading from', file_name, '...')
             for row in self._load_data_linewise(file_name):
-                p_row = self._preprocess(row)
+                p_row = self.preprocess(row)
                 if p_row:
                     yield p_row
 
-    def _label_convert(self, label_field):
-        """
-        Label converter.
-
-        Converts whatever field it is given to some format specified according
-        to the self.label.
-
-        Parameters
-        ----------
-        label_field : string
-            The data entry of the label, to be converted.
-
-        Returns
-        -------
-        converted_label : string
-            The converted label.
-        """
-        if self.label == 'age':
-            age = {range(18):      'child',
-                   range(19, 26):  'young adult',
-                   # range(15, 18):  'teen',
-                   # range(18, 24):  'post-teen',
-                   # range(24, 34):  'young adult',
-                   range(26, 100): 'adult'}
-            if not self.i:
-                print("\t", "labels:", str(age))
-                self.i = 1
-            for r in age.keys():
-                if int(label_field) in r:
-                    return age[r]
-        else:
-            return label_field
-
-    def _preprocess(self, row):
+    def preprocess(self, row):
         """
         Text and label preprocessor.
 
@@ -215,7 +182,7 @@ class Datareader:
         """
         proc = Preprocessor()
         if self.proc == 'label' or self.proc == 'both':
-            new_label = self._label_convert(row[0])
+            new_label = proc.label_convert(row[0])
             row[0] = new_label
         if self.proc == 'text' or self.proc == 'both':
             new_text = proc.basic(row[0])
