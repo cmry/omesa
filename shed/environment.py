@@ -14,8 +14,6 @@ from os import path
 import pickle
 
 # Author:       Chris Emmery
-# Contributors: Mike Kestemont, Florian Kunneman, Ben Verhoeven,
-#               Janneke van de Loo
 # License:      BSD 3-Clause
 # pylint:       disable=E1103
 

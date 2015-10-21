@@ -1,0 +1,22 @@
+site_name: Shed Documentation
+theme: readthedocs
+docs_dir: sources
+repo_url: http://github.com/cmry/shed
+site_url: http://shd.io/
+#theme_dir: theme
+site_description: Documentation for reproducable Text Mining research framework.
+
+dev_addr: '0.0.0.0:8000'
+google_analytics: []
+
+
+pages:
+- Home: index.md
+- Index: documentation.md
+- Examples: examples.md
+- FAQ: faq.md
+- Environment: environment.md
+- Experiment: experiment.md
+- Dataloader: dataloader.md
+- Processor: processor.md
+- Featurizer: featurizer.md
