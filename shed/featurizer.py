@@ -380,7 +380,7 @@ class SentimentFeatures():
     def __init__(self):
         """Load the sentiment lexicon."""
         self.name = 'sentiment'
-        self.lexiconDict = pickle.load(open('./shed/data/' +
+        self.lexiconDict = pickle.load(open('./models/' +
                                             'sentilexicons.cpickle', 'rb'))
         self.instances = []
 
