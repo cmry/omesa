@@ -1,7 +1,7 @@
 """Text feature extraction module.
 
 This module contains several helper classes for extracting textual features
-used in Text Mining applications, partly based on instances parsed with Frog.
+used in Text Mining applications, partly based on instances parsed with parse.
 It also includes a wrapper class to cleverly hanlde this within the shed
 environment.
 
@@ -70,8 +70,8 @@ class Featurizer:
 
     Notes
     -----
-    For an explanation regarding the frog features, please refer either to
-    utils.frog.extract_tags or http://ilk.uvt.nl/frog/.
+    For an explanation regarding the parse features, please refer either to
+    utils.parse.extract_tags or http://ilk.uvt.nl/parse/.
     """
 
     def __init__(self, features):
@@ -89,7 +89,7 @@ class Featurizer:
         Parameters
         ----------
         stream : generator
-            Yields an instance with (label, raw, frog, meta).
+            Yields an instance with (label, raw, parse, meta).
         func : function
             Function object from etiher the fit or transform method.
 
@@ -101,13 +101,13 @@ class Featurizer:
         if func == self._func_transform:
             self.X, self.Y = [], []
             self.labels = []
-        for label, raw, frog, meta in stream:
+        for label, raw, parse, meta in stream:
             for helper in self.helpers:
                 if helper.name in self.space_based:
                     self.X.append(raw)
                     self.Y.append(label)
                 else:
-                    func(helper, raw, frog)
+                    func(helper, raw, parse)
             if func == self._func_transform:
                 self.labels.append(label)
                 for meta_inst in meta:
@@ -132,11 +132,11 @@ class Featurizer:
             X = np.hstack(submatrices)
             return X
 
-    def _func_fit(self, helper, raw, frog):
-        helper.fit(raw, frog)
+    def _func_fit(self, helper, raw, parse):
+        helper.fit(raw, parse)
 
-    def _func_transform(self, helper, raw, frog):
-        helper.transform(raw, frog)
+    def _func_transform(self, helper, raw, parse):
+        helper.transform(raw, parse)
 
     def fit(self, stream):
         """Fit the extractors according to their requirements."""
@@ -187,7 +187,8 @@ class Ngrams:
         self.relative = relative
         self.max_feats = max_feats
         self.level = level
-        self.i = 0 if level == 'token' else 2
+        self.row = 0 if level == 'token' else 2
+        self.index, self.counter = 0, 0
 
     def __str__(self):
         return """
@@ -208,41 +209,55 @@ class Ngrams:
 
     def close_fit(self):
         """Set frequencies from fitted Ngrams."""
-        self.feats = [i for i, _ in sorted(self.feats.items(), reverse=True,
-                      key=operator.itemgetter(1))][:self.max_feats]
+        pass
 
-    def fit_ngram(self, d, raw, frog):
-        inst = raw if self.level == 'char' else frog
-        needle = list(inst) if self.level == 'char' \
-            else [x[self.i] for x in inst]
+    def fit_ngram(self, d, raw, parse, add_to='index'):
+        """Fit the possible n-gram according to their level."""
+        ind = self.index if add_to == 'index' else self.counter
+
+        if self.level == 'char':
+            needle = list(inst)
+        elif self.level == 'token' or self.level == 'pos':
+            needle = parse[self.row] if parse else raw.split()
+            if self.level == 'pos' and not parse:
+                return "OMG ERROR"
+
         for n in self.n_list:
-            d.update(
-                Counter([self.level+"-"+"_".join(item) for
-                         item in self._find_ngrams(needle, n)]))
+            for item in self._find_ngrams(needle, n):
+                if item not in d:
+                    d[self.level+"-"+"_".join(item)] = add_to
+                    add_to += 1
+
+        if ind == self.cnt:
+            self.cnt = 0
         return d
 
 
-    def fit(self, raw, frog):
+    def fit(self, raw, parse):
         """Find the possible grams in the provided instance."""
-        self.fit_ngram(self.feats, raw, frog)
+        self.fit_ngram(self.feats, raw, parse)
 
-    def transform(self, raw, frog):
+    def transform(self, raw, parse):
         """Given a set of strings, look up the fitted gram frequencies."""
         dct, inst = {}, []
-        dct = self.fit_ngram(dct, raw, frog)  # fit possible new grams
-        if self.relative or self.cutoff:
-            for f in self.feats:
-                c = dct.get(f, 0)
-                if self.cutoff:
-                    inst.append(0 if c != 0 and dct[f] >= self.cutoff else c)
-                else:
-                    inst.append(c)
-            s = np.sum(inst)
-            if self.relative and s > 0:
-                inst = [x / s for x in inst]
-        else:
-            inst = [dct.get(f, 0) for f in self.feats]
-        self.instances.append(inst)
+        dct = self.fit_ngram(dct, raw, parse, ind='cnt')
+        # FIXME: refactor part below to new format
+        # if self.relative or self.cutoff:
+        #     for f in self.feats:
+        #         c = dct.get(f, 0)
+        #         if self.cutoff:
+        #             inst.append(0 if c != 0 and dct[f] >= self.cutoff else c)
+        #         else:
+        #             inst.append(c)
+        #     s = np.sum(inst)
+        #     if self.relative and s > 0:
+        #         inst = [x / s for x in inst]
+        # else:
+        # inst = [1 if f in dct.keys() else 0 for f in self.feats]
+        v = np.zeros(len(self.feats))
+        for gram in dct.keys():
+            v[self.feats[gram]] = dct[gram]
+        self.instances.append(v)
 
 
 class FuncWords:
@@ -250,7 +265,7 @@ class FuncWords:
     """
     Extract function word frequencies.
 
-    Computes relative frequencies of function words according to Frog data,
+    Computes relative frequencies of function words according to parse data,
     and adds the respective frequencies as a feature.
 
     Notes
@@ -266,18 +281,18 @@ class FuncWords:
         self.relative = relative
         self.sum = 0
 
-    def func_freq(self, frogstring):
+    def func_freq(self, parsestring):
         """
         Count word frequencies.
 
         Return a frequency dictionary of the function words in the text.
-        Input is a string of frog output. Selects based on relevant functors
+        Input is a string of parse output. Selects based on relevant functors
         the words that are function words from this input.
 
         Parameters
         -----
-        frogstring : list
-            List with Frogged data elements, example:
+        parsestring : list
+            List with parseged data elements, example:
             ['zijn', 'zijn', 'WW(pv,tgw,mv)', '43'], ['?', '?', 'LET()', '43']
 
         Returns
@@ -289,7 +304,7 @@ class FuncWords:
         functors = {'VNW': 'pronouns', 'LID': 'determiners',
                     'VZ': 'prepositions', 'BW': 'adverbs', 'TW': 'quantifiers',
                     'VG': 'conjunction'}
-        tokens = [item[0] for item in frogstring if item[2].split('(')[0]
+        tokens = [item[0] for item in parsestring if item[2].split('(')[0]
                   in functors]
         return Counter(tokens)
 
@@ -297,13 +312,13 @@ class FuncWords:
         """Get function words from Counter."""
         self.feats = [k for k in self.feats.keys()]
 
-    def fit(self, _, frog):
+    def fit(self, _, parse):
         """Fit possible function words."""
-        self.feats.update(self.func_freq(frog))
+        self.feats.update(self.func_freq(parse))
 
-    def transform(self, _, frog):
+    def transform(self, _, parse):
         """Extract frequencies for fitted function word possibilites."""
-        func_dict = self.func_freq(frog)
+        func_dict = self.func_freq(parse)
         inst = [func_dict.get(f, 0) for f in self.feats]
         self.instances.append(inst)
 
@@ -393,7 +408,7 @@ class SentimentFeatures():
         """Placeholder for close fit."""
         pass
 
-    def fit(self, _, frog):
+    def fit(self, _, parse):
         """Placeholder for fit."""
         return self
 
@@ -427,9 +442,9 @@ class SentimentFeatures():
                     # FIXME: reinclude the token numbers here
         return polarity_score
 
-    def transform(self, _, frog):
-        """Get the sentiment belonging to the words in the frog string."""
-        inst = [self.calculate_sentiment(frog)]
+    def transform(self, _, parse):
+        """Get the sentiment belonging to the words in the parse string."""
+        inst = [self.calculate_sentiment(parse)]
         self.instances.append(inst)
 
 
@@ -524,7 +539,7 @@ class SimpleStats:
         """Placeholder for close fit."""
         pass
 
-    def fit(self, _, frog):
+    def fit(self, _, parse):
         """Placeholder for fit."""
         self.feats = True
 
@@ -662,13 +677,13 @@ class SimpleStats:
         avg_len = np.mean(sent_lengths)
         return avg_len
 
-    def transform(self, raw, frog):
+    def transform(self, raw, parse):
         """Transform given instance into simple text features."""
         fts = self.text_based_feats(raw) + \
-            self.token_based_feats([f[0] for f in frog])
+            self.token_based_feats([f[0] for f in parse])
         if self.sentence_length:
             fts += [self.avg_sent_length(
-                [f[3] for f in frog if len(frog) > 3])]
+                [f[3] for f in parse if len(parse) > 3])]
         self.instances.append(fts)
 
 
