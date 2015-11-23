@@ -167,7 +167,7 @@ class Pipeline:
         """
         print("Starting fitting ...")
         self.featurizer = Featurizer(features)
-        self.featurizer.fit(loader)
+        [x for x in self.featurizer.fit(loader)]
         print("done!")
 
     def transform(self, loader):
@@ -191,8 +191,8 @@ class Pipeline:
         print("Starting transforming ...")
         if not self.featurizer:
             raise EnvironmentError("Data is not fitted yet.")
-        space = self.featurizer.transform(loader)
-        labels = self.featurizer.labels
+        space, labels = zip(*[(v, label) for label, v in
+                              self.featurizer.transform(loader)])
         print("done!")
         return space, labels
 

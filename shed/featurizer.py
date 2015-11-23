@@ -14,6 +14,7 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from collections import OrderedDict, Counter, defaultdict
+from time import sleep
 import pickle
 
 # Author:       Chris Emmery
@@ -44,9 +45,6 @@ class Featurizer:
     helper : list of classes
         Store for the provided features.
 
-    space_based : list of strings
-        Classnames that need the complete data in memory.
-
     X : list of lists of shape [n_samples, n_words]
         All data instances used by space_based featurizer helpers.
 
@@ -76,14 +74,11 @@ class Featurizer:
 
     def __init__(self, features):
         """Initialize the wrapper and set the provided features to a var."""
-        self.labels = []
-        self.metaf = defaultdict(list)
+        self.labels, self.labelc = {}, 0
+        self.metaf, self.metafc = {}, 0
         self.helpers = features
-        self.space_based = ['tf_pca', 'doc2vec', 'llda']
-        self.X = []
-        self.Y = []
 
-    def loop_helpers(self, stream, func):
+    def call_helpers(self, stream, func):
         """Call all the helpers to extract features.
 
         Parameters
@@ -98,53 +93,30 @@ class Featurizer:
         X : numpy array of shape [n_samples, n_features]
             Training data returns when applying the transform function.
         """
-        if func == self._func_transform:
-            self.X, self.Y = [], []
-            self.labels = []
         for label, raw, parse, meta in stream:
+            V = np.array([])
+            if label not in self.labels:
+                self.labels[label] = self.labelc
+                self.labelc += 1
             for helper in self.helpers:
-                if helper.name in self.space_based:
-                    self.X.append(raw)
-                    self.Y.append(label)
-                else:
-                    func(helper, raw, parse)
-            if func == self._func_transform:
-                self.labels.append(label)
+                helper.fit(raw, parse)
+                if func == self.transform:
+                    V = np.hstack((V, helper.transform(raw, parse)))
+            if func == self.transform:
                 for meta_inst in meta:
-                    self.metaf[meta.index(meta_inst)].append(meta_inst)
-
-        submatrices = []
-        for helper in self.helpers:
-            if func == self._func_fit:
-                if helper.name not in self.space_based:
-                    helper.close_fit()
-                else:
-                    helper.fit(self.X, self.Y)
-            else:
-                if helper.name in self.space_based:
-                    helper.transform(self.X, self.Y)
-                submatrices.append(helper.instances)
-                helper.instances = []
-        for value in self.metaf.values():
-            submatrices.append(
-                np.asarray([[x] for x in LabelEncoder().fit_transform(value)]))
-        if func == self._func_transform:
-            X = np.hstack(submatrices)
-            return X
-
-    def _func_fit(self, helper, raw, parse):
-        helper.fit(raw, parse)
-
-    def _func_transform(self, helper, raw, parse):
-        helper.transform(raw, parse)
+                    if meta_inst not in self.metaf:
+                        self.metaf[meta_inst] = self.metafc
+                        self.metafc += 1
+                    V = np.hstack((V, self.metaf[meta_inst]))
+            yield self.labels[label], V
 
     def fit(self, stream):
         """Fit the extractors according to their requirements."""
-        return self.loop_helpers(stream, self._func_fit)
+        return self.call_helpers(stream, self.fit)
 
     def transform(self, stream):
         """Transform an instance according to the fitted extractors."""
-        return self.loop_helpers(stream, self._func_transform)
+        return self.call_helpers(stream, self.transform)
 
 
 class Ngrams:
@@ -213,10 +185,10 @@ class Ngrams:
 
     def fit_ngram(self, d, raw, parse, add_to='index'):
         """Fit the possible n-gram according to their level."""
-        ind = self.index if add_to == 'index' else self.counter
+        add_to = self.index if add_to == 'index' else self.counter
 
         if self.level == 'char':
-            needle = list(inst)
+            needle = list(raw)
         elif self.level == 'token' or self.level == 'pos':
             needle = parse[self.row] if parse else raw.split()
             if self.level == 'pos' and not parse:
@@ -228,7 +200,7 @@ class Ngrams:
                     d[self.level+"-"+"_".join(item)] = add_to
                     add_to += 1
 
-        if ind == self.cnt:
+        if add_to == self.counter:
             self.cnt = 0
         return d
 
@@ -240,7 +212,7 @@ class Ngrams:
     def transform(self, raw, parse):
         """Given a set of strings, look up the fitted gram frequencies."""
         dct, inst = {}, []
-        dct = self.fit_ngram(dct, raw, parse, ind='cnt')
+        dct = self.fit_ngram(dct, raw, parse, add_to='cnt')
         # FIXME: refactor part below to new format
         # if self.relative or self.cutoff:
         #     for f in self.feats:
@@ -257,7 +229,7 @@ class Ngrams:
         v = np.zeros(len(self.feats))
         for gram in dct.keys():
             v[self.feats[gram]] = dct[gram]
-        self.instances.append(v)
+        return v
 
 
 class FuncWords:
@@ -395,7 +367,7 @@ class SentimentFeatures():
     def __init__(self):
         """Load the sentiment lexicon."""
         self.name = 'sentiment'
-        self.lexiconDict = pickle.load(open('./models/' +
+        self.lexiconDict = pickle.load(open('./shed/data/' +
                                             'sentilexicons.cpickle', 'rb'))
         self.instances = []
 
