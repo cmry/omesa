@@ -94,21 +94,21 @@ class Featurizer:
             Training data returns when applying the transform function.
         """
         for label, raw, parse, meta in stream:
-            V = np.array([])
+            v = {}
             if label not in self.labels:
                 self.labels[label] = self.labelc
                 self.labelc += 1
             for helper in self.helpers:
                 helper.fit(raw, parse)
                 if func == self.transform:
-                    V = np.hstack((V, helper.transform(raw, parse)))
+                    v.update(helper.transform(raw, parse))
             if func == self.transform:
                 for meta_inst in meta:
                     if meta_inst not in self.metaf:
-                        self.metaf[meta_inst] = self.metafc
+                        self.metaf[label] = self.metafc
                         self.metafc += 1
-                    V = np.hstack((V, self.metaf[meta_inst]))
-            yield self.labels[label], V
+                        v.update({self.metaf[meta_inst]: 1})
+            yield self.labels[label], v
 
     def fit(self, stream):
         """Fit the extractors according to their requirements."""
@@ -183,9 +183,9 @@ class Ngrams:
         """Set frequencies from fitted Ngrams."""
         pass
 
-    def fit_ngram(self, d, raw, parse, add_to='index'):
+    def fit_ngram(self, d, raw, parse): # , add_to='index'):
         """Fit the possible n-gram according to their level."""
-        add_to = self.index if add_to == 'index' else self.counter
+        # add_to = self.index if add_to == 'index' else self.counter
 
         if self.level == 'char':
             needle = list(raw)
@@ -194,25 +194,27 @@ class Ngrams:
             if self.level == 'pos' and not parse:
                 return "OMG ERROR"
 
+        c = Counter()
         for n in self.n_list:
-            for item in self._find_ngrams(needle, n):
-                if item not in d:
-                    d[self.level+"-"+"_".join(item)] = add_to
-                    add_to += 1
-
-        if add_to == self.counter:
-            self.cnt = 0
-        return d
+            c += Counter([self.level+"-"+"_".join(item) for item in self._find_ngrams(needle, n)])
+        #     for item in self._find_ngrams(needle, n):
+        #         if item not in d:
+        #             d[self.level+"-"+"_".join(item)] = add_to
+        #             add_to += 1
+        #
+        # if add_to == self.counter:
+        #     self.cnt = 0
+        return c
 
 
     def fit(self, raw, parse):
         """Find the possible grams in the provided instance."""
-        self.fit_ngram(self.feats, raw, parse)
+        # self.fit_ngram(self.feats, raw, parse)
 
     def transform(self, raw, parse):
         """Given a set of strings, look up the fitted gram frequencies."""
-        dct, inst = {}, []
-        dct = self.fit_ngram(dct, raw, parse, add_to='cnt')
+        # dct, inst = {}, []
+        dct = self.fit_ngram({}, raw, parse) # , add_to='cnt')
         # FIXME: refactor part below to new format
         # if self.relative or self.cutoff:
         #     for f in self.feats:
@@ -226,10 +228,10 @@ class Ngrams:
         #         inst = [x / s for x in inst]
         # else:
         # inst = [1 if f in dct.keys() else 0 for f in self.feats]
-        v = np.zeros(len(self.feats))
-        for gram in dct.keys():
-            v[self.feats[gram]] = dct[gram]
-        return v
+        # v = np.zeros(len(self.feats))
+        # for gram in dct.keys():
+        #     v[self.feats[gram]] = dct[gram]
+        return dct
 
 
 class FuncWords:
