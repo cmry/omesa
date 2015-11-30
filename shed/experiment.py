@@ -179,9 +179,7 @@ class Pipeline(object):
 
     def train(self, data, features):
         """Send the training data through all applicable steps."""
-        self.shed.fit(self.load_data(data), features)
-
-        D, y = self.shed.transform(self.load_data(data))
+        D, y = self.shed.fit_transform(self.load_data(data), features)
         X = self.hasher.fit_transform(D)
         X_tf = self.tfidf.fit_transform(X)
 
