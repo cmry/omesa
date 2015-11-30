@@ -53,16 +53,20 @@ class Preprocessor(object):
         text = self.replace_bbcode_tags(text)
         return text
 
-    def label_convert(self, label_field):
+    def label_convert(self, config, label):
         """
         Label converter.
 
-        Converts whatever field it is given to some format specified according
-        to the self.label.
+        Converts a label according to the convert_config as many times as
+        specified.
 
         Parameters
         ----------
-        label_field : string
+        config: dict
+            Each key is a label, and each value a tuple with (count, convertto)
+            so that label will be convertto as many times as count.
+
+        label : string
             The data entry of the label, to be converted.
 
         Returns
@@ -70,21 +74,12 @@ class Preprocessor(object):
         converted_label : string
             The converted label.
         """
-        if self.label == 'age':
-            age = {range(18):      'child',
-                   range(19, 26):  'young adult',
-                   # range(15, 18):  'teen',
-                   # range(18, 24):  'post-teen',
-                   # range(24, 34):  'young adult',
-                   range(26, 100): 'adult'}
-            if not self.i:
-                print("\t", "labels:", str(age))
-                self.i = 1
-            for r in age.keys():
-                if int(label_field) in r:
-                    return age[r]
-        else:
-            return label_field
+        if self.conf[label][0] != 0:
+            self.conf[label][0] -= 1
+            if len(self.conf[label]) > 1:
+                return self.conf[label][1]
+            else:
+                return label
 
     def replace_bbcode_tags(self, text):
         """Replace BBCode tags.

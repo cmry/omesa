@@ -179,14 +179,8 @@ class Ngrams:
         inp = [''] + input_list + ['']
         return zip(*[inp[i:] for i in range(n)])
 
-    def close_fit(self):
-        """Set frequencies from fitted Ngrams."""
-        pass
-
-    def fit_ngram(self, d, raw, parse): # , add_to='index'):
+    def fit_ngram(self, raw, parse):
         """Fit the possible n-gram according to their level."""
-        # add_to = self.index if add_to == 'index' else self.counter
-
         if self.level == 'char':
             needle = list(raw)
         elif self.level == 'token' or self.level == 'pos':
@@ -196,42 +190,18 @@ class Ngrams:
 
         c = Counter()
         for n in self.n_list:
-            c += Counter([self.level+"-"+"_".join(item) for item in self._find_ngrams(needle, n)])
-        #     for item in self._find_ngrams(needle, n):
-        #         if item not in d:
-        #             d[self.level+"-"+"_".join(item)] = add_to
-        #             add_to += 1
-        #
-        # if add_to == self.counter:
-        #     self.cnt = 0
+            c += Counter([self.level+"-"+"_".join(item) for
+                          item in self._find_ngrams(needle, n)])
         return c
 
 
     def fit(self, raw, parse):
         """Find the possible grams in the provided instance."""
-        # self.fit_ngram(self.feats, raw, parse)
+        pass
 
     def transform(self, raw, parse):
         """Given a set of strings, look up the fitted gram frequencies."""
-        # dct, inst = {}, []
-        dct = self.fit_ngram({}, raw, parse) # , add_to='cnt')
-        # FIXME: refactor part below to new format
-        # if self.relative or self.cutoff:
-        #     for f in self.feats:
-        #         c = dct.get(f, 0)
-        #         if self.cutoff:
-        #             inst.append(0 if c != 0 and dct[f] >= self.cutoff else c)
-        #         else:
-        #             inst.append(c)
-        #     s = np.sum(inst)
-        #     if self.relative and s > 0:
-        #         inst = [x / s for x in inst]
-        # else:
-        # inst = [1 if f in dct.keys() else 0 for f in self.feats]
-        # v = np.zeros(len(self.feats))
-        # for gram in dct.keys():
-        #     v[self.feats[gram]] = dct[gram]
-        return dct
+        return self.fit_ngram(raw, parse)
 
 
 class FuncWords:
@@ -333,10 +303,6 @@ class TfPCA():
         """Placeholder for identity."""
         return x
 
-    def close_fit(self):
-        """Placeholder for close fit."""
-        pass
-
     def fit(self, raw_data, _):
         """Fit PCA to the TF matrix."""
         X = self.vectorizer.fit_transform(raw_data).toarray()
@@ -377,10 +343,6 @@ class SentimentFeatures():
         return """
         feature:   %s
         """ % (self.name)
-
-    def close_fit(self):
-        """Placeholder for close fit."""
-        pass
 
     def fit(self, _, parse):
         """Placeholder for fit."""
@@ -508,10 +470,6 @@ class SimpleStats:
         self.text = set(text)
         self.token = set(token)
         self.sentence_length = sentence_length
-
-    def close_fit(self):
-        """Placeholder for close fit."""
-        pass
 
     def fit(self, _, parse):
         """Placeholder for fit."""
@@ -711,10 +669,6 @@ class TGedu:
 
         self.url = re.compile(r"https?://[^\s]+")           # http://www.textgain.com
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I) # @tom_de_smedt
-
-    def close_fit(self):
-        """Placeholder for close fit."""
-        pass
 
     def fit(self, bla, _):
         pass

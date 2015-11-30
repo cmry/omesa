@@ -18,7 +18,7 @@ import pickle
 # pylint:       disable=E1103
 
 
-class Pipeline:
+class Environment:
 
     """
     Starts the framework's environment and initiates its namespace.
@@ -51,7 +51,7 @@ class Pipeline:
     >>> from shed.featurizer import *
     >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-    >>> env = shed.Pipeline(name='bayes_age_v1')
+    >>> env = shed.Environment(name='bayes_age_v1')
     >>> loader = env.load(data=data, target_label='age')
     >>> space, labels = env.fit_transform(loader(), features)
     """
@@ -139,7 +139,7 @@ class Pipeline:
         >>> from shed.featurizer import *
         >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-        >>> env = shed.Pipeline(name='bayes_age_v1')
+        >>> env = shed.Environment(name='bayes_age_v1')
         >>> loader = env.load(data=data, max_n=2000, target_label='age')
         """
         if not self.backbone:
@@ -165,10 +165,10 @@ class Pipeline:
             Featurizer helper class instances and parameters found in
             featurizer.py.
         """
-        print("Starting fitting ...")
+        print(" Starting fitting ...")
         self.featurizer = Featurizer(features)
         [x for x in self.featurizer.fit(loader)]
-        print("done!")
+        print(" done!")
 
     def transform(self, loader):
         """
@@ -188,18 +188,18 @@ class Pipeline:
         labels : list of shape [n_labels]
             List of labels for data instances.
         """
-        print("Starting transforming ...")
+        print(" Starting transforming ...")
         if not self.featurizer:
             raise EnvironmentError("Data is not fitted yet.")
         space, labels = zip(*[(v, label) for label, v in
                               self.featurizer.transform(loader)])
-        print("done!")
+        print(" done!")
         return space, labels
 
-    def fit_transform(self, loader, features=Ngrams()):
-        """Shorthand for fit and transform methods."""
-        self.fit(loader, features)
-        space, labels = self.transform(loader)
+    def fit_transform(self, loaders, features=Ngrams()):
+        """Shorthand for fit and transform methods. Needs two loaders"""
+        self.fit(loaders.pop(), features)
+        space, labels = self.transform(loaders.pop())
         return space, labels
 
     def train(self, model, space, labels):

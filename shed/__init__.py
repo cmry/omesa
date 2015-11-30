@@ -18,7 +18,7 @@ whish to extract from for this.
     >>> from shed.featurizer import *
     >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
-    >>> env = shed.Pipeline(name='bayes_age_v1')
+    >>> env = shed.Environment(name='bayes_age_v1')
     >>> loader = env.load(data=data, target_label='age')
     >>> space, labels = env.fit_transform(loader, features)
 
@@ -78,7 +78,7 @@ Chris
 
 """
 
-from .environment import Pipeline
+from .environment import Environment
 
 __author__ = 'Chris Emmery'
 __contrb__ = 'Mike Kestemont, Ben Verhoeven, Florian Kunneman,' \
