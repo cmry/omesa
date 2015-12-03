@@ -4,26 +4,22 @@
 
 from . import environment as env
 
-# import sys
-# import pickle
-import numpy as np
 import csv
+import numpy as np
+import pickle
+import sys
 from collections import Counter, OrderedDict
 from copy import deepcopy
 from operator import itemgetter
-# from time import time
-# from tqdm import *
-
 from sklearn import metrics
 from sklearn.cross_validation import cross_val_score
-# from sklearn.preprocessing import LabelEncoder, StandardScaler
-# from sklearn.grid_search import GridSearchCV
-# from sklearn import pipeline
+from sklearn.grid_search import GridSearchCV
+from sklearn import pipeline
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer  # , FeatureHasher
-from sklearn.svm import SVC  # , LinearSVC
-# from sklearn.naive_bayes import GaussianNB, BernoulliNB
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.svm import SVC
+from time import time
 
 
 class LabelHandler(object):
@@ -62,6 +58,8 @@ class LabelHandler(object):
                 return self.labs[label][1]
             else:
                 return label
+        if not any([x[0] for x in self.labs.values()]):
+            return 'break'
 
 
 class Log(object):
@@ -101,7 +99,7 @@ class Log(object):
         self.log = {
             'head':   "\n---- Shed ---- \n\n Config: \n" +
                       "\t {0} \n\tname: {1} \n\tseed: {2} " +
-                      "\n\tclasf \n",
+                      "\n\t \n",
             # 'read':   "\n Reading from {0}... Acquired {1} from data.\n ",
             'sparse': "\n Sparse {0} shape: {1}",
             'svd':    "\n Fitting SVD...",
@@ -109,9 +107,9 @@ class Log(object):
                       "\n Distribution: {1}" +
                       "\n Accuracy @ baseline: \t {2}" +
                       "\n Reporting on class {3}",
-            'grid':   "\n Model with rank: {0} \n" +
-                      "\n Mean validation score: {1:.3f} (std: {2:.3f}) \n" +
-                      "\n Parameters: {3}",
+            'grid':   "\n Model with rank: {0} " +
+                      "\n Mean validation score: {1:.3f} (std: {2:.3f}) " +
+                      "\n Parameters: {3} \n",
             'tfcv':   "\n Tf-CV Result: {0}",
             'f1sc':   "\n Performance on test set: \n{0}"
         }
@@ -146,7 +144,6 @@ class Log(object):
             f.write(' '.join([v for v in OrderedDict(sorted(self.log.items(),
                               key=lambda i: o.index(i[0]))).values()]))
 
-
 class Pipeline(object):
 
     def __init__(self, conf):
@@ -159,22 +156,32 @@ class Pipeline(object):
         self.svd = TruncatedSVD(n_components=conf.get('components'))
         self.conf = conf
 
+    def load_csv(self, data):
+        """Iterates through csv files."""
+        csv.field_size_limit(sys.maxsize)
+        for d in data:
+            reader = csv.reader(open(d, 'r'))
+            for i, x in enumerate(reader):
+                if self.conf.get("has_header") and not i:
+                    continue
+                yield x
+
     def load_data(self, data):
         """Load from given datasets provided amount of instances."""
         conf = self.conf
         i_text, i_label = conf['text_column'], conf['label_column']
         i_ann, i_feats = conf.get('ann_column'), conf.get('feature_columns')
-        for d in data:
-            assert '.csv' in d  # let's just assume it's a .csv
-            reader = csv.reader(open(d, 'r'))
-            for i, x in enumerate(reader):
-                if conf.get("has_header") and not i:
-                    continue
-                label = self.handle.check(x[i_label]) if self.handle.labs \
-                    else x[i_label]
-                ann, feats = ('' if not v else x[v] for v in [i_ann, i_feats])
-                if label and x[i_text]:
-                    yield (label, x[i_text], ann, feats)
+
+        # so that data can also be an iterable
+        loader = self.load_csv(data) if data[0][-4:] == '.csv' else data
+        for x in loader:
+            label = self.handle.check(x[i_label]) if self.handle.labs \
+                else x[i_label]
+            if label == 'break':
+                break
+            ann, feats = ('' if not v else x[v] for v in [i_ann, i_feats])
+            if label and x[i_text]:
+                yield (label, x[i_text], ann, feats)
         self.handle = LabelHandler(conf.get('label_selection'))
 
     def train(self, data, features):
@@ -185,21 +192,36 @@ class Pipeline(object):
         X_tf = self.tfidf.fit_transform(X)
 
         if self.conf.get('components'):
-            X_tf = self.pipe.pca.fit_transform(X_tf, y)
+            X_tf = self.svd.fit_transform(X_tf, y)
 
         return X_tf, y
 
     def test(self, data):
         """Send the test data through all applicable steps."""
         # same steps as pipe_train
-        Di, yi = self.pipe.transform(self.load_data(data))
-        Xi = self.pipe.hasher.transform(Di)
-        Xi_tf = self.pipe.tfidf.transform(Xi)
+        Di, yi = self.shed.transform(self.load_data(data))
+        Xi = self.hasher.transform(Di)
+        Xi_tf = self.tfidf.transform(Xi)
 
         if self.conf.get('components'):
-            Xi_tf = self.pipe.pca.transform(Xi_tf)
+            Xi_tf = self.svd.transform(Xi_tf)
 
         return Xi_tf, yi
+
+
+class MiniModel(object):
+
+    def __init__(self, pipeline, clf):
+        self.pipeline = pipeline
+        self.clf = clf
+
+    def classify(self, data):
+        self.pipeline.conf['label_column'] = 0
+        self.pipeline.conf['text_column'] = 1
+        self.pipeline.handle.labs = None
+        v, y = self.pipeline.test(data)
+        enc = dict(map(reversed, self.pipeline.shed.featurizer.labels.items()))
+        return [enc[l] for l in self.clf.predict(v)], self.clf.predict_proba(v)
 
 
 class Experiment(object):
@@ -234,18 +256,50 @@ class Experiment(object):
                             reverse=True)[:n_top]
         for i, score in enumerate(top_scores):
             self.log.loop('grid', (i + 1, score.mean_validation_score,
-                                   np.std(score.cv_validation_scores,
-                                          score.parameters)))
+                                   np.std(score.cv_validation_scores),
+                                          score.parameters))
         self.log.dump('grid')
+
+    def choose_classifier(self, seed):
+        """Chooses a classifier based on settings."""
+        if self.conf.get('setting') == 'grid':
+            param_grid = {'svc__kernel': ['rbf', 'linear'],
+                          'svc__gamma': [1e-2, 1e-3, 1e-4],
+                          'svc__C': [1, 10, 100, 1000, 2000]}
+            pipe = pipeline.Pipeline([
+                ('svc', SVC(random_state=seed, cache_size=80000))
+            ])
+            clf = GridSearchCV(pipe, param_grid=param_grid, n_jobs=-1)
+        elif not self.conf.get('classifier'):
+            clf = SVC(random_state=seed, gamma=1e-2, kernel='linear', C=1,
+                      cache_size=150000, probability=True)
+        else:
+            clf.probability = True
+            clf.random_state = seed
+
+        return clf
+
+    def save(self, clf):
+        """Saves desired Experiment data."""
+        if self.conf.get('save'):
+            if 'log' in self.conf['save']:
+                self.log.save()
+            if 'features' in self.conf['save']:
+                self.log.echo(" Feature saving has not been implemented yet!")
+            if 'model' in self.conf['save']:
+                self.pipe.shed.save()
+            if 'mini' in self.conf['save']:
+                pickle.dump(MiniModel(self.pipe, clf),
+                            open(self.conf['name'] + '.pickle', 'wb'))
 
     def experiment(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
-        np.random.RandomState(666)
-        # setting = conf.get('setting')
+        seed = 666
+        np.random.RandomState(seed)
 
         # report features
         self.log.post('head', ('\n'.join([str(c) for c in conf['features']]),
-                               conf['name'], 666))
+                               conf['name'], seed))
 
         X, y = self.pipe.train(conf['train_data'], conf['features'])
         self.log.loop('sparse', ('train', X.shape))
@@ -254,31 +308,21 @@ class Experiment(object):
             Xi, yi = self.pipe.test(conf['test_data'])
             self.log.loop('sparse', ('test', Xi.shape))
             self.log.dump('sparse')
-            positive_train = self.report('test', yi)
 
-        clf = SVC(random_state=666, gamma=1e-2, kernel='linear', C=1,
-                  cache_size=150000)
+        clf = self.choose_classifier(seed)
+        clf.fit(X, y)
 
-        if not conf.get('test_data'):
-            f1_scorer = metrics.make_scorer(metrics.f1_score,
-                                            pos_label=self.report('train', y),
-                                            average='binary')
+        # report performance
+        if conf.get('setting') == 'grid':
+            self.grid_report(clf.grid_scores_)
+        elif not conf.get('test_data'):
+            f1_scorer = metrics.make_scorer(metrics.f1_score)
             score = np.average(cross_val_score(clf, X, y, cv=10,
-                                               scoring=f1_scorer, n_jobs=-1))
+                                               scoring=f1_scorer,
+                                               n_jobs=-1))
             self.log.post('tfcv', (score,))
-
-        # grid part out for now
         else:
-            clf.fit(X, y)
             res = clf.predict(Xi)
-            self.log.post('f1sc', metrics.f1_score(yi, res,
-                                                   pos_label=positive_train,
-                                                   average='binary'))
+            self.log.post('f1sc', metrics.classification_report(yi, res))
 
-        if conf.get('save'):
-            if 'log' in conf['save']:
-                self.log.save()
-            if 'features' in conf['save']:
-                self.log.echo(" Feature saving has not been implemented yet!")
-            if 'model' in conf['save']:
-                self.pipe.shed.save()
+        self.save(clf)

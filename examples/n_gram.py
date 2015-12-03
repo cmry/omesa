@@ -2,7 +2,7 @@
 
 # for as long as it's not yet pip installable
 import sys
-sys.path.append('/home/user/path/to/shed/')
+sys.path.append('/home/emmery/git/shed/')
 # -----
 
 from shed.experiment import Experiment

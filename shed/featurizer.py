@@ -12,7 +12,7 @@ import operator
 import re
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import LabelEncoder
+# from sklearn.preprocessing import LabelEncoder
 from collections import OrderedDict, Counter, defaultdict
 from time import sleep
 import pickle
