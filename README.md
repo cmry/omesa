@@ -7,19 +7,64 @@ A small framework for reproducible Text Mining research that largely builds on t
   - Record of all settings and fitted parts of the entire experimen, promoting reproducability.
   - Dump an easily deployable version of the final model for plug-and-play demos.
 
-Read the documentation at [readthedocs](shd.readthedocs.org).
+Read the documentation at [readthedocs](http://shd.readthedocs.org/).
 
 ## Important Note
 
 This repository is currently in development, so don't expect any stable functionality until this part is removed. :)
 
-## Experiment
+## `Experiment`
 
-...
+An end-to-end experiment pipeline, included in this module, is the main functionality of shed. By making use of a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code. 
+
+### Example
+
+One of the examples provided is that of [n-gram classification]('examples/n_gram.py') of Wikipedia documents. In this experiment, we are provided with [`n_gram.csv`]('examples/n_gram.csv') that features 10 articles about Machine Learning, and 10 random other articles. To run shed on this, the following configuration is used:
+
+``` python
+from shed.experiment import Experiment
+from shed.featurizer import Ngrams
+
+conf = {
+    "gram_experiment": {
+        "name": "gram_experiment",
+        "train_data": ["./n_gram.csv"],
+        "has_header": True,
+        "features": [Ngrams(level='char', n_list=[3])],
+        "text_column": 1,
+        "label_column": 0,
+        "folds": 10,
+        "save": ("log")
+    }
+}
+
+for experiment, configuration in conf.items():
+    Experiment(configuration)
+```
+
+This will ten-fold cross validate performance on the `.csv`, selecting text and label columns and indicating a header is present in the `.csv` document. We provide the `Ngrams` function and parameters to be used as features, and store the log. The output is as follows:
+
+``` text
+
+---- Shed ---- 
+
+ Config: 
+	 
+        feature:   char_ngram
+        n_list:    [3]
+        max_feat:  None
+         
+	name: gram_experiment 
+	seed: 111 
+
+ Sparse train shape: (20, 1287)
+
+ Tf-CV Result: 0.8
+```
 
 ## `Environment`
 
-shed was originally developped to be used as an easy data-to-feature-space wrapper, with as few dependencies as possible. For this purpose, the `Environment` class was built, which allows minimal use of shed within an existing framework. An example of its use can be seen below.
+shed was originally developed to be used as an easy data-to-feature-space wrapper, with as few dependencies as possible. For this purpose, the `Environment` class was built, which allows minimal use of shed within an existing framework. An example of its use can be seen below.
 
 ### Example
 
