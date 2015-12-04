@@ -105,7 +105,8 @@ class Environment:
         skip : range, optional, default False
             Range of indices that need to be skipped in the data. Can be used
             for splitting as in tenfold cross-validation, whilst retaining the
-            iterative functionality and therefore keeping memory consumption low.
+            iterative functionality and therefore keeping memory consumption
+            low.
 
         shuffle : bool, optional, default True
             If the order of the dataset should be randomized.
