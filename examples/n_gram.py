@@ -2,12 +2,14 @@
 
 # for as long as it's not yet pip installable
 import sys
-sys.path.append('/home/emmery/git/shed/')
+sys.path.append('/dir/to/shed/')
 # -----
 
-from shed.experiment import Experiment
-from shed.featurizer import Ngrams
-
+try:
+    from shed.experiment import Experiment
+    from shed.featurizer import Ngrams
+except ImportError:
+    print("Could not load shed. Please update the path in this file.")
 
 conf = {
     "gram_experiment": {
