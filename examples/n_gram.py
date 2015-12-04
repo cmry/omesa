@@ -9,7 +9,7 @@ try:
     from shed.experiment import Experiment
     from shed.featurizer import Ngrams
 except ImportError:
-    print("Could not load shed. Please update the path in this file.")
+    exit("Could not load shed. Please update the path in this file.")
 
 conf = {
     "gram_experiment": {
