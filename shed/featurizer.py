@@ -21,10 +21,10 @@ import pickle
 # Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
 #               Janneke van de Loo
 # License:      BSD 3-Clause
-# pylint:       disable=E1103
+# pylint:       disable=E1103,W0512
 
 
-class Featurizer:
+class Featurizer(object):
 
     """
     Wrapper for looping feature extractors in fit and transform operations.
@@ -119,14 +119,13 @@ class Featurizer:
         return self.call_helpers(stream, self.transform)
 
 
-class Ngrams:
+class Ngrams(object):
 
     """
-    Calculate ngram frequencies.
+    Calculate n-gram frequencies.
 
-    Can either be applied on token, POS or character level. The fit method
-    iteratively builds a list with gram occurences, the transform method uses
-    these to count their frequencies in a new instance.
+    Can either be applied on token, POS or character level. The transform
+    method dumps a feature dictionary that can be used for feature hashing.
 
     Parameters
     ----------
@@ -135,39 +134,36 @@ class Ngrams:
         uni and bigrams have to be extracted, n_list has to be [1, 2].
 
     max_feats : integers
-        Limit on how many features will be generated.
+        Limits how many features will be generated.
 
     Examples
     --------
     Token-level uni and bigrams with a maximum of 2000 feats per n:
-    >>> Ngrams(level='token', n_list=[1, 2], max_feats=2000)
+
+    In [1]: ng = Ngrams(level='token', n_list=[1, 2], max_feats=2000)
+
+    In [2]: ng.transform('this is text')
+    Out[2]: {'this': 1, 'is': 1, 'text': 1, 'this is': 1, 'is text': 1}
 
     Notes
     -----
-    Implemented by: Ben Verhoeven
-    Refactoring: Chris Emmery
+    Implemented: Chris Emmery
     """
 
-    def __init__(self, level='token', n_list=[2], relative=False, cutoff=0,
-                 max_feats=None):
+    def __init__(self, level='token', n_list=None):
         """Set parameters for N-gram extraction."""
         self.name = level+'_ngram'
-        self.feats = {}
-        self.instances = []
-        self.n_list = n_list
-        self.cutoff = cutoff
-        self.relative = relative
-        self.max_feats = max_feats
+        self.n_list = [2] if not n_list else n_list
         self.level = level
-        self.row = 0 if level == 'token' else 2
+        self.row = 0 if level is 'token' else 2
         self.index, self.counter = 0, 0
 
     def __str__(self):
+        """Report on feature settings."""
         return """
-        feature:   %s
-        n_list:    %s
-        max_feat:  %s
-        """ % (self.name, self.n_list, self.max_feats)
+        feature:   {0}
+        n_list:    1
+        """.format(self.name, self.n_list)
 
     def _find_ngrams(self, input_list, n):
         """Magic n-gram function.
@@ -176,32 +172,27 @@ class Ngrams:
         end items. Based on the implementation by Scott Triglia http://locally
         optimal.com/blog/2013/01/20/elegant-n-gram-generation-in-python/
         """
-        inp = [''] + input_list + ['']
+        inp = [''] * n + input_list + [''] * n
         return zip(*[inp[i:] for i in range(n)])
 
-    def fit_ngram(self, raw, parse):
-        """Fit the possible n-gram according to their level."""
+    def fit(self, raw, parse=None):
+        """Placeholder fit."""
+        return 'placeholder'
+
+    def transform(self, raw, parse=None):
+        """Given a document, return level-grams as Counter dict."""
         if self.level == 'char':
             needle = list(raw)
         elif self.level == 'token' or self.level == 'pos':
             needle = parse[self.row] if parse else raw.split()
             if self.level == 'pos' and not parse:
-                return "OMG ERROR"
+                raise EnvironmentError("There's no POS annotation.")
 
         c = Counter()
         for n in self.n_list:
             c += Counter([self.level+"-"+"_".join(item) for
                           item in self._find_ngrams(needle, n)])
         return c
-
-
-    def fit(self, raw, parse):
-        """Find the possible grams in the provided instance."""
-        pass
-
-    def transform(self, raw, parse):
-        """Given a set of strings, look up the fitted gram frequencies."""
-        return self.fit_ngram(raw, parse)
 
 
 class FuncWords:
@@ -217,54 +208,27 @@ class FuncWords:
     Implemented by: Ben Verhoeven, Chris Emmery
     """
 
-    def __init__(self, relative=False):
+    def __init__(self, lang='en'):
         """Set parameters for function word extraction."""
         self.name = 'func_words'
-        self.feats = {}
-        self.instances = []
-        self.relative = relative
-        self.sum = 0
 
-    def func_freq(self, parsestring):
-        """
-        Count word frequencies.
+        if lang == 'en':
+            raise NotImplementedError
+        elif lang == 'nl':
+            self.functors = {
+                'VNW': 'pronouns', 'LID': 'determiners',
+                'VZ': 'prepositions', 'BW': 'adverbs', 'TW': 'quantifiers',
+                'VG': 'conjunction'}
 
-        Return a frequency dictionary of the function words in the text.
-        Input is a string of parse output. Selects based on relevant functors
-        the words that are function words from this input.
-
-        Parameters
-        -----
-        parsestring : list
-            List with parseged data elements, example:
-            ['zijn', 'zijn', 'WW(pv,tgw,mv)', '43'], ['?', '?', 'LET()', '43']
-
-        Returns
-        -----
-        Counter
-            Frequency dictionary with the function words from the training set.
-        """
-        # TODO: proposing a close_transform for doing relative frequency calcs
-        functors = {'VNW': 'pronouns', 'LID': 'determiners',
-                    'VZ': 'prepositions', 'BW': 'adverbs', 'TW': 'quantifiers',
-                    'VG': 'conjunction'}
-        tokens = [item[0] for item in parsestring if item[2].split('(')[0]
-                  in functors]
-        return Counter(tokens)
-
-    def close_fit(self):
-        """Get function words from Counter."""
-        self.feats = [k for k in self.feats.keys()]
-
-    def fit(self, _, parse):
+    def fit(self, raw, parse):
         """Fit possible function words."""
-        self.feats.update(self.func_freq(parse))
+        return "placeholder"
 
     def transform(self, _, parse):
         """Extract frequencies for fitted function word possibilites."""
-        func_dict = self.func_freq(parse)
-        inst = [func_dict.get(f, 0) for f in self.feats]
-        self.instances.append(inst)
+        tokens = [item[0] for item in parse if item[2].split('(')[0]
+                  in self.functors]
+        return Counter()
 
 
 class TfPCA():
