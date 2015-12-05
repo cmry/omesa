@@ -18,8 +18,7 @@ from time import sleep
 import pickle
 
 # Author:       Chris Emmery
-# Contributors: Mike Kestemont, Ben Verhoeven, Florian Kunneman,
-#               Janneke van de Loo
+# Contributors: Mike Kestemont, Ben Verhoeven, Janneke van de Loo
 # License:      BSD 3-Clause
 # pylint:       disable=E1103,W0512
 
@@ -205,7 +204,8 @@ class FuncWords:
 
     Notes
     -----
-    Implemented by: Ben Verhoeven, Chris Emmery
+    Implemented by: Chris Emmery
+    Dutch functors: Ben Verhoeven
     """
 
     def __init__(self, lang='en'):
@@ -216,9 +216,8 @@ class FuncWords:
             raise NotImplementedError
         elif lang == 'nl':
             self.functors = {
-                'VNW': 'pronouns', 'LID': 'determiners',
-                'VZ': 'prepositions', 'BW': 'adverbs', 'TW': 'quantifiers',
-                'VG': 'conjunction'}
+                'VNW': 'pronouns', 'LID': 'determiners','VZ': 'prepositions',
+                'BW': 'adverbs', 'TW': 'quantifiers', 'VG': 'conjunction'}
 
     def fit(self, raw, parse):
         """Fit possible function words."""
@@ -229,55 +228,6 @@ class FuncWords:
         tokens = [item[0] for item in parse if item[2].split('(')[0]
                   in self.functors]
         return Counter()
-
-
-class TfPCA():
-
-    """
-    Term frequency Prinicple Component Analysis.
-
-    Tryout: transforms unigram counts to PCA matrix.
-
-    Attributes
-    ----------
-
-    dimensions : int
-        Number of remaining dimensions.
-
-    max_tokens : int, optional, default 1000
-        Maximum amount of tokens used in PCA analysis.
-
-    Notes
-    -----
-    Implemented by: Mike Kestemont
-    Quality check: Chris Emmery
-    """
-
-    def __init__(self, dimensions, max_tokens=1000):
-        """Initialize the sklearn class with a TF matrix."""
-        self.name = 'tf_pca'
-        self.pca = PCA(n_components=dimensions)
-        self.vectorizer = TfidfVectorizer(analyzer=self.identity,
-                                          use_idf=False,
-                                          max_features=max_tokens)
-        self.feats = None
-        self.instances = None
-
-    def identity(self, x):
-        """Placeholder for identity."""
-        return x
-
-    def fit(self, raw_data, _):
-        """Fit PCA to the TF matrix."""
-        X = self.vectorizer.fit_transform(raw_data).toarray()
-        self.pca.fit(X)
-        self.feats = True
-        return self
-
-    def transform(self, raw_data, _):
-        """Reduce the space by means of PCA."""
-        X = self.vectorizer.transform(raw_data).toarray()
-        self.instances = self.pca.transform(X)
 
 
 class SentimentFeatures():
@@ -291,9 +241,9 @@ class SentimentFeatures():
 
     Notes
     -----
-    Based on code by Cynthia Van Hee, Marjan Van de Kauter, Orphee De Clercq
-
     Implemented by: Chris Emmery
+
+    Based on code by Cynthia Van Hee, Marjan Van de Kauter, Orphée De Clercq
     """
 
     def __init__(self):
@@ -301,7 +251,6 @@ class SentimentFeatures():
         self.name = 'sentiment'
         self.lexiconDict = pickle.load(open('./shed/data/' +
                                             'sentilexicons.cpickle', 'rb'))
-        self.instances = []
 
     def __str__(self):
         return """
@@ -310,7 +259,7 @@ class SentimentFeatures():
 
     def fit(self, _, parse):
         """Placeholder for fit."""
-        return self
+        return 'placeholder'
 
     def calculate_sentiment(self, instance):
         """
@@ -344,8 +293,7 @@ class SentimentFeatures():
 
     def transform(self, _, parse):
         """Get the sentiment belonging to the words in the parse string."""
-        inst = [self.calculate_sentiment(parse)]
-        self.instances.append(inst)
+        return {self.name: self.calculate_sentiment(parse)}
 
 
 class SimpleStats:
@@ -423,29 +371,21 @@ class SimpleStats:
                  regex_punc=None, regex_word=None, regex_caps=None):
         """Initialize all parameters to extract simple stats."""
         self.name = 'simple_stats'
-        self.feats = None
-        self.instances = []
+
         self.regex_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]' if not \
                           regex_punc else regex_punc
         self.regex_word = r'^[a-zA-Z\-0-9]*[a-zA-Z][a-zA-Z\-0-9]*$' if not \
                           regex_word else regex_word
         self.regex_caps = r'^[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$' if not \
                           regex_caps else regex_caps
+
         self.text = set(text)
         self.token = set(token)
         self.sentence_length = sentence_length
 
     def fit(self, _, parse):
         """Placeholder for fit."""
-        self.feats = True
-
-    def preprocess(self, text):
-        """Preprocess data based on Netlog issues."""
-        text = pnet.restore_html_symbols(text)
-        text = pnet.replace_netlog_tags(text)
-        text = pnet.replace_url_email(text)
-        text = pnet.replace_emoticons(text)
-        return text
+        return 'placeholder'
 
     def floodings(text):
         '''
@@ -539,7 +479,6 @@ class SimpleStats:
     def text_based_feats(self, text):
         """Include features that are based on the raw text."""
         vector = []
-        text = self.preprocess(text)
         if self.text.intersection(set(['flood', 'all'])):
             vector.extend(self.flooding_stats(text))
         if self.text.intersection(set(['char', 'all'])):
@@ -583,85 +522,58 @@ class SimpleStats:
         self.instances.append(fts)
 
 
-class TGedu:
+class Readability:
 
     """
-    Get education-related features.
+    Get readability-related features.
 
     Notes
     -----
     Implemented by: Chris Emmery
-    Code by: Tom De Smedt
+    Attributes by: Tom De Smedt
     """
 
     def __init__(self):
         """Initialize empty class variables."""
-        self.name = 'edu'
-        self.feats = {}
-        self.instances = []
-
+        self.name = 'readability'
         self.diacritics = \
             u"àáâãäåąāæçćčςďèéêëēěęģìíîïīłįķļľņñňńйðòóôõöøþřšťùúûüůųýÿўžż"
-
-        self.punctuation = \
-            ".,;:!?()[]{}`''\"@#$^&*+-|=~_"
-
-        self.flooding = \
-            re.compile(r"((.)\2{2,})", re.I) # ooo, xxx, !!!, ...
-
+        self.punctuation = ".,;:!?()[]{}`''\"@#$^&*+-|=~_"
+        self.flooding = re.compile(r"((.)\2{2,})", re.I) # ooo, xxx, !!!, ...
         self.emoticons = set((
-            '*)', '*-)', '8)', '8-)', '8-D', ":'''(", ":'(", ':(', ':)', ':-(', ':-)',
-            ':-.', ':-/', ':-<', ':-D', ':-O', ':-P', ':-S', ':-[', ':-b', ':-c', ':-o',
-            ':-p', ':-s', ':-|', ':/', ':3', ':>', ':D', ':O', ':P', ':S', ':[', ':\\', ':]',
-            ':^)', ':b', ':c', ':c)', ':o', ':o)', ':p', ':s', ':{', ':|', ':}', ";'(", ';)',
-            ';-)', ';-]', ';D', ';]', ';^)', '<3', '=(', '=)', '=-D', '=/', '=D', '=]', '>.>',
-            '>:)', '>:/', '>:D', '>:P', '>:[', '>:\\', '>:o', '>;]', 'X-D', 'XD', 'o.O', 'o_O',
-            'x-D', 'xD', u'\xb0O\xb0', u'\xb0o\xb0', u'\u2665', u'\u2764', '^_^', '-_-'
+            '*)', '*-)', '8)', '8-)', '8-D', ":'''(", ":'(", ':(', ':)',
+            ':-(', ':-)', ':-.', ':-/', ':-<', ':-D', ':-O', ':-P', ':-S',
+            ':-[', ':-b', ':-c', ':-o', ':-p', ':-s', ':-|', ':/', ':3', ':>',
+            ':D', ':O', ':P', ':S', ':[', ':\\', ':]', ':^)', ':b', ':c',
+            ':c)', ':o', ':o)', ':p', ':s', ':{', ':|', ':}', ";'(", ';)',
+            ';-)', ';-]', ';D', ';]', ';^)', '<3', '=(', '=)', '=-D', '=/',
+            '=D', '=]', '>.>', '>:)', '>:/', '>:D', '>:P', '>:[', '>:\\',
+            '>:o', '>;]', 'X-D', 'XD', 'o.O', 'o_O', 'x-D', 'xD', u'\xb0O\xb0',
+            u'\xb0o\xb0', u'\u2665', u'\u2764', '^_^', '-_-'
         ))
-
         self.emoji = set((
-            u'\u263a', u'\u2764\ufe0f', u'\ud83d', u'\U0001f44c', u'\U0001f44d', u'\U0001f47f',
-            u'\U0001f495', u'\U0001f499', u'\U0001f49a', u'\U0001f49b', u'\U0001f49c', u'\U0001f600',
-            u'\U0001f601', u'\U0001f602', u'\U0001f603', u'\U0001f604', u'\U0001f605', u'\U0001f606',
-            u'\U0001f607', u'\U0001f608', u'\U0001f60a', u'\U0001f60b', u'\U0001f60c', u'\U0001f60d',
-            u'\U0001f60e', u'\U0001f60f', u'\U0001f610', u'\U0001f612', u'\U0001f613', u'\U0001f614',
-            u'\U0001f615', u'\U0001f61b', u'\U0001f61c', u'\U0001f61d', u'\U0001f61e', u'\U0001f61f',
-            u'\U0001f620', u'\U0001f621', u'\U0001f622', u'\U0001f625', u'\U0001f626', u'\U0001f627',
-            u'\U0001f629', u'\U0001f62a', u'\U0001f62b', u'\U0001f62c', u'\U0001f62d', u'\U0001f62e',
-            u'\U0001f62f', u'\U0001f633', u'\U0001f636', u'\U0001f63b', u'\U0001f63f', u'\U0001f640', u'\ude09'
+            u'\U0001f44c', u'\U0001f44d', u'\U0001f47f', u'\U0001f495',
+            u'\U0001f499', u'\U0001f49a', u'\U0001f49b', u'\U0001f49c',
+            u'\U0001f600', u'\U0001f601', u'\U0001f602', u'\U0001f603',
+            u'\U0001f604', u'\U0001f605', u'\U0001f606', u'\U0001f607',
+            u'\U0001f608', u'\U0001f60a', u'\U0001f60b', u'\U0001f60c',
+            u'\U0001f60d', u'\U0001f60e', u'\U0001f60f', u'\U0001f610',
+            u'\U0001f612', u'\U0001f613', u'\U0001f614', u'\U0001f615',
+            u'\U0001f61b', u'\U0001f61c', u'\U0001f61d', u'\U0001f61e',
+            u'\U0001f61f', u'\U0001f620', u'\U0001f621', u'\U0001f622',
+            u'\U0001f625', u'\U0001f626', u'\U0001f627', u'\U0001f629',
+            u'\U0001f62a', u'\U0001f62b', u'\U0001f62c', u'\U0001f62d',
+            u'\U0001f62e', u'\U0001f62f', u'\U0001f633', u'\U0001f636',
+            u'\U0001f63b', u'\U0001f63f', u'\U0001f640', u'\u2764\ufe0f',
+            u'\u263a', u'\ud83d', u'\ude09'
         ))
-
         self.url = re.compile(r"https?://[^\s]+")           # http://www.textgain.com
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I) # @tom_de_smedt
 
-    def fit(self, bla, _):
-        pass
-
-    def atr_freq(self, attrib, inp):
-        i = 0
-        for x in attrib:
-            if x in inp:
-                i += 1
-        return i
+    def fit(self, raw, _):
+        return 'placeholder'
 
     def transform(self, raw, _):
         """Add each metric to the feature vector."""
-        S = raw
-        s = raw.lower()
-        a = S.replace("\n", " ")
-        a = a.split(" ")
-        a = [w for w in a if w]
-        n = len(a) or 1
-        m = len(s) or 1
-        v = [
-            np.mean([len(i) for i in a]),
-            self.flooding.search(s) is None,
-            sum(1 for w in a if w.isupper()) / n,
-            sum(1 for w in a if w == w.capitalize()),
-            sum(1 for c in S if c.isupper()) / m
-        ]
-        v.append(self.atr_freq(self.punctuation, s))
-        v.append(self.atr_freq(self.diacritics, s))
-        v.append(self.atr_freq(self.emoticons, s))
-        v.append(self.atr_freq(self.emoji, s))
-        self.instances.append(v)
+        # TODO: add stuff here
+        pass
