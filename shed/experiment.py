@@ -216,14 +216,14 @@ class Pipeline(object):
             if label == 'break':
                 break
             ann, feats = ('' if not v else x[v] for v in [i_ann, i_feats])
+            ann = [x.split('\t') for x in ann.split('\n')]
             if label and x[i_text]:
                 yield (label, x[i_text], ann, feats)
         self.handle = LabelHandler(conf.get('label_selection'))
 
     def train(self, data, features):
         """Send the training data through all applicable steps."""
-        D, y = self.featurizer.fit_transform([self.load_data(data),
-                                              self.load_data(data)], features)
+        D, y = self.featurizer.transform(self.load_data(data), features)
         X = self.hasher.fit_transform(D)
         X_tf = self.tfidf.fit_transform(X)
 
@@ -411,8 +411,6 @@ class Experiment(object):
             ---
         }
     }
-
-    `ex`
 
     Parameters
     ----------

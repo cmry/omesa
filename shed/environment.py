@@ -152,28 +152,9 @@ class Environment:
         loader = self.reader.load()
         return loader
 
-    def fit(self, loader, features=Ngrams()):
+    def transform(self, loader, features=False):
         """
-        Fit the provided features to cover the training data.
-
-        Parameters
-        ----------
-        loader : generator
-            The loader should iteratively yield a preprocessed training data
-            instance with (label, raw, frog).
-
-        features : list of class instances, optional, default Ngrams
-            Featurizer helper class instances and parameters found in
-            featurizer.py.
-        """
-        print(" Starting fitting ...")
-        self.featurizer = Featurizer(features)
-        [x for x in self.featurizer.fit(loader)]
-        print(" done!")
-
-    def transform(self, loader):
-        """
-        Transform the test data according to the fitted features.
+        Transform the test data according to required features.
 
         Parameters
         ----------
@@ -190,17 +171,11 @@ class Environment:
             List of labels for data instances.
         """
         print(" Starting transforming ...")
-        if not self.featurizer:
-            raise EnvironmentError("Data is not fitted yet.")
+        if features:
+            self.featurizer = Featurizer(features)
         space, labels = zip(*[(v, label) for label, v in
                               self.featurizer.transform(loader)])
         print(" done!")
-        return space, labels
-
-    def fit_transform(self, loaders, features=Ngrams()):
-        """Shorthand for fit and transform methods. Needs two loaders"""
-        self.fit(loaders.pop(), features)
-        space, labels = self.transform(loaders.pop())
         return space, labels
 
     def train(self, model, space, labels):

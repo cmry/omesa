@@ -8,13 +8,8 @@ environment.
 """
 
 import numpy as np
-import operator
 import re
-from sklearn.decomposition import PCA
-from sklearn.feature_extraction.text import TfidfVectorizer
-# from sklearn.preprocessing import LabelEncoder
-from collections import OrderedDict, Counter, defaultdict
-from time import sleep
+from collections import OrderedDict, Counter
 import pickle
 
 # Author:       Chris Emmery
@@ -24,7 +19,6 @@ import pickle
 
 
 class Featurizer(object):
-
     """
     Wrapper for looping feature extractors in fit and transform operations.
 
@@ -77,7 +71,7 @@ class Featurizer(object):
         self.metaf, self.metafc = {}, 0
         self.helpers = features
 
-    def call_helpers(self, stream, func):
+    def transform(self, stream):
         """Call all the helpers to extract features.
 
         Parameters
@@ -98,10 +92,8 @@ class Featurizer(object):
                 self.labels[label] = self.labelc
                 self.labelc += 1
             for helper in self.helpers:
-                helper.fit(raw, parse)
-                if func == self.transform:
-                    v.update(helper.transform(raw, parse))
-            if func == self.transform:
+                v.update(helper.transform(raw, parse))
+            if meta:
                 for meta_inst in meta:
                     if meta_inst not in self.metaf:
                         self.metaf[label] = self.metafc
@@ -109,17 +101,8 @@ class Featurizer(object):
                         v.update({self.metaf[meta_inst]: 1})
             yield self.labels[label], v
 
-    def fit(self, stream):
-        """Fit the extractors according to their requirements."""
-        return self.call_helpers(stream, self.fit)
-
-    def transform(self, stream):
-        """Transform an instance according to the fitted extractors."""
-        return self.call_helpers(stream, self.transform)
-
 
 class Ngrams(object):
-
     """
     Calculate n-gram frequencies.
 
@@ -146,7 +129,7 @@ class Ngrams(object):
 
     Notes
     -----
-    Implemented: Chris Emmery
+    Implemented by: Chris Emmery
     """
 
     def __init__(self, level='token', n_list=None):
@@ -173,10 +156,6 @@ class Ngrams(object):
         """
         inp = [''] * n + input_list + [''] * n
         return zip(*[inp[i:] for i in range(n)])
-
-    def fit(self, raw, parse=None):
-        """Placeholder fit."""
-        return 'placeholder'
 
     def transform(self, raw, parse=None):
         """Given a document, return level-grams as Counter dict."""
@@ -216,22 +195,17 @@ class FuncWords:
             raise NotImplementedError
         elif lang == 'nl':
             self.functors = {
-                'VNW': 'pronouns', 'LID': 'determiners','VZ': 'prepositions',
+                'VNW': 'pronouns', 'LID': 'determiners', 'VZ': 'prepositions',
                 'BW': 'adverbs', 'TW': 'quantifiers', 'VG': 'conjunction'}
-
-    def fit(self, raw, parse):
-        """Fit possible function words."""
-        return "placeholder"
 
     def transform(self, _, parse):
         """Extract frequencies for fitted function word possibilites."""
         tokens = [item[0] for item in parse if item[2].split('(')[0]
                   in self.functors]
-        return Counter()
+        return Counter(tokens)
 
 
 class SentimentFeatures():
-
     """
     Lexicon based sentiment features.
 
@@ -256,10 +230,6 @@ class SentimentFeatures():
         return """
         feature:   %s
         """ % (self.name)
-
-    def fit(self, _, parse):
-        """Placeholder for fit."""
-        return 'placeholder'
 
     def calculate_sentiment(self, instance):
         """
@@ -297,7 +267,6 @@ class SentimentFeatures():
 
 
 class SimpleStats:
-
     r"""
     Word and token based features.
 
@@ -335,7 +304,7 @@ class SimpleStats:
 
     Notes
     -----
-    Code by: Janneke van de Loo
+    Features by: Janneke van de Loo
     Implemented by: Chris Emmery
     """
 
@@ -345,42 +314,38 @@ class SimpleStats:
         self.v = {}
         self.text, self.token, self.stl = text, token, sentence_length
 
-    def fit(self, _, parse):
-        """Placeholder for fit."""
-        return 'placeholder'
-
-    def avg(self, iter):
+    def avg(self, iterb):
         """Average length of iter."""
-        return np.mean([len(fl) for fl, _ in floodings]) if floodings else 0
+        return np.mean([len(fl) for fl, _ in iterb]) if iterb else 0
 
     def text_based_feats(self, raw):
         """Include features that are based on the raw text."""
         r_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]'
         flood, flood_alph, flood_punc = [], [], []
 
-        for fl in re.findall(r"((.)\2{2,})", text):
+        for fl in re.findall(r"((.)\2{2,})", raw):
             flood.append(len(fl[0]))
             if re.search(r'^[a-zA-Z]+$', fl[1]):
                 flood_alph.append(len(fl[0]))
             if re.search(r_punc, fl[1]):
                 flood_punc.append(len(fl[0]))
-        av = (np.mean(fl), np.mean(fl_alph), np.mean(fl_punc))
+        # print(fl, fl_alph, fl_punc)
+        av = (np.mean(flood), np.mean(flood_alph), np.mean(flood_punc))
 
-        self.v.update({'flood_norm_len': len(fl),
-                       'flood_alph_len': len(fl_alph),
-                       'flood_punc_len': len(fl_punc),
-                       'flood_norm_avg': av[0] if str(av[0]) not 'nan' else 0,
-                       'flood_alph_avg': av[1] if str(av[1]) not 'nan' else 0,
-                       'flood_punc_avg': av[2] if str(av[2]) not 'nan' else 0,
-                       'num_punc': len(re.findall(self.regex_punc+'+', text)),
-                       'num_num': len(re.findall(r'[0-9]+', text)),
-                       'num_emots': len(re.findall(r'_EMOTICON_', text))
-        })
+        self.v.update({'flood_norm_len': len(flood),
+                       'flood_alph_len': len(flood_alph),
+                       'flood_punc_len': len(flood_punc),
+                       'flood_norm_avg': av[0] if str(av[0]) != 'nan' else 0,
+                       'flood_alph_avg': av[1] if str(av[1]) != 'nan' else 0,
+                       'flood_punc_avg': av[2] if str(av[2]) != 'nan' else 0,
+                       'num_punc': len(re.findall(r_punc + '+', raw)),
+                       'num_num': len(re.findall(r'[0-9]+', raw)),
+                       'num_emots': len(re.findall(r'_EMOTICON_', raw))})
 
     def token_based_feats(self, tokens):
         """Include features that are based on certain tokens."""
         stats = {'word_len': 0, 'cap_words': 0, 'start_cap': 0,
-                 'num_urls': 0, 'num_phots': 0, 'num_phots': 0}
+                 'num_urls': 0, 'num_phots': 0, 'num_vids': 0}
         r_cap = r'[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$'
 
         for token in tokens:
@@ -394,7 +359,7 @@ class SimpleStats:
             elif token == '__PHOTO__':
                 stats['num_phots'] += 1
             elif token == '__VIDEO__':
-                stats['num_phots'] += 1
+                stats['num_vids'] += 1
 
         self.v.update(stats)
 
@@ -407,14 +372,20 @@ class SimpleStats:
         """Transform given instance into simple text features."""
         if self.text:
             self.text_based_feats(raw)
-        if self.tokens:
-            self.token_based_feats([p[0] for p in parse])
-        if self.stl:
-            self.avg_sent_length([p[3] for p in parse])
+        try:
+            if self.token:
+                assert parse
+                self.token_based_feats([p[0] for p in parse])
+            if self.stl:
+                assert parse
+                self.avg_sent_length([p[3] for p in parse])
+        except AssertionError:
+            exit("SimpleStats - No parses were found to extract token or " +
+                 "sentence features from. Please provide or disable features.")
+        return self.v
 
 
 class Readability:
-
     """
     Get readability-related features.
 
@@ -430,7 +401,7 @@ class Readability:
         self.diacritics = \
             u"àáâãäåąāæçćčςďèéêëēěęģìíîïīłįķļľņñňńйðòóôõöøþřšťùúûüůųýÿўžż"
         self.punctuation = ".,;:!?()[]{}`''\"@#$^&*+-|=~_"
-        self.flooding = re.compile(r"((.)\2{2,})", re.I) # ooo, xxx, !!!, ...
+        self.flooding = re.compile(r"((.)\2{2,})", re.I)  # ooo, xxx, !!!, ...
         self.emoticons = set((
             '*)', '*-)', '8)', '8-)', '8-D', ":'''(", ":'(", ':(', ':)',
             ':-(', ':-)', ':-.', ':-/', ':-<', ':-D', ':-O', ':-P', ':-S',
@@ -458,11 +429,10 @@ class Readability:
             u'\U0001f63b', u'\U0001f63f', u'\U0001f640', u'\u2764\ufe0f',
             u'\u263a', u'\ud83d', u'\ude09'
         ))
-        self.url = re.compile(r"https?://[^\s]+")           # http://www.textgain.com
-        self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I) # @tom_de_smedt
+        self.url = re.compile(r"https?://[^\s]+")
+        self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I)
 
-    def fit(self, raw, _):
-        return 'placeholder'
+        return NotImplementedError
 
     def transform(self, raw, _):
         """Add each metric to the feature vector."""
