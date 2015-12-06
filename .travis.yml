@@ -27,7 +27,6 @@ install:
     # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION atlas numpy scipy matplotlib scikit-learn nose dateutil pandas statsmodels
   - source activate test-environment
-  - python setup.py install
 
 # Run test
 script:
