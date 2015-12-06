@@ -82,12 +82,19 @@ data = ['/dir/to/data/data.csv', 'dir/to/data/data2.csv']
 shd = shed.Environment(name='ngram_bayes')
 ```
 
-Now we can `fit_transform` our data to `X, y`. Given that we quickly want to test if it works, we provide a maximum amount of instances with the `max_n` argument.
+Now we can `transform` our data to `X, y`. Given that we quickly want to test if it works, we provide a maximum amount of instances with the `max_n` argument.
 
 ``` python
 loader = shd.load(data=data, target_label='category', max_n=10000)
-X, y = shd.fit_transform(loader, features)
+X, y = shd.transform(loader, features)
 ```
+
+`X` is returned as a list of sparse dictionary representations for the features. To transform these into a sparse matrix, it is currently advised to use either the `FeatureHasher` or `DictVectorizer` from `sklearn`, which can be found [here](scikit-learn.org/stable/modules/feature_extraction.html).
+
+``` python
+X = DictVectorizer.fit_transform(X)
+```
+
 From there on, you can do whatever you wish with `X`, such as a common `sklearn` classification operation. In the end, the model can be stored by calling `shd.train` rather than the `fit` of the classifier, like so:
 
 ``` python
