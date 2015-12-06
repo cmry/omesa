@@ -16,6 +16,7 @@ import pickle
 # Contributors: Mike Kestemont, Ben Verhoeven, Janneke van de Loo
 # License:      BSD 3-Clause
 # pylint:       disable=E1103,W0512
+# -*- coding: utf-8 -*-
 
 
 class Featurizer(object):

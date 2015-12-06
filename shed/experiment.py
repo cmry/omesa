@@ -1,6 +1,7 @@
 """Experiment wrapper code."""
 
 # pylint:       disable=E1103,E1101,E0611,C0103,C0325,C0330,W0141
+# -*- coding: utf-8 -*-
 
 from . import environment as env
 

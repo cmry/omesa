@@ -13,6 +13,7 @@ from .processor import Preprocessor
 # Contributors: Florian Kunneman
 # License:      BSD 3-Clause
 # pylint:       disable=E1103
+# -*- coding: utf-8 -*-
 
 
 class Datareader:

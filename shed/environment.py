@@ -16,6 +16,7 @@ import pickle
 # Author:       Chris Emmery
 # License:      BSD 3-Clause
 # pylint:       disable=E1103
+# -*- coding: utf-8 -*-
 
 
 class Environment:
