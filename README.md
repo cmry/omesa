@@ -4,7 +4,7 @@ A small framework for reproducible Text Mining research that largely builds on t
   - Exhaustive search over best features, pipeline options, to classifier optimization.
   - Flexible wrappers to plug in your tools and features of choice.
   - Completely sparse pipeline through hashing - from data to feature space.
-  - Record of all settings and fitted parts of the entire experimen, promoting reproducability.
+  - Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
   - Dump an easily deployable version of the final model for plug-and-play demos.
 
 Read the documentation at [readthedocs](http://shd.readthedocs.org/).
