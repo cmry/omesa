@@ -30,7 +30,7 @@ install:
 
 # Run test
 script:
-  - nosetests --with-cov --cov shed --cov-config .coveragerc --logging-level=INFO
+  - nosetests --with-coverage --cover-package=shed --logging-level=INFO
 
 # Calculate coverage
 after_success:
