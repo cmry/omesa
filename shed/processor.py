@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Processor methods."""
 
 import re
@@ -7,7 +9,6 @@ from os import path
 # Contributors: Florian Kunneman
 # License:      BSD 3-Clause
 # pylint:       disable=W0142,F0401
-# -*- coding: utf-8 -*-
 
 
 class Processor(object):

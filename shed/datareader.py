@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Data handling functions.
 
 Used to open a stream, and activate certain preprocessing options such as
@@ -13,7 +15,6 @@ from .processor import Preprocessor
 # Contributors: Florian Kunneman
 # License:      BSD 3-Clause
 # pylint:       disable=E1103
-# -*- coding: utf-8 -*-
 
 
 class Datareader:
