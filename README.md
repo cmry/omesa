@@ -52,7 +52,6 @@ for experiment, configuration in conf.items():
 This will ten-fold cross validate performance on the `.csv`, selecting text and label columns and indicating a header is present in the `.csv` document. We provide the `Ngrams` function and parameters to be used as features, and store the log. The output is as follows:
 
 ``` text
-
 ---- Shed ----
 
  Config:
