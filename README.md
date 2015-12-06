@@ -13,6 +13,11 @@ Read the documentation at [readthedocs](http://shd.readthedocs.org/).
 
 This repository is currently in development, so don't expect any stable functionality until this part is removed. :)
 
+## Acknowledgements
+
+Part of the work on shed was carried out in the context of the [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded by the government agency for Innovation by Science and Technology (IWT).
+
+
 ## Dependencies
 
 shed currently heavily relies on `numpy`, `scipy` and `sklearn`. To use
