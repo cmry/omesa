@@ -13,9 +13,16 @@ Read the documentation at [readthedocs](http://shd.readthedocs.org/).
 
 This repository is currently in development, so don't expect any stable functionality until this part is removed. :)
 
+## Dependencies
+
+shed currently heavily relies on `numpy`, `scipy` and `sklearn`. To use
+[Frog](https://languagemachines.github.io/frog/) as a Dutch back-end, we
+strongly recommend using [LaMachine](https://proycon.github.io/LaMachine/). For
+English, there is a [spaCy](https://spacy.io/) wrapper available.
+
 ## `Experiment`
 
-An end-to-end experiment pipeline, included in this module, is the main functionality of shed. By making use of a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code. 
+An end-to-end experiment pipeline, included in this module, is the main functionality of shed. By making use of a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code.
 
 ### Example
 
@@ -46,16 +53,16 @@ This will ten-fold cross validate performance on the `.csv`, selecting text and 
 
 ``` text
 
----- Shed ---- 
+---- Shed ----
 
- Config: 
-	 
+ Config:
+
         feature:   char_ngram
         n_list:    [3]
         max_feat:  None
-         
-	name: gram_experiment 
-	seed: 111 
+
+	name: gram_experiment
+	seed: 111
 
  Sparse train shape: (20, 1287)
 
@@ -133,7 +140,7 @@ class SomeFeaturizer:
         """Set parameters for SomeFeaturizer."""
         self.name = 'hookname'
         self.some_params = some_params
-    
+
     def transform(self, raw, parse):
         """Return a dictionary of feature values."""
         return Counter([x for x in raw])
