@@ -301,65 +301,37 @@ class SimpleStats:
     r"""
     Word and token based features.
 
-    By default, this class returns ALL features. To explicitly exclude these,
-    use empty lists in the function.
-
     Parameters
     ----------
-    text : list, ['all' (default), 'flood', 'char', 'emo']
-        Text-based features to be extracted, can include:
+    text : boolean, optional, default True
+        Text-based features to be extracted, includes:
 
-        'flood':
-            Includes flooding properties regarding total amount of flooding,
-            and individually punctuation and alphanumeric stats.
-        'char':
-            Include frequency of punctuation and number sequences.
-        'emo':
-            Detect and include emoticon frequencies.
-        'all':
-            Every feature listed above.
+        - Total amount of flooding, and individually punctuation and
+          alphanumeric stats.
+        - Frequency of punctuation and number sequences.
+        - Emoticon frequencies.
 
-    token : list, ['all' (default), 'wlen', 'capw', 'scapw', 'urls', 'photo', \
-                   'vid']
-        Token-based features to be extracted, can include:
+    token : boolean, optional, default True
+        Token-based features to be extracted, can includes:
 
-        'wlen':
-            Word lengths.
-        'capw':
-            Number of all CAPITAL words.
-        'scapw':
-            Number Of Start Capital Words.
-        'urls':
-            Occurence of URLs.
-        'photo':
-            Occurence of links to pictures.
-        'vid':
-            Occurence of links to videos.
-        'all':
-            Every feature listed above.
+        - Word lengths.
+        - Number of all CAPITAL words.
+        - Number Of Start Capital Words.
+        - Occurence of URLs.
+        - Occurence of links to pictures.
+        - Occurence of links to videos.
+        - Every feature listed above.
 
-    sentence_lenth : integer, optional, default True
+    sentence_lenth : boolean, optional, default True
         Add the sentence length as a feature.
-
-    regex_punc : pattern
-        A pattern that captures all punctuation. Default is provided.
-
-    regex_word : pattern
-        A pattern that captures all alphanumerics. Default is provided.
-
-    regex_punc : pattern
-        A pattern that captures all capital sequences. Default is provided.
 
     Examples
     --------
     All features:
     >>> SimpleStats()
 
-    Only sentence length:
-    >>> SimpleStats(text=[], token=[])
-
     Only text features:
-    >>> SimpleStats(text=['all'], token=[], sentence_length=False)
+    >>> SimpleStats(token=False, sentence_length=False)
 
     Notes
     -----
@@ -367,159 +339,78 @@ class SimpleStats:
     Implemented by: Chris Emmery
     """
 
-    def __init__(self, text=['all'], token=['all'], sentence_length=True,
-                 regex_punc=None, regex_word=None, regex_caps=None):
+    def __init__(self, text=True, token=True, sentence_length=True):
         """Initialize all parameters to extract simple stats."""
         self.name = 'simple_stats'
-
-        self.regex_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]' if not \
-                          regex_punc else regex_punc
-        self.regex_word = r'^[a-zA-Z\-0-9]*[a-zA-Z][a-zA-Z\-0-9]*$' if not \
-                          regex_word else regex_word
-        self.regex_caps = r'^[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$' if not \
-                          regex_caps else regex_caps
-
-        self.text = set(text)
-        self.token = set(token)
-        self.sentence_length = sentence_length
+        self.v = {}
+        self.text, self.token, self.stl = text, token, sentence_length
 
     def fit(self, _, parse):
         """Placeholder for fit."""
         return 'placeholder'
 
-    def floodings(text):
-        '''
-        Returns a list of tuples (complete_flooding, flooded_item),
-        e.g.('iii', 'i')
-        '''
-        floodings = re.findall(r"((.)\2{2,})", text)
-        floodings = [tup for tup in floodings if tup[0] != '...']
-        return floodings
+    def avg(self, iter):
+        """Average length of iter."""
+        return np.mean([len(fl) for fl, _ in floodings]) if floodings else 0
 
-    def only_alph(self, floodings):
-        """Include only alphanumeric flooding stats."""
-        return [fl for fl in floodings if re.search(r'^[a-zA-Z]+$', fl[1])]
-
-    def only_punc(self, floodings):
-        """Include only punctuation related floodings."""
-        return [fl for fl in floodings if re.search(self.regex_punc, fl[1])]
-
-    def avg_fl_len(self, floodings):
-        """Average length of flooding."""
-        if floodings:
-            avg_len = np.mean([len(fl) for fl, _ in floodings])
-        else:
-            avg_len = 0
-        return avg_len
-
-    def flooding_stats(self, text):
-        """Some stats related to arbitrary repetion of keystrokes."""
-        vector = []
-        fl = pnet.floodings(text)
-        fl_alph = self.only_alph(fl)
-        fl_punc = self.only_punc(fl)
-        vector.append(len(fl))
-        vector.append(len(fl_alph))
-        vector.append(len(fl_punc))
-        vector.append(self.avg_fl_len(fl))
-        vector.append(self.avg_fl_len(fl_alph))
-        vector.append(self.avg_fl_len(fl_punc))
-        return vector
-
-    def num_punc_seqs(self, text):
-        """Punctuation sequences such as ..,,,!!!."""
-        regex_punc_seq = self.regex_punc+'+'
-        return len(re.findall(regex_punc_seq, text))
-
-    def num_num_seqs(self, text):
-        """Number sequences such as 9782189421."""
-        regex_num_seq = r'[0-9]+'
-        return len(re.findall(regex_num_seq, text))
-
-    def char_type_stats(self, text):
-        """Number of punctuation and number sequences."""
-        vector = []
-        vector.append(self.num_punc_seqs(text))
-        vector.append(self.num_num_seqs(text))
-        return vector
-
-    def num_emoticons(self, text):
-        """Number of _EMOTICON_ tags found."""
-        return len(re.findall(r'_EMOTICON_', text))
-
-    def get_words(self, tokens):
-        """Retrieve what is declared to be a word."""
-        return [tok for tok in tokens if re.search(self.regex_word, tok)]
-
-    def avg_word_len(self, words):
-        """Average word length of input string."""
-        avg = np.mean([len(w) for w in words])
-        return avg if str(avg) != 'nan' else 0.0
-
-    def num_allcaps_words(self, words):
-        """Number of words that are all CAPITALIZED."""
-        return sum([1 for w in words if re.search(self.regex_caps, w)])
-
-    def num_startcap_words(self, words):
-        """Number Of Words That Start With A Capital."""
-        return sum([1 for w in words if re.search(r'^[A-Z]', w)])
-
-    def num_urls(self, tokens):
-        """Number of URLs in given string."""
-        return sum([1 for tok in tokens if tok == '_URL_'])
-
-    def num_photos(self, tokens):
-        """Number of photos in given string."""
-        return sum([1 for tok in tokens if tok == '_PHOTO_'])
-
-    def num_videos(self, tokens):
-        """Number of videos in given string."""
-        return sum([1 for tok in tokens if tok == '_VIDEO_'])
-
-    def text_based_feats(self, text):
+    def text_based_feats(self, raw):
         """Include features that are based on the raw text."""
-        vector = []
-        if self.text.intersection(set(['flood', 'all'])):
-            vector.extend(self.flooding_stats(text))
-        if self.text.intersection(set(['char', 'all'])):
-            vector.extend(self.char_type_stats(text))
-        if self.text.intersection(set(['emo', 'all'])):
-            vector.append(self.num_emoticons(text))
-        return vector
+        r_punc = r'[\!\?\.\,\:\;\(\)\"\'\-]'
+        flood, flood_alph, flood_punc = [], [], []
+
+        for fl in re.findall(r"((.)\2{2,})", text):
+            flood.append(len(fl[0]))
+            if re.search(r'^[a-zA-Z]+$', fl[1]):
+                flood_alph.append(len(fl[0]))
+            if re.search(r_punc, fl[1]):
+                flood_punc.append(len(fl[0]))
+        av = (np.mean(fl), np.mean(fl_alph), np.mean(fl_punc))
+
+        self.v.update({'flood_norm_len': len(fl),
+                       'flood_alph_len': len(fl_alph),
+                       'flood_punc_len': len(fl_punc),
+                       'flood_norm_avg': av[0] if str(av[0]) not 'nan' else 0,
+                       'flood_alph_avg': av[1] if str(av[1]) not 'nan' else 0,
+                       'flood_punc_avg': av[2] if str(av[2]) not 'nan' else 0,
+                       'num_punc': len(re.findall(self.regex_punc+'+', text)),
+                       'num_num': len(re.findall(r'[0-9]+', text)),
+                       'num_emots': len(re.findall(r'_EMOTICON_', text))
+        })
 
     def token_based_feats(self, tokens):
         """Include features that are based on certain tokens."""
-        vector = []
-        words = self.get_words(tokens)
-        if self.token.intersection(set(['wlen', 'all'])):
-            vector.append(self.avg_word_len(words))
-        if self.token.intersection(set(['capw', 'all'])):
-            vector.append(self.num_allcaps_words(words))
-        if self.token.intersection(set(['scapw', 'all'])):
-            vector.append(self.num_startcap_words(words))
-        if self.token.intersection(set(['urls', 'all'])):
-            vector.append(self.num_urls(tokens))
-        if self.token.intersection(set(['photo', 'all'])):
-            vector.append(self.num_photos(tokens))
-        if self.token.intersection(set(['vid', 'all'])):
-            vector.append(self.num_videos(tokens))
-        return vector
+        stats = {'word_len': 0, 'cap_words': 0, 'start_cap': 0,
+                 'num_urls': 0, 'num_phots': 0, 'num_phots': 0}
+        r_cap = r'[A-Z\-0-9]*[A-Z][A-Z\-0-9]*$'
 
-    def avg_sent_length(self, sent_nums):
+        for token in tokens:
+            stats['word_len'] += len(token)
+            stats['cap_words'] += len(''.join(re.findall(r_cap, token)))
+            stats['start_cap'] += len(re.findall(r'[A-Z][a-z]', token))
+
+            # needs token parser
+            if token == '__URL__':
+                stats['num_urls'] += 1
+            elif token == '__PHOTO__':
+                stats['num_phots'] += 1
+            elif token == '__VIDEO__':
+                stats['num_phots'] += 1
+
+        self.v.update(stats)
+
+    def avg_sent_length(self, sentence_indices):
         """Calculate average sentence length."""
-        sent_len_dict = Counter(sent_nums)
-        sent_lengths = [val for _, val in sent_len_dict.items()]
-        avg_len = np.mean(sent_lengths)
-        return avg_len
+        words_per_sent = Counter(sentence_indices)
+        return np.mean([val for _, val in words_per_sent.items()])
 
     def transform(self, raw, parse):
         """Transform given instance into simple text features."""
-        fts = self.text_based_feats(raw) + \
-            self.token_based_feats([f[0] for f in parse])
-        if self.sentence_length:
-            fts += [self.avg_sent_length(
-                [f[3] for f in parse if len(parse) > 3])]
-        self.instances.append(fts)
+        if self.text:
+            self.text_based_feats(raw)
+        if self.tokens:
+            self.token_based_feats([p[0] for p in parse])
+        if self.stl:
+            self.avg_sent_length([p[3] for p in parse])
 
 
 class Readability:
