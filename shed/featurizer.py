@@ -146,7 +146,7 @@ class Ngrams(object):
         """Report on feature settings."""
         return """
         feature:   {0}
-        n_list:    1
+        n_list:    {1}
         """.format(self.name, self.n_list)
 
     def _find_ngrams(self, input_list, n):

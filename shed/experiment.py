@@ -14,9 +14,10 @@ from collections import Counter, OrderedDict
 from copy import deepcopy
 from operator import itemgetter
 from sklearn import metrics
+from sklearn import pipeline
 from sklearn.cross_validation import cross_val_score
 from sklearn.grid_search import GridSearchCV
-from sklearn import pipeline
+from sklearn.model_selection import train_test_split
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -501,12 +502,15 @@ class Experiment(object):
             self.log.dump('sparse')
 
         clf = self.choose_classifier(seed)
+        if conf.get('setting') == 'grid' and not conf.get('test_data'):
+            X, Xe, y, ye = train_test_split(
+                X, y, test_size=0.8, random_state=666)
         clf.fit(X, y)
 
         # report performance
-        if conf.get('setting') == 'grid':
-            self.grid_report(clf.grid_scores_)
-        elif not conf.get('test_data'):
+        if not conf.get('test_data'):
+            if conf.get('setting') == 'grid':
+                X, y = Xe, ye
             f1_scorer = metrics.make_scorer(metrics.f1_score)
             score = np.average(cross_val_score(clf, X, y, cv=10,
                                                scoring=f1_scorer,
