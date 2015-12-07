@@ -2,7 +2,7 @@ site_name: Shed Documentation
 theme: readthedocs
 docs_dir: sources
 repo_url: http://github.com/cmry/shed
-site_url: http://shd.io/
+site_url: http://shd.readthedocs.org/
 #theme_dir: theme
 site_description: Documentation for reproducable Text Mining research framework.
 
