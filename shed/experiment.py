@@ -15,8 +15,8 @@ from copy import deepcopy
 from operator import itemgetter
 from sklearn import metrics
 from sklearn import pipeline
-from sklearn.cross_validation import cross_val_score
-from sklearn.grid_search import GridSearchCV, train_test_split
+from sklearn.cross_validation import cross_val_score, train_test_split
+from sklearn.grid_search import GridSearchCV
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
