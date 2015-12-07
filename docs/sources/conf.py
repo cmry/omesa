@@ -14,6 +14,12 @@
 
 import sys
 import os
+import mock
+
+MOCK_MODULES = ['numpy', 'scipy', 'scikit-learn', 'matplotlib',
+                'matplotlib.pyplot', 'scipy.interpolate']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -23,13 +29,6 @@ project_path = os.path.abspath(__file__ + "/../../../")
 print(project_path)
 
 sys.path.insert(0, os.path.abspath(project_path))
-
-import mock
-
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'matplotlib.pyplot',
-                'scipy.interpolate']
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
 
 # -- General configuration ------------------------------------------------
 
