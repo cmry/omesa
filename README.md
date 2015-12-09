@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/cmry/shed.svg?branch=master)](https://travis-ci.org/cmry/shed)
-[![Documentation Status](https://readthedocs.org/projects/shd/badge/?version=latest)](http://shd.readthedocs.org/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/shed/badge/?version=latest)](http://shed.readthedocs.org/en/latest/?badge=latest)
 [![Code Health](https://landscape.io/github/cmry/shed/master/landscape.svg?style=flat)](https://landscape.io/github/cmry/shed/master)
 [![Coverage Status](https://coveralls.io/repos/cmry/shed/badge.svg?branch=master&service=github)](https://coveralls.io/github/cmry/shed?branch=master)
 ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
@@ -15,7 +15,7 @@ A small framework for reproducible Text Mining research that largely builds on t
   - Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
   - Dump an easily deployable version of the final model for plug-and-play demos.
 
-Read the documentation at [readthedocs](http://shd.readthedocs.org/).
+Read the documentation at [readthedocs](http://shed.readthedocs.org/).
 
 ## Important Note
 
