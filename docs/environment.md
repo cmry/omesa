@@ -55,22 +55,39 @@ Typical experiment:
 | [classify](#methods-classify)    | Quickly transform and predict a text instance.     |
 | [save](#methods-save)            | Save the environment to a folder in model.         |
 
-### Load
+### load
 
 ``` python
-load(self, data, proc=None, max_n=None, skip=range(0, 0), rnd_seed=111,
+load(data, proc=None, max_n=None, skip=range(0, 0), rnd_seed=111,
      label='label', meta=[])
 ```
 
-If no arguments are provided, will just extract from some small test
-set. This can be used during development.
+Load provided dataset(s) taking into account specified options.
 
-| Parameters   |                                |                                                      |
-|: ----------- |: ------------------------      |:---------------------------------------------------- |
-|**data**      | list of strings                | List with document directories to be loaded.         |
-|**proc**      | string or function <br> **[None (default), 'text', 'label', 'both', function]**       | Any label or text conversion can be indicated with a string, or an own function can be supplied to apply to the row object. |
-|**max_n**     | int, optional, default False   | Maximum number of data instances *per dataset* user wants to work with. |
-|**skip**      | range, optional, default False | Range of indices that need to be skipped in the data. Can be used for splitting as in tenfold cross-validation, whilst retaining the iterative functionality and therefore keeping memory consumption low. |
-|**rnd_seed**  | int, optional, default 666     | A seed number used for reproducing the random order. |
-|**label**     | str, optional, default label   | Name of the label header row that should be retrieved. If not set, the second column will be asummed to be a label column. |
-|**meta**      | list, optional, default None   | Extract features from the dataset itself by specifying the headers or the indices in which these are located. Include 'file' if the filename has to be a feature. |
+| Param        | Type                                                                                  | Doc                                                  |
+|: ----------- |: ------------------------------------------------------------------------------------ |:---------------------------------------------------- |
+|**data**      | list of strings                                                                       | List with document directories to be loaded.         |
+|**proc**      | string or function | **[None (default), 'text', 'label', 'both', function]** <br>  Any label or text conversion can be indicated with a string, or an own function can be supplied to apply to the row object. |
+|**max_n**     | int, optional, default False                                                          | Maximum number of data instances *per dataset* user wants to work with. |
+|**skip**      | range, optional, default False                                                        | Range of indices that need to be skipped in the data. Can be used for splitting as in tenfold cross-validation, whilst retaining the iterative functionality and therefore keeping memory consumption low. |
+|**rnd_seed**  | int, optional, default 111                                                            | A seed number used for reproducing the random order. |
+|**label**     | str, optional, default label                                                          | Name of the label header row that should be retrieved. If not set, the second column will be asummed to be a label column. |
+|**meta**      | list, optional, default None                                                          | Extract features from the dataset itself by specifying the headers or the indices in which these are located. Include 'file' if the filename has to be a feature. |
+
+### transform
+
+``` python
+transform(loader, features=False)
+```
+
+Transform the data according to required features into a sparse representation
+in dictionary format.
+
+| Param        | Type                                | Doc                                    |
+|: ----------- |: ---------------------------------- |:-------------------------------------- |
+| **loader**  | generator                           | The loader should iteratively yield a preprocessed testing data instance with (label, raw, frog, meta). |
+
+| Returns      | Type                                | Doc                                       |
+|: ----------- |: ---------------------------------- |:----------------------------------------- |
+| **space**    | list of dicts with {feature: value} | Dict with sparse feature representation.  |
+| **labels**   | list of shape [n_labels]            | List of labels for data instances.        |
