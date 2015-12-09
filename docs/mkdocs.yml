@@ -9,16 +9,12 @@ site_description: Documentation for reproducible Text Mining research framework.
 dev_addr: '0.0.0.0:8000'
 
 pages:
-- Main:
-    - Environment: environment.md
-    - Experiment: experiment.md
-- Features:
-    - Featurizer: featurizer.md
-- Backend:
-    - Dataloader: dataloader.md
-    - Processor: processor.md
-- Examples:
-    - End-To-End: shed.md
-    - Data-To-Features: df.md
-    - Text Classification: examples.md
-- FAQ: faq.md
+- [environment.md, Main, Environment]
+- [experiment.md, Main, Experiment]
+- [featurizer.md, Features, Featurizer]
+- [dataloader.md, Backend, Dataloader]
+- [processor.md, Backend, Taggers]
+- [shed.md, Examples, End-To-End]
+- [df.md, Examples, Data-To-Features]
+- [examples.md, Examples, Text Classification]
+- [faq.md, Home]
