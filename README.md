@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/cmry/shed/badge.svg?branch=master&service=github)](https://coveralls.io/github/cmry/shed?branch=master)
 ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
 ![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
-![License](https://img.shields.io/pypi/l/Django.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cmry/shed/blob/master/LICENSE)
 
 # shed
 A small framework for reproducible Text Mining research that largely builds on top of [scikit-learn](http://scikit-learn.org/stable/). Its goal is to make common research procedures fully automated, optimized, and well recorded. To this end it features:
