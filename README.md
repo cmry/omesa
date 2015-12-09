@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/cmry/shed.svg?branch=master)](https://travis-ci.org/cmry/shed)
+[![Documentation Status](https://readthedocs.org/projects/shd/badge/?version=latest)](http://shd.readthedocs.org/en/latest/?badge=latest)
 [![Code Health](https://landscape.io/github/cmry/shed/master/landscape.svg?style=flat)](https://landscape.io/github/cmry/shed/master)
 [![Coverage Status](https://coveralls.io/repos/cmry/shed/badge.svg?branch=master&service=github)](https://coveralls.io/github/cmry/shed?branch=master)
 ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
