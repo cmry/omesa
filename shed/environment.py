@@ -70,7 +70,7 @@ class Environment:
 
     def load(self, data=['./shed/data/test3.csv'], proc=None,
              max_n=None, skip=range(0, 0), shuffle=True, rnd_seed=666,
-             target_label='age', meta=[]):
+             target_label='label', meta=[]):
         r"""
         Wrapper for the data loader.
 
@@ -156,7 +156,7 @@ class Environment:
 
     def transform(self, loader, features=False):
         """
-        Transform the test data according to required features.
+        Transform the data according to required features.
 
         Parameters
         ----------
@@ -181,19 +181,19 @@ class Environment:
         return space, labels
 
     def train(self, model, space, labels):
-        """Small wrapper to fit a sklearn syntax compatible classifier."""
+        """Fit a sklearn syntax compatible classifier."""
         self.model = model
         self.model.fit(space, labels)
 
     def test(self, space):
-        """Small wrapper to test a sklearn syntax compatible classifier."""
+        """Test a sklearn syntax compatible classifier."""
         if not self.model:
             raise EnvironmentError("There is no trained model to test.")
         res = self.model.predict(space)
         return res
 
     def classify(self, text, v=None):
-        """Small wrapper to quickly transform and predict a text instance."""
+        """Quickly transform and predict a text instance."""
         if not v or not self.backbone:
             self.backbone = Processor(self.hook, wake=True)
             v = [('', text, self.backbone.parse(text), '')]
