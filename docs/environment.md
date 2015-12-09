@@ -86,8 +86,6 @@ in dictionary format.
 | Param        | Type                                | Doc                                    |
 |: ----------- |: ---------------------------------- |:-------------------------------------- |
 | **loader**  | generator                           | The loader should iteratively yield a preprocessed testing data instance with (label, raw, frog, meta). |
-
-| Returns      | Type                                | Doc                                       |
-|: ----------- |: ---------------------------------- |:----------------------------------------- |
+| **Returns**  |                                     |                                         |
 | **space**    | list of dicts with {feature: value} | Dict with sparse feature representation.  |
 | **labels**   | list of shape [n_labels]            | List of labels for data instances.        |
