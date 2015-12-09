@@ -9,7 +9,6 @@ site_description: Documentation for reproducable Text Mining research framework.
 dev_addr: '0.0.0.0:8000'
 
 pages:
-- Home: index.md
 - Index: documentation.md
 - Examples: examples.md
 - FAQ: faq.md
