@@ -20,22 +20,21 @@ guaranteed as long as this message shows.
 
 ## Dependencies
 
-shed currently heavily relies on numpy, scipy and scikit-learn. To use the
+`shed` currently heavily relies on `numpy`, `scipy` and `sklearn`. To use the
 [Frog](https://languagemachines.github.io/frog/) wrapper as a Dutch back-end, we
 strongly recommend using [LaMachine](https://proycon.github.io/LaMachine/). For
 English, there is a [spaCy](https://spacy.io/) wrapper available.
 
-## shed Only - End-To-End In 2 Minutes
+## `shed` Only - End-To-End In 2 Minutes
 
-An end-to-end experiment pipeline, included in this module, is the main
-functionality of shed. By making use of a configuration dictionary, several
-experiments or set-ups can be ran and evaluated with a very minimal piece of
-code. One of the test examples provided is that of
+With the end-to-end `Experiment` pipeline and a configuration dictionary,
+several experiments or set-ups can be ran and evaluated with a very minimal
+piece of code. One of the test examples provided is that of
 [n-gram classification]('https://www.github.com/cmry/shed/examples/n_gram.py')
-of Wikipedia documents. In this experiment, we are provided with
-[`n_gram.csv`]('examples/n_gram.csv') that features 10 articles about Machine
-Learning, and 10 random other articles. To run shed on this, the following
-configuration is used:
+of Wikipedia documents. In this experiment, we are provided with a toy set
+[`n_gram.csv`]('https://www.github.com/cmry/shed/examples/n_gram.csv') that
+features 10 articles about Machine Learning, and 10 random other articles. To
+run `shed` on this, the following configuration is used:
 
 ``` python
 from shed.experiment import Experiment
@@ -79,12 +78,12 @@ store the log. The output is as follows:
  Tf-CV Result: 0.8
 ```
 
-## shed + Your Pipeline - Data To Features in 5 Minutes
+## `shed` + Your Pipeline - Data To Features in 5 Minutes
 
-shed was originally developed to be used as an easy data-to-features wrapper,
-with as few dependencies as possible. For this purpose, the `Environment`
-class was built, which allows minimal use of shed within an existing framework.
-An example of its use can be seen below.
+The package was originally developed to be used as an easy data-to-features
+wrapper, with as few dependencies as possible. For this purpose, the
+`Environment` class was built, which allows minimal use of `shed` within an
+existing framework. An example of its use can be seen below.
 
 Say that we are starting session in which we would like to train on some data.
 We need a config name, a list of data, and what kind of features we wish to
@@ -177,6 +176,6 @@ transformed into a sparse matrix.
 
 ## Acknowledgements
 
-Part of the work on shed was carried out in the context of the
+Part of the work on `shed` was carried out in the context of the
 [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded
 by the government agency for Innovation by Science and Technology (IWT).
