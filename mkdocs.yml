@@ -8,6 +8,7 @@ site_description: Documentation for reproducible Text Mining research framework.
 
 
 pages:
+- [index.md, Home]
 - [environment.md, Main, Environment]
 - [experiment.md, Main, Experiment]
 - [featurizer.md, Features, Featurizer]
