@@ -7,7 +7,6 @@ site_url: http://shd.readthedocs.org/
 site_description: Documentation for reproducable Text Mining research framework.
 
 dev_addr: '0.0.0.0:8000'
-google_analytics: []
 
 pages:
 - Home: index.md

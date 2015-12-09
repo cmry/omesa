@@ -63,7 +63,7 @@ and label columns and indicating a header is present in the `.csv` document.
 We provide the `Ngrams` function and parameters to be used as features, and
 store the log. The output is as follows:
 
-``` text
+``` yml
 ---- Shed ----
 
  Config:
