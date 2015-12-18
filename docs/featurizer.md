@@ -8,7 +8,7 @@ environment.
 
 
 
- ## Featurizer 
+## Featurizer 
 
 ``` python 
  class Featurizer(features) 
@@ -95,7 +95,7 @@ Call all the helpers to extract features.
         
 
 
- ## Ngrams 
+## Ngrams 
 
 ``` python 
  class Ngrams(object) 
@@ -173,7 +173,7 @@ end items. Based on the implementation by Scott Triglia.
 Given a document, return level-grams as Counter dict.
 
 
- ## FuncWords 
+## FuncWords 
 
 ``` python 
  class FuncWords(object) 
@@ -206,7 +206,7 @@ and adds the respective frequencies as a feature.
 Extract frequencies for fitted function word possibilites.
 
 
- ## SentimentFeatures 
+## SentimentFeatures 
 
 ``` python 
  class SentimentFeatures() 
@@ -252,7 +252,7 @@ Instance is a list of word-pos-lemma tuples that represent a token.
 Get the sentiment belonging to the words in the parse string.
 
 
- ## SimpleStats 
+## SimpleStats 
 
 ``` python 
  class SimpleStats 
@@ -353,7 +353,7 @@ Calculate average sentence length.
 Transform given instance into simple text features.
 
 
- ## Readability 
+## Readability 
 
 ``` python 
  class Readability 
