@@ -207,7 +207,7 @@ class Doc2Markdown:
     def md_class_doc(self, class_doc):
         """Merge all class section elements in one string."""
         mark_doc = ''
-        mark_doc += '\n\n## {0} \n\n'.format(
+        mark_doc += '\n\n# {0} \n\n'.format(
             class_doc['name'].replace('(', ' (').split()[1])
         mark_doc += self.md_code.format(class_doc['name'])
         mark_doc += self.md_title('\n'.join(class_doc['title']),
