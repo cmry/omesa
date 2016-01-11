@@ -21,8 +21,8 @@ import pickle
 
 
 class Featurizer(object):
-    """
-    Wrapper for looping feature extractors in fit and transform operations.
+
+    """Wrapper for looping feature extractors in fit and transform operations.
 
     Calls helper classes which extract different features from text data. Given
     a list of initialized feature extractor classes, correctly streams or dumps
@@ -55,7 +55,7 @@ class Featurizer(object):
     >>> features = [Ngrams(level='char', n_list=[1,2])]
     >>> ftr = _Featurizer(features)
     >>> ftr.fit(loader())
-    X, Y = ftr.transform(loader()), ftr.labels
+    >>> X, Y = ftr.transform(loader()), ftr.labels
 
     During testing with only one instance:
     >>> new_data = 'this is some string to test'
@@ -105,8 +105,8 @@ class Featurizer(object):
 
 
 class Ngrams(object):
-    """
-    Calculate n-gram frequencies.
+
+    """Calculate n-gram frequencies.
 
     Can either be applied on token, POS or character level. The transform
     method dumps a feature dictionary that can be used for feature hashing.
@@ -124,10 +124,9 @@ class Ngrams(object):
     --------
     Token-level uni and bigrams with a maximum of 2000 feats per n:
 
-    In [1]: ng = Ngrams(level='token', n_list=[1, 2], max_feats=2000)
-
-    In [2]: ng.transform('this is text')
-    Out[2]: {'this': 1, 'is': 1, 'text': 1, 'this is': 1, 'is text': 1}
+    >>> ng = Ngrams(level='token', n_list=[1, 2], max_feats=2000)
+    >>> ng.transform('this is text')
+    ... {'this': 1, 'is': 1, 'text': 1, 'this is': 1, 'is text': 1}
 
     Notes
     -----
@@ -144,17 +143,16 @@ class Ngrams(object):
 
     def __str__(self):
         """Report on feature settings."""
-        return """
+        return '''
         feature:   {0}
         n_list:    {1}
-        """.format(self.name, self.n_list)
+        '''.format(self.name, self.n_list)
 
     def _find_ngrams(self, input_list, n):
         """Magic n-gram function.
 
         Calculate n-grams from a list of tokens/characters with added begin and
-        end items. Based on the implementation by Scott Triglia http://locally
-        optimal.com/blog/2013/01/20/elegant-n-gram-generation-in-python/
+        end items. Based on the implementation by Scott Triglia.
         """
         inp = [''] * n + input_list + [''] * n
         return zip(*[inp[i:] for i in range(n)])
@@ -178,10 +176,9 @@ class Ngrams(object):
         return c
 
 
-class FuncWords:
+class FuncWords(object):
 
-    """
-    Extract function word frequencies.
+    """Extract function word frequencies.
 
     Computes relative frequencies of function words according to parse data,
     and adds the respective frequencies as a feature.
@@ -233,13 +230,12 @@ class DuSent():
                                 '/data/sentilexicons.cpickle', 'rb'))
 
     def __str__(self):
-        return """
+        return '''
         feature:   %s
-        """ % (self.name)
+        ''' % (self.name)
 
     def calculate_sentiment(self, instance):
-        """
-        Calculate four features for the input instance.
+        """Calculate four features for the input instance.
 
         Instance is a list of word-pos-lemma tuples that represent a token.
         """
@@ -276,8 +272,7 @@ class DuSent():
 
 
 class SimpleStats:
-    r"""
-    Word and token based features.
+    r"""Word and token based features.
 
     Parameters
     ----------
@@ -395,8 +390,7 @@ class SimpleStats:
 
 
 class Readability:
-    """
-    Get readability-related features.
+    """Get readability-related features.
 
     Notes
     -----
