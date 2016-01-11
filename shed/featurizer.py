@@ -163,8 +163,11 @@ class Ngrams(object):
         """Given a document, return level-grams as Counter dict."""
         if self.level == 'char':
             needle = list(raw)
+        elif self.level == 'text':
+            needle = raw.split()
         elif self.level == 'token' or self.level == 'pos':
-            needle = parse[self.row] if parse else raw.split()
+            #FIXME: parses are not handled well
+            needle = parse[self.row] if parse[0][0] else raw.split()
             if self.level == 'pos' and not parse:
                 raise EnvironmentError("There's no POS annotation.")
 
@@ -207,7 +210,7 @@ class FuncWords:
         return Counter(tokens)
 
 
-class SentimentFeatures():
+class DuSent():
     """
     Lexicon based sentiment features.
 
@@ -225,8 +228,9 @@ class SentimentFeatures():
     def __init__(self):
         """Load the sentiment lexicon."""
         self.name = 'sentiment'
-        self.lexiconDict = pickle.load(open('./shed/data/' +
-                                            'sentilexicons.cpickle', 'rb'))
+        self.lexiconDict = pickle.load(
+            open(__file__.split('featurizer.py')[0] +
+                                '/data/sentilexicons.cpickle', 'rb'))
 
     def __str__(self):
         return """
@@ -251,8 +255,11 @@ class SentimentFeatures():
             r'WW\(inf,nom': ('n', 'v'),
             r'WW\(': ('v', 'v')
         })
-        for token in instance:
-            word, lemma, pos, _ = token
+        for parse in instance:
+            try:
+                word, lemma, pos, _ = parse
+            except ValueError:
+                exit("ERROR: DuSent relies on Frogged data!")
             for regx, param in token_dict.items():
                 if re.search(regx, pos):
                     if (word, param[0]) in self.lexiconDict:
@@ -263,7 +270,7 @@ class SentimentFeatures():
                     # FIXME: reinclude the token numbers here
         return polarity_score
 
-    def transform(self, _, parse):
+    def transform(self, raw, parse):
         """Get the sentiment belonging to the words in the parse string."""
         return {self.name: self.calculate_sentiment(parse)}
 

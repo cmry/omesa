@@ -15,12 +15,15 @@ from copy import deepcopy
 from operator import itemgetter
 from sklearn import metrics
 from sklearn import pipeline
-from sklearn.cross_validation import cross_val_score, train_test_split
+from sklearn.utils import shuffle
+from sklearn.cross_validation import cross_val_predict, train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.svm import SVC
+from sklearn.preprocessing import MaxAbsScaler
+from sklearn.svm import SVC, LinearSVC
+from time import time
 
 
 class LabelHandler(object):
@@ -103,7 +106,7 @@ class Log(object):
                       "\n\t \n",
             # 'read':   "\n Reading from {0}... Acquired {1} from data.\n ",
             'sparse': "\n Sparse {0} shape: {1}",
-            'svd':    "\n Fitting SVD...",
+            'svd':    "\n Fitting SVD with {0} components...",
             'rep':    "\n\n---- {0} Results ---- \n" +
                       "\n Distribution: {1}" +
                       "\n Accuracy @ baseline: \t {2}" +
@@ -112,7 +115,8 @@ class Log(object):
                       "\n Mean validation score: {1:.3f} (std: {2:.3f}) " +
                       "\n Parameters: {3} \n",
             'tfcv':   "\n Tf-CV Result: {0}",
-            'f1sc':   "\n Performance on test set: \n{0}"
+            'f1sc':   "\n F1 Result: {0}",
+            'cr':     "\n Performance on test set: \n\n{0}"
         }
         self.buffer = []
 
@@ -141,7 +145,7 @@ class Log(object):
     def save(self):
         """Save log."""
         with open(self.fn, 'w') as f:
-            o = ['head', 'sparse', 'svd', 'rep', 'grid', 'tfcv', 'f1sc']
+            o = ['head', 'sparse', 'svd', 'rep', 'grid', 'tfcv', 'f1sc', 'cr']
             f.write(' '.join([v for v in OrderedDict(sorted(self.log.items(),
                               key=lambda i: o.index(i[0]))).values()]))
 
@@ -190,8 +194,8 @@ class Pipeline(object):
         self.featurizer = env.Environment(conf['name'], backbone=backbone)
         self.handle = LabelHandler(conf.get('label_selection'))
         self.hasher = DictVectorizer()
-        self.tfidf = TfidfTransformer()
-        self.svd = TruncatedSVD(n_components=conf.get('components'))
+        self.tfidf = TfidfTransformer(sublinear_tf=True)
+        self.svd = None
         self.conf = conf
 
     def load_csv(self, data):
@@ -226,25 +230,34 @@ class Pipeline(object):
     def train(self, data, features):
         """Send the training data through all applicable steps."""
         D, y = self.featurizer.transform(self.load_data(data), features)
+        print("\n Hashing features...")
         X = self.hasher.fit_transform(D)
-        X_tf = self.tfidf.fit_transform(X)
+        print(" done!")
 
-        if self.conf.get('components'):
-            X_tf = self.svd.fit_transform(X_tf, y)
+        if 'tfidf' in self.conf.get('settings'):
+            print("\n Tf*idf transformation...")
+            X = self.tfidf.fit_transform(X)
+            print(" done!")
+        else:
+            X = MaxAbsScaler(copy=False).fit_transform(X)
 
-        return X_tf, y
+        return X, y
 
     def test(self, data):
         """Send the test data through all applicable steps."""
         # same steps as pipe_train
         Di, yi = self.featurizer.transform(self.load_data(data))
         Xi = self.hasher.transform(Di)
-        Xi_tf = self.tfidf.transform(Xi)
 
-        if self.conf.get('components'):
-            Xi_tf = self.svd.transform(Xi_tf)
+        if 'tfidf' in self.conf.get('settings'):
+            Xi = self.tfidf.transform(Xi, copy=False)
+        else:
+            Xi = MaxAbsScaler(copy=False).fit_transform(Xi)
 
-        return Xi_tf, yi
+        if 'svd' in self.conf.get('settings'):
+            Xi = self.svd.transform(Xi)
+
+        return Xi, yi
 
 
 class Model(object):
@@ -452,25 +465,73 @@ class Experiment(object):
                                    np.std(score.cv_validation_scores),
                                    score.parameters))
         self.log.dump('grid')
+        return top_scores[0].parameters
 
-    def choose_classifier(self, seed):
+    def choose_classifier(self, X, y, seed):
         """Choose a classifier based on settings."""
-        if self.conf.get('setting') == 'grid':
+        conf = self.conf
+
+        # split dev (test_set here is X)
+        if conf.get('settings'):
+            X_dev, X, y_dev, y = train_test_split(
+                X, y, test_size=0.8, random_state=666)
+
+        # apply SVD once
+        if conf.get('components'):
+            try:
+                assert 'svd' in conf.get('settings')
+            except AssertionError:
+                exit("ERROR! You specified components but no SVD in settings.")
+            n_comp = conf['components']
+            self.log.post('svd', (n_comp, ))
+            self.pipe.svd = TruncatedSVD(n_components=n_comp)
+            X_dev = self.pipe.svd.fit_transform(X_dev)
+            print(" done!")
+
+        if 'grid' in conf.get('settings'):
+
             param_grid = {'svc__kernel': ['rbf', 'linear'],
-                          'svc__gamma': [1e-2, 1e-3, 1e-4],
-                          'svc__C': [1, 10, 100, 1000, 2000]}
-            pipe = pipeline.Pipeline([
-                ('svc', SVC(random_state=seed, cache_size=80000))
-            ])
+                          # 'svc__gamma': [1e-1, 1e-2, 1e-3, 1e-4],
+                          'svc__gamma': np.logspace(-3, 2, 3),
+                          'svc__C': np.logspace(0.1, 3, 6)}
+            steps = [('svc', SVC(random_state=seed, cache_size=80000))]
+
+            # incorporate SVD into GridSearch
+            if 'svd' in conf.get('settings') and not conf.get('components'):
+                param_grid.update({'svd__n_components': [50, 100, 500, 1000]})
+                steps = [('svd', TruncatedSVD())] + steps
+
+            pipe = pipeline.Pipeline(steps)
             clf = GridSearchCV(pipe, param_grid=param_grid, n_jobs=-1)
-        elif not self.conf.get('classifier'):
-            clf = SVC(random_state=seed, gamma=1e-2, kernel='linear', C=1,
+
+            print("\n Starting Grid Search...")
+            clf.fit(X_dev, y_dev)
+            print(" done!")
+
+            p = self.grid_report(clf.grid_scores_)
+            clf = SVC(random_state=seed, gamma=p['svc__gamma'],
+                      kernel=p['svc__kernel'], C=p['svc__C'],
                       cache_size=150000, probability=True)
+
+            if 'svd' in conf.get('settings') and not conf.get('components'):
+                comp = p['svd__n_components']
+                self.pipe.svd = TruncatedSVD(n_components=comp)
+
+            if 'svd' in conf.get('settings'):
+                X = self.pipe.svd.transform(X)
+
+            return X, y, clf
+
+        elif not conf.get('classifier'):
+            clf = LinearSVC(random_state=seed, C=10)
+        elif conf.get('classifier'):
+            clf = conf['classifier']
+            clf.random_state = seed
         else:
             clf.probability = True
             clf.random_state = seed
 
-        return clf
+        return X, y, clf
 
     def save(self, clf):
         """Save desired Experiment data."""
@@ -485,6 +546,7 @@ class Experiment(object):
 
     def run(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
+        t1 = time()
         seed = 666
         np.random.RandomState(seed)
 
@@ -493,30 +555,30 @@ class Experiment(object):
                                conf['name'], seed))
 
         X, y = self.pipe.train(conf['train_data'], conf['features'])
+        X, y = shuffle(X, y, random_state=666)
         self.log.loop('sparse', ('train', X.shape))
 
-        if conf.get('test_data'):
-            Xi, yi = self.pipe.test(conf['test_data'])
-            self.log.loop('sparse', ('test', Xi.shape))
-            self.log.dump('sparse')
-
-        clf = self.choose_classifier(seed)
-        if conf.get('setting') == 'grid' and not conf.get('test_data'):
-            X, Xe, y, ye = train_test_split(
-                X, y, test_size=0.8, random_state=666)
+        X, y, clf = self.choose_classifier(X, y, seed)
+        print("\n Training model...")
         clf.fit(X, y)
+        print(" done!")
 
         # report performance
         if not conf.get('test_data'):
-            if conf.get('setting') == 'grid':
-                X, y = Xe, ye
-            f1_scorer = metrics.make_scorer(metrics.f1_score)
-            score = np.average(cross_val_score(clf, X, y, cv=10,
-                                               scoring=f1_scorer,
-                                               n_jobs=-1))
-            self.log.post('tfcv', (score,))
+            res = cross_val_predict(clf, X, y, cv=10, n_jobs=-1)
+            self.log.post('cr', (metrics.classification_report(y, res),))
         else:
+            print("\n Fetching test data...")
+            Xi, yi = self.pipe.test(conf['test_data'])
+            self.log.loop('sparse', ('test', Xi.shape))
+            self.log.dump('sparse')
+            print(" done!")
+
             res = clf.predict(Xi)
-            self.log.post('f1sc', metrics.classification_report(yi, res))
+            yi = list(yi)
+            self.log.post('cr', (metrics.classification_report(yi, res),))
 
         self.save(clf)
+        t2 = time()
+        print("\n Experiment took {0} seconds".format(round(t2-t1, 1)))
+        print("\n" + '-'*10, "\n")
