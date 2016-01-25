@@ -19,13 +19,7 @@ Read the documentation at [readthedocs](http://shed.readthedocs.org/).
 
 ![diagram](http://chris.emmery.nl/dump/shed.png)
 
-## Important Note
-
-This repository is currently in development, so don't expect any stable functionality until this part is removed. :)
-
-## Acknowledgements
-
-Part of the work on shed was carried out in the context of the [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded by the government agency for Innovation by Science and Technology (IWT).
+**Important Note**: This repository is currently in development, so don't expect any stable functionality until this part is removed. :)
 
 
 ## Dependencies
@@ -39,7 +33,7 @@ English, there is a [spaCy](https://spacy.io/) wrapper available.
 
 An end-to-end experiment pipeline, included in this module, is the main functionality of shed. By making use of a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code.
 
-### Example
+#### Example
 
 One of the examples provided is that of [n-gram classification]('examples/n_gram.py') of Wikipedia documents. In this experiment, we are provided with [`n_gram.csv`]('examples/n_gram.csv') that features 10 articles about Machine Learning, and 10 random other articles. To run shed on this, the following configuration is used:
 
@@ -87,7 +81,7 @@ This will ten-fold cross validate performance on the `.csv`, selecting text and 
 
 shed was originally developed to be used as an easy data-to-feature-space wrapper, with as few dependencies as possible. For this purpose, the `Environment` class was built, which allows minimal use of shed within an existing framework. An example of its use can be seen below.
 
-### Example
+#### Example
 
 Say that we are starting session in which we would like to train on some data. We need a config name, a list of data, and what kind of features we wish to extract from for this. First we import `shed`, and the `featurizer` classes we want to use. After, the feature classes can be initialized with the relevant parameters, and we provide the directory to our data. Finally, the `shed.Environment` is called with a name that all workcan be saved under:
 
@@ -161,3 +155,7 @@ class SomeFeaturizer:
 ```
 
 This returns a `{word: frequency}` dict per instance that can easily be transformed into a sparse matrix.
+
+## Acknowledgements
+
+Part of the work on shed was carried out in the context of the [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded by the government agency for Innovation by Science and Technology (IWT).
