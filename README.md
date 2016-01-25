@@ -17,6 +17,8 @@ A small framework for reproducible Text Mining research that largely builds on t
 
 Read the documentation at [readthedocs](http://shed.readthedocs.org/).
 
+![diagram](http://chris.emmery.nl/dump/shed.png)
+
 ## Important Note
 
 This repository is currently in development, so don't expect any stable functionality until this part is removed. :)

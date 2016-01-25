@@ -162,12 +162,12 @@ class Environment:
         ----------
         loader : generator
             The loader should iteratively yield a preprocessed testing data
-            instance with (label, raw, frog).
+            instance with (label, raw, parse, meta).
 
         Returns
         -------
-        space : numpy array of shape [n_samples, n_features]
-            Matrix with feature space.
+        space : list of dicts with {feature: value} of shape [n_instances]
+            Dict with sparse feature representation.
 
         labels : list of shape [n_labels]
             List of labels for data instances.
@@ -181,7 +181,17 @@ class Environment:
         return space, labels
 
     def train(self, model, space, labels):
-        """Fit a sklearn syntax compatible classifier."""
+        """Fit an sklearn syntax compatible classifier.
+
+        Parameters
+        ----------
+        model : class
+            Should have a fit method for training on space and labels.
+        space : matrix of shape [n_instances, n_features], or scipy.sparse
+            Depending on what model can train on, provide feature matrix.
+        labels : list of shape [n_instances]
+            List of labels for every row in space.
+        """
         self.model = model
         self.model.fit(space, labels)
 
