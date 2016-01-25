@@ -19,10 +19,11 @@ Read the documentation at [readthedocs](http://shed.readthedocs.org/).
 
 ![diagram](http://chris.emmery.nl/dump/shed.png)
 
-**Important Note**: This repository is currently in development, so don't expect any stable functionality until this part is removed. :)
+#### Important Note
+This repository is currently in development, so don't expect any stable functionality until this part is removed.
 
 
-## Dependencies
+#### Dependencies
 
 shed currently heavily relies on `numpy`, `scipy` and `sklearn`. To use
 [Frog](https://languagemachines.github.io/frog/) as a Dutch back-end, we
