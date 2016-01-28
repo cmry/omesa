@@ -69,7 +69,6 @@ class Featurizer(object):
 
     def __init__(self, features):
         """Initialize the wrapper and set the provided features to a var."""
-        self.labels, self.labelc = {}, 0
         self.metaf, self.metafc = {}, 0
         self.helpers = features
 
@@ -90,9 +89,6 @@ class Featurizer(object):
         """
         for label, raw, parse, meta in stream:
             v = {}
-            if label not in self.labels:
-                self.labels[label] = self.labelc
-                self.labelc += 1
             for helper in self.helpers:
                 v.update(helper.transform(raw, parse))
             if meta:
@@ -101,7 +97,7 @@ class Featurizer(object):
                         self.metaf[label] = self.metafc
                         self.metafc += 1
                         v.update({self.metaf[meta_inst]: 1})
-            yield self.labels[label], v
+            yield label, v
 
 
 class Ngrams(object):
