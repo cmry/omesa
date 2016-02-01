@@ -9,19 +9,18 @@ environment.
 
 """
 
-import numpy as np
 import re
-from collections import OrderedDict, Counter
 import pickle
+from collections import OrderedDict, Counter
+import numpy as np
 
 # Author:       Chris Emmery
 # Contributors: Mike Kestemont, Ben Verhoeven, Janneke van de Loo
 # License:      BSD 3-Clause
-# pylint:       disable=E1103,W0512
+# pylint:       disable=E1103,W0512,R0903,C0103
 
 
 class Featurizer(object):
-
     """Wrapper for looping feature extractors in fit and transform operations.
 
     Calls helper classes which extract different features from text data. Given
@@ -67,10 +66,12 @@ class Featurizer(object):
     utils.parse.extract_tags or http://ilk.uvt.nl/parse/.
     """
 
-    def __init__(self, features):
+    def __init__(self, features, preprocessor=False, parser=False):
         """Initialize the wrapper and set the provided features to a var."""
         self.metaf, self.metafc = {}, 0
         self.helpers = features
+        self.preprocessor = preprocessor
+        self.parser = parser
 
     def transform(self, stream):
         """Call all the helpers to extract features.
@@ -89,6 +90,9 @@ class Featurizer(object):
         """
         for label, raw, parse, meta in stream:
             v = {}
+            text = self.preprocessor.clean(raw) if self.preprocessor else raw
+            if not parse and self.parser:
+                parse = self.parser.parse(raw if self.parser.raw else text)
             for helper in self.helpers:
                 v.update(helper.transform(raw, parse))
             if meta:
@@ -101,7 +105,6 @@ class Featurizer(object):
 
 
 class Ngrams(object):
-
     """Calculate n-gram frequencies.
 
     Can either be applied on token, POS or character level. The transform
@@ -144,7 +147,8 @@ class Ngrams(object):
         n_list:    {1}
         '''.format(self.name, self.n_list)
 
-    def _find_ngrams(self, input_list, n):
+    @staticmethod
+    def find_ngrams(input_list, n):
         """Magic n-gram function.
 
         Calculate n-grams from a list of tokens/characters with added begin and
@@ -160,7 +164,7 @@ class Ngrams(object):
         elif self.level == 'text':
             needle = raw.split()
         elif self.level == 'token' or self.level == 'pos':
-            #FIXME: parses are not handled well
+            # FIXME: parses are not handled well
             needle = parse[self.row] if parse[0][0] else raw.split()
             if self.level == 'pos' and not parse:
                 raise EnvironmentError("There's no POS annotation.")
@@ -173,7 +177,6 @@ class Ngrams(object):
 
 
 class FuncWords(object):
-
     """Extract function word frequencies.
 
     Computes relative frequencies of function words according to parse data,
@@ -223,9 +226,10 @@ class DuSent():
         self.name = 'sentiment'
         self.lexiconDict = pickle.load(
             open(__file__.split('featurizer.py')[0] +
-                                '/data/sentilexicons.cpickle', 'rb'))
+                 '/data/sentilexicons.cpickle', 'rb'))
 
     def __str__(self):
+        """Class string representation."""
         return '''
         feature:   %s
         ''' % (self.name)
@@ -262,7 +266,7 @@ class DuSent():
                     # FIXME: reinclude the token numbers here
         return polarity_score
 
-    def transform(self, raw, parse):
+    def transform(self, _, parse):
         """Get the sentiment belonging to the words in the parse string."""
         return {self.name: self.calculate_sentiment(parse)}
 
@@ -314,7 +318,8 @@ class SimpleStats:
         self.v = {}
         self.text, self.token, self.stl = text, token, sentence_length
 
-    def avg(self, iterb):
+    @staticmethod
+    def avg(iterb):
         """Average length of iter."""
         return np.mean([len(fl) for fl, _ in iterb]) if iterb else 0
 
@@ -363,7 +368,8 @@ class SimpleStats:
 
         self.v.update(stats)
 
-    def avg_sent_length(self, sentence_indices):
+    @staticmethod
+    def avg_sent_length(sentence_indices):
         """Calculate average sentence length."""
         words_per_sent = Counter(sentence_indices)
         return np.mean([val for _, val in words_per_sent.items()])
