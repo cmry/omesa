@@ -3,42 +3,15 @@
 """Processor methods."""
 
 import re
-from os import path
 
 # Author:       Chris Emmery
 # Contributors: Florian Kunneman
 # License:      BSD 3-Clause
-# pylint:       disable=W0142,F0401
+# pylint:       disable=F0401,R0903
 
 
-class Processor(object):
-
-    """
-    Routes to relevant backbone.
-    """
-
-    def __init__(self, backbone, wake=False):
-        if backbone == 'frog' or (backbone == 'sleepfrog' and wake):
-            self.backbone = Frog(path.dirname(path.realpath(__file__)) +
-                                 '/../../')
-        elif backbone == 'sleepfrog':
-            self.backbone = Frog(path.dirname(path.realpath(__file__)) +
-                                 '/../../', sleep=True)
-        elif backbone == 'spacy':
-            self.backbone = Spacy()
-        else:
-            self.backbone = None
-        self.hook = backbone
-
-    def parse(self, text):
-        """Route to the parse function of the backbone."""
-        return self.backbone.parse(text)
-
-
-class Preprocessor(object):
-
-    """
-    Preprocess raw data.
+class SocialCleaner(object):
+    """Preprocess raw social media data.
 
     This class should handle all the preprocessing done for both the labels
     as well as the texts that are provided. Current implementations are the
@@ -47,41 +20,15 @@ class Preprocessor(object):
     """
 
     def __init__(self):
+        """Record the applied methods."""
         self.applied = []
 
-    def basic(self, text):
+    def clean(self, text):
+        """Clean according to ALL the preprocessors."""
         text = self.replace_url_email(text)
         text = self.find_emoticons(text)
         text = self.replace_bbcode_tags(text)
         return text
-
-    def label_convert(self, config, label):
-        """
-        Label converter.
-
-        Converts a label according to the convert_config as many times as
-        specified.
-
-        Parameters
-        ----------
-        config: dict
-            Each key is a label, and each value a tuple with (count, convertto)
-            so that label will be convertto as many times as count.
-
-        label : string
-            The data entry of the label, to be converted.
-
-        Returns
-        -------
-        converted_label : string
-            The converted label.
-        """
-        if self.conf[label][0] != 0:
-            self.conf[label][0] -= 1
-            if len(self.conf[label]) > 1:
-                return self.conf[label][1]
-            else:
-                return label
 
     def replace_bbcode_tags(self, text):
         """Replace BBCode tags.
@@ -197,9 +144,7 @@ class Preprocessor(object):
 
 
 class Spacy(object):
-
-    """
-    Wrapper to spaCy.io. From their docs @ http://http://spacy.io/docs/
+    """Wrapper to spaCy.io. From their docs @ http://http://spacy.io/docs/.
 
     "spaCy consists of a vocabulary table that stores lexical types, a
     pipeline that produce annotations, and three classes to manipulate
@@ -213,10 +158,11 @@ class Spacy(object):
     is currently not enabled for shed.
     """
 
-    def __init__(self, lmdir):
+    def __init__(self, raw=True):
         """Load up the spaCy pipeline."""
         from spacy.en import English
         self.spacy = English()
+        self.raw = raw
 
     def parse(self, text):
         """Extract spaCy tags.
@@ -239,10 +185,9 @@ class Spacy(object):
 
 
 class Frog(object):
+    """Wrapper to python-frog, loaded from LaMachine.
 
-    """
-    Wrapper to python-frog, loaded from LaMachine. Excerpt from the
-    documentation @ http://ilk.uvt.nl/frog/:
+    Excerpt from the documentation @ http://ilk.uvt.nl/frog/:
 
     Frog is an integration of memory-based natural language processing (NLP)
     modules developed for Dutch. All NLP modules are based on Timbl, the
@@ -266,13 +211,14 @@ class Frog(object):
     - Type of dependency relation with head word.
     """
 
-    def __init__(self, lmdir, sleep=False):
-        """Starts the frog server if the sleep function isn't on."""
+    def __init__(self, lmdir, sleep=False, raw=True):
+        """Start the frog server if the sleep function isn't on."""
         if not sleep:
             import frog
             opts = frog.FrogOptions(parser=False, ner=False)
             self.frogger = frog.Frog(opts, lmdir + "LaMachine/lamachine/etc/"
                                      "frog/frog-twitter.cfg")
+            self.raw = raw
 
     def parse(self, text):
         """Extract frog tags.

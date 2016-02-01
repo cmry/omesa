@@ -1,5 +1,4 @@
-"""
-The Main Thing.
+"""The Main Thing.
 
 shed is a framework that makes standard text mining research protocols less
 script heavy.
@@ -78,9 +77,7 @@ Chris
 
 """
 
-from .environment import Environment
-
 __author__ = 'Chris Emmery'
 __contrb__ = 'Mike Kestemont, Ben Verhoeven, Florian Kunneman,' \
              'Janneke van de Loo'
-__license__ = 'BSD 3-Clause'
+__license__ = 'MIT'
