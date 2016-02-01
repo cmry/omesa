@@ -172,7 +172,7 @@ class Ngrams(object):
         c = Counter()
         for n in self.n_list:
             c += Counter([self.level+"-"+"_".join(item) for
-                          item in self._find_ngrams(needle, n)])
+                          item in self.find_ngrams(needle, n)])
         return c
 
 

@@ -30,13 +30,20 @@ shed currently heavily relies on `numpy`, `scipy` and `sklearn`. To use
 strongly recommend using [LaMachine](https://proycon.github.io/LaMachine/). For
 English, there is a [spaCy](https://spacy.io/) wrapper available.
 
-## `Experiment`
+## Shed Only - End-To-End In 2 Minutes
 
-An end-to-end experiment pipeline, included in this module, is the main functionality of shed. By making use of a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code.
+With the end-to-end `Experiment` pipeline and a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code. One of the test examples provided is that of n-gram classification of Wikipedia documents. In this experiment, we are provided with a toy set n_gram.csv that features 10 articles about Machine Learning, and 10 random other articles. To run the experiment, the following configuration is used:
 
 #### Example
 
-One of the examples provided is that of [n-gram classification]('examples/n_gram.py') of Wikipedia documents. In this experiment, we are provided with [`n_gram.csv`]('examples/n_gram.csv') that features 10 articles about Machine Learning, and 10 random other articles. To run shed on this, the following configuration is used:
+With the end-to-end `Experiment` pipeline and a configuration dictionary,
+several experiments or set-ups can be ran and evaluated with a very minimal
+piece of code. One of the test examples provided is that of
+[n-gram classification](https://github.com/cmry/shed/blob/master/examples/n_gram.py)
+of Wikipedia documents. In this experiment, we are provided with a toy set
+[n_gram.csv](https://github.com/cmry/shed/blob/master/examples/n_gram.csv) that
+features 10 articles about Machine Learning, and 10 random other articles. To
+run the experiment, the following configuration is used:
 
 ``` python
 from shed.experiment import Experiment
@@ -59,83 +66,42 @@ for experiment, configuration in conf.items():
     Experiment(configuration)
 ```
 
-This will ten-fold cross validate performance on the `.csv`, selecting text and label columns and indicating a header is present in the `.csv` document. We provide the `Ngrams` function and parameters to be used as features, and store the log. The output is as follows:
+This will ten-fold cross validate performance on the `.csv`, selecting text
+and label columns and indicating a header is present in the `.csv` document.
+We provide the `Ngrams` function and parameters to be used as features, and
+store the log.
 
-``` text
+#### Output
+
+The log file will be printed during run time, as well as stored in the
+script's directory. The output of the current experiment is as follows:
+
+``` yml
 ---- Shed ----
 
  Config:
 
         feature:   char_ngram
         n_list:    [3]
-        max_feat:  None
 
 	name: gram_experiment
-	seed: 111
+	seed: 42
 
- Sparse train shape: (20, 1287)
+ Sparse train shape: (20, 1301)
 
- Tf-CV Result: 0.8
-```
+ Performance on test set:
 
-## `Environment`
+             precision    recall  f1-score   support
 
-shed was originally developed to be used as an easy data-to-feature-space wrapper, with as few dependencies as possible. For this purpose, the `Environment` class was built, which allows minimal use of shed within an existing framework. An example of its use can be seen below.
+         DF       0.83      0.50      0.62        10
+         ML       0.64      0.90      0.75        10
 
-#### Example
+avg / total       0.74      0.70      0.69        20
 
-Say that we are starting session in which we would like to train on some data. We need a config name, a list of data, and what kind of features we wish to extract from for this. First we import `shed`, and the `featurizer` classes we want to use. After, the feature classes can be initialized with the relevant parameters, and we provide the directory to our data. Finally, the `shed.Environment` is called with a name that all workcan be saved under:
 
-``` python
-import shed
-from shed.featurizer import Ngrams
+ Experiment took 0.2 seconds
 
-features = [Ngrams(level='char', n_list=[3]),
-            Ngrams(level='token', n_list=[1, 2])]
-
-data = ['/dir/to/data/data.csv', 'dir/to/data/data2.csv']
-
-shd = shed.Environment(name='ngram_bayes')
-```
-
-Now we can `transform` our data to `X, y`. Given that we quickly want to test if it works, we provide a maximum amount of instances with the `max_n` argument.
-
-``` python
-loader = shd.load(data=data, target_label='category', max_n=10000)
-X, y = shd.transform(loader, features)
-```
-
-`X` is returned as a list of sparse dictionary representations for the features. To transform these into a sparse matrix, it is currently advised to use either the `FeatureHasher` or `DictVectorizer` from `sklearn`, which can be found [here](scikit-learn.org/stable/modules/feature_extraction.html).
-
-``` python
-X = DictVectorizer.fit_transform(X)
-```
-
-From there on, you can do whatever you wish with `X`, such as a common `sklearn` classification operation. In the end, the model can be stored by calling `shd.train` rather than the `fit` of the classifier, like so:
-
-``` python
-from sklearn.naive_bayes import GaussianNB
-clf = GaussianNB()
-shd.train(clf, X, y)
-```
-The last line will make sure that the trained model is stored in `shd.model`. To test the model, you can just do:
-
-``` python
-from sklearn.metrics import accuracy_score
-print(accuracy_score(shd.test(clf, X), y))
-```
-
-To save your model, you can:
-
-``` python
-shd.save()
-```
-Which will store it in a pickle under the name that was given with the initiation of `shed.Environment`. If you ever wish to implement it in a demo of some sorts, just call it under the same name again:
-
-``` python
-shd = shed.Environment('ngram_bayes')
-mod = shd.load()
-prediction_labels, confidence_scores = mod.classify(text)
+----------
 ```
 
 ## Adding own Features

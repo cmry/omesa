@@ -40,6 +40,8 @@ class LabelHandler(object):
                 return self.labs[label][1]
             else:
                 return label
+        if not len(self.labs):
+            return label
         if not any([x[0] for x in self.labs.values()]):
             return 'break'
 
@@ -50,7 +52,7 @@ class Dataloader(object):
     def __init__(self, conf):
         """Set configuration and label handler."""
         self.conf = conf
-        self.handle = LabelHandler(conf.get('label_selection'))
+        self.handle = LabelHandler(conf.get('label_selection', {}))
 
     def load_csv(self, data):
         """Iterate through csv files."""
@@ -78,4 +80,4 @@ class Dataloader(object):
             ann = [x.split('\t') for x in ann.split('\n')]
             if label is not None and x[i_text]:
                 yield (label, x[i_text], ann, feats)
-        self.handle = LabelHandler(conf.get('label_selection'))
+        self.handle = LabelHandler(conf.get('label_selection', {}))

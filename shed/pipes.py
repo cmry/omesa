@@ -74,7 +74,7 @@ class Pipeline(object):
         X = self.hasher.fit_transform(D)
         print(" done!")
 
-        if 'tfidf' in self.conf.get('settings'):
+        if 'tfidf' in self.conf.get('settings', ''):
             print("\n Tf*idf transformation...")
             X = self.tfidf.fit_transform(X)
             print(" done!")
@@ -86,15 +86,16 @@ class Pipeline(object):
     def test(self, data):
         """Send the test data through all applicable steps."""
         # same steps as pipe_train
-        Di, yi = self.featurizer.transform(self.load_data(data))
+        Di, yi = zip(*[(v, label) for label, v in
+                       self.featurizer.transform(self.loader.load_data(data))])
         Xi = self.hasher.transform(Di)
 
-        if 'tfidf' in self.conf.get('settings'):
+        if 'tfidf' in self.conf.get('settings', ''):
             Xi = self.tfidf.transform(Xi, copy=False)
         else:
             Xi = MaxAbsScaler(copy=False).fit_transform(Xi)
 
-        if 'svd' in self.conf.get('settings'):
+        if 'svd' in self.conf.get('settings', ''):
             Xi = self.svd.transform(Xi)
 
         return Xi, yi
@@ -126,7 +127,7 @@ class Grid(Pipeline):
             X_dev = self.pipe.svd.fit_transform(X_dev)
             print(" done!")
 
-        if 'grid' in conf.get('settings'):
+        if 'grid' in conf.get('settings', ''):
 
             # will only run LinearSVC for now
             user_grid = conf.get('parameters')

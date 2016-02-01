@@ -221,7 +221,7 @@ class Experiment(object):
         self.log.post('head', ('\n'.join([str(c) for c in conf['features']]),
                                conf['name'], seed))
 
-        X, y = self.pipe.train(conf['train_data'], conf['features'])
+        X, y = self.pipe.train(conf['train_data'])
         self.log.loop('sparse', ('train', X.shape))
 
         X, y, clf = self.grid.choose_classifier(X, y, seed)
