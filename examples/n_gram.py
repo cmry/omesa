@@ -2,7 +2,7 @@
 
 # for as long as it's not yet pip installable
 import sys
-sys.path.append('/home/emmery/git/shed/')
+sys.path.append('../')  # /dir/to/shed
 # -----
 
 try:

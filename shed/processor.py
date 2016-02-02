@@ -10,6 +10,34 @@ import re
 # pylint:       disable=F0401,R0903
 
 
+class SimpleCleaner(object):
+    """Very simple data cleaner."""
+
+    def __init__(self):
+        """Just boot."""
+        self.emoticons = set((
+            '*)', '*-)', '8)', '8-)', '8-d', ":'''(", ":'(", ':(', ':)',
+            ':-(', ':-)', ':-.', ':-/', ':-<', ':-d', ':-o', ':-p', ':-s',
+            ':-[', ':-b', ':-c', ':-o', ':-p', ':-s', ':-|', ':/', ':3', ':>',
+            ';d', ';p', ';x', 'x|', ':f',
+            ':d', ':o', ':[', ':\\', ':]', ':^)', ':b', ':c', ':?',
+            ':c)', ':o', ':o)', ':p', ':s', ':{', ':|', ':}', ";'(", ';)',
+            ';-)', ';-]', ';D', ';]', ';^)', '<3', '=(', '=)', '=-d', '=/',
+            '=d', '=]', '>.>', '>:)', '>:/', '>:d', '>:P', '>:[', '>:\\',
+            '>:o', '>;]', 'x-d', 'xd', 'o.o', 'o_o', 'x-d', u'\xb0O\xb0',
+            u'\xb0o\xb0', u'\u2665', u'\u2764', '^_^', '-_-'
+        ))
+
+    def clean(self, text):
+        """Lowers text and removes special stuff."""
+        text = text.lower().replace('|', ' ')  # ask.fm specific
+        text = ' '.join([re.sub('[^a-zA-Z0-9-_*?!]', ' ', word) if not
+                         any([emo in word for emo in self.emoticons]) else
+                         ' ' + word for word in text.split()])
+        text = re.sub('\s{2,}', ' ', text)
+        return text
+
+
 class SocialCleaner(object):
     """Preprocess raw social media data.
 

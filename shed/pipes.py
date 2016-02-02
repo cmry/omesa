@@ -4,6 +4,7 @@
 
 from .featurizer import Featurizer
 from .data import Dataloader
+from .logger import Reporter
 
 import numpy as np
 from sklearn import pipeline
@@ -13,7 +14,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.grid_search import GridSearchCV
 from sklearn.preprocessing import MaxAbsScaler
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.utils import shuffle
 
 
@@ -56,6 +57,7 @@ class Pipeline(object):
     def __init__(self, conf):
         """Start pipeline modules."""
         self.loader = Dataloader(conf)
+        self.reporter = Reporter(conf['name'])
         self.featurizer = Featurizer(conf['features'],
                                      conf.get('preprocessor'),
                                      conf.get('parser'))
@@ -104,16 +106,21 @@ class Pipeline(object):
 class Grid(Pipeline):
     """Current placeholder for grid methods. Should be fleshed out."""
 
-    def choose_classifier(self, X, y, seed):
-        """Choose a classifier based on settings."""
-        conf = self.conf
-        X, y = shuffle(X, y, random_state=seed)
-
-        # split dev (test_set here is X)
-        if conf.get('settings'):
+    def split_dev(self, X, y, seed=42):
+        """Split dev if should be hold out (test_set here is X)."""
+        X_dev, y_dev = None, None
+        if 'hold_grid' in self.conf.get('settings', ''):
             X_dev, X, y_dev, y = train_test_split(X, y, test_size=0.8,
                                                   random_state=seed,
                                                   stratify=y)
+        else:
+            X, y = shuffle(X, y, random_state=seed)
+        return X, y, X_dev, y_dev
+
+    def choose_classifier(self, X, y, seed):
+        """Choose a classifier based on settings."""
+        conf = self.conf
+        X, y, X_dev, y_dev = self.split_dev(X, y, seed)
 
         # apply SVD once
         if conf.get('components'):
@@ -131,10 +138,10 @@ class Grid(Pipeline):
 
             # will only run LinearSVC for now
             user_grid = conf.get('parameters')
-            param_grid = {'linearsvc__C': np.logspace(-3, 2, 6)} if not \
+            param_grid = {'clf__C': np.logspace(-3, 2, 6)} if not \
                 user_grid else user_grid
-            steps = [('linearsvc', LinearSVC(random_state=seed,
-                                             class_weight='balanced'))]
+            steps = [('clf', conf.get('classifier',
+                                      LinearSVC(class_weight='balanced')))]
 
             # incorporate SVD into GridSearch
             if 'svd' in conf.get('settings') and not conf.get('components'):
@@ -142,15 +149,19 @@ class Grid(Pipeline):
                 steps = [('svd', TruncatedSVD())] + steps
 
             pipe = pipeline.Pipeline(steps)
-            print("grid: ", param_grid)
+            print("\n", "Grid: ", param_grid)
             grid = GridSearchCV(pipe, scoring='f1', param_grid=param_grid,
                                 n_jobs=-1)
 
             print("\n Starting Grid Search...")
-            grid.fit(X_dev, y_dev)
+            # grid search approximated on dev
+            if X_dev and y_dev:
+                grid.fit(X_dev, y_dev)
+            else:
+                grid.fit(X, y)
             print(" done!")
 
-            p = self.grid_report(grid.grid_scores_)
+            p = self.reporter.grid(grid.grid_scores_)
             clf = grid.best_estimator_
 
             if 'svd' in conf.get('settings') and not conf.get('components'):

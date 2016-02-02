@@ -94,7 +94,7 @@ class Log(object):
 class Reporter(Log):
     """Reports sklearn pipeline info."""
 
-    def report(self, t, y):
+    def basic(self, t, y):
         """Report baseline, and label distribution."""
         maj_class = Counter(y).most_common(1)[0][0]
         baseline = [maj_class for _ in y]
@@ -104,7 +104,7 @@ class Reporter(Log):
             dist[1][0]))
         return dist[1][0]
 
-    def grid_report(self, grid_scores, n_top=1):
+    def grid(self, grid_scores, n_top=1):
         """Post gridsearch report."""
         top_scores = sorted(grid_scores, key=itemgetter(1),
                             reverse=True)[:n_top]
