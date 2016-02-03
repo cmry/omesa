@@ -89,7 +89,8 @@ class Pipeline(object):
         """Send the test data through all applicable steps."""
         # same steps as pipe_train
         Di, yi = zip(*[(v, label) for label, v in
-                       self.featurizer.transform(self.loader.load_data(data))])
+                       self.featurizer.transform(
+                            self.loader.load_data(data, test=True))])
         Xi = self.hasher.transform(Di)
 
         if 'tfidf' in self.conf.get('settings', ''):

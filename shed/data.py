@@ -2,6 +2,7 @@
 
 import csv
 import sys
+from copy import deepcopy
 
 # pylint:       disable=E1103,W0512,R0903,C0103
 
@@ -30,12 +31,13 @@ class LabelHandler(object):
 
     def __init__(self, labs):
         """Copy the original counts to keep them intact across train / test."""
-        self.labs = dict(labs)
+        self.labs = deepcopy(labs)
 
-    def check(self, label):
+    def check(self, label, test):
         """Check if label has count, otherwise return label. If zero, none."""
         if self.labs.get(label) and self.labs[label][0]:
-            self.labs[label][0] = self.labs[label][0] - 1
+            if not test:  # always grab full test
+                self.labs[label][0] = self.labs[label][0] - 1
             if len(self.labs[label]) > 1:
                 return self.labs[label][1]
             else:
@@ -64,7 +66,7 @@ class Dataloader(object):
                     continue
                 yield x
 
-    def load_data(self, data):
+    def load_data(self, data, test=False):
         """Load from given datasets provided amount of instances."""
         conf = self.conf
         i_text, i_label = conf['text_column'], conf['label_column']
@@ -73,7 +75,7 @@ class Dataloader(object):
         # so that data can also be an iterable
         loader = self.load_csv(data) if data[0][-4:] == '.csv' else data
         for x in loader:
-            label = self.handle.check(x[i_label])
+            label = self.handle.check(x[i_label], test)
             if label == 'break':
                 break
             ann, feats = ('' if not v else x[v] for v in [i_ann, i_feats])
