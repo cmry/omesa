@@ -206,7 +206,7 @@ class FuncWords(object):
         return Counter(tokens)
 
 
-class DuSent():
+class DuSent(object):
     """
     Lexicon based sentiment features.
 
@@ -271,7 +271,7 @@ class DuSent():
         return {self.name: self.calculate_sentiment(parse)}
 
 
-class SimpleStats:
+class SimpleStats(object):
     r"""Word and token based features.
 
     Parameters
@@ -391,7 +391,7 @@ class SimpleStats:
         return self.v
 
 
-class Readability:
+class Readability(object):
     """Get readability-related features.
 
     Notes
@@ -437,9 +437,7 @@ class Readability:
         self.url = re.compile(r"https?://[^\s]+")
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I)
 
-        return NotImplementedError
-
     def transform(self, raw, _):
         """Add each metric to the feature vector."""
         # TODO: add stuff here
-        pass
+        return NotImplementedError

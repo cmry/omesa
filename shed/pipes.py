@@ -14,7 +14,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.grid_search import GridSearchCV
 from sklearn.preprocessing import MaxAbsScaler
-from sklearn.svm import SVC, LinearSVC
+from sklearn.svm import LinearSVC
 from sklearn.utils import shuffle
 
 
