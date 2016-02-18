@@ -1,4 +1,0 @@
-numpy==1.10.1
-scipy==0.16.1
-scikit-learn==0.17
-wheel==0.24.0

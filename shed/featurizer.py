@@ -94,7 +94,7 @@ class Featurizer(object):
             if not parse and self.parser:
                 parse = self.parser.parse(raw if self.parser.raw else text)
             for helper in self.helpers:
-                v.update(helper.transform(raw, parse))
+                v.update(helper.transform(text, parse))
             if meta:
                 for meta_inst in meta:
                     if meta_inst not in self.metaf:
@@ -437,7 +437,7 @@ class Readability(object):
         self.url = re.compile(r"https?://[^\s]+")
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I)
 
-    def transform(self, raw, _):
+    def transform(self, _, __):
         """Add each metric to the feature vector."""
         # TODO: add stuff here
         return NotImplementedError
