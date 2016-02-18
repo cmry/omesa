@@ -77,7 +77,12 @@ Chris
 
 """
 
+# pylint:    disable=E0603
+
 __author__ = 'Chris Emmery'
-__contrb__ = 'Mike Kestemont, Ben Verhoeven, Florian Kunneman,' \
-             'Janneke van de Loo'
+__contrb__ = ('Mike Kestemont', 'Florian Kunneman', 'Janneke van de Loo',
+              'Ben Verhoeven')
 __license__ = 'MIT'
+
+import shed.experiment
+import shed.processor

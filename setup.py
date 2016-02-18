@@ -10,7 +10,7 @@ setup(name='shed',
       author='Chris Emmery',
       author_email='chris.emmery@uantwerpen.be',
       url='https://github.com/cmry/shed',
-      download_url='https://github.com/cmry/shed/tarball/0.0.1',
       license='MIT',
-      install_requires=['scikit-learn'],
-      packages=find_packages())
+      packages=find_packages(exclude=['tests']),
+      install_requires=['scikit-learn>=0.17'],
+      zip_safe=True)
