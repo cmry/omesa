@@ -5,7 +5,7 @@ from setuptools import find_packages
 
 
 setup(name='omesa',
-      version='0.2.1.alpha',
+      version='0.2.8.alpha',
       description='A small framework for reproducible text mining research',
       author='Chris Emmery',
       author_email='chris.emmery@uantwerpen.be',

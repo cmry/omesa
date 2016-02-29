@@ -1,28 +1,30 @@
-.. -*- mode: rst -*-
-
-|Travis|_ |Docs|_ |Landscape|_ |Coveralls|_ |Python2.x| |Python3.x| |License|_
-
-.. |Travis| image:: https://travis-ci.org/cmry/Omesa.svg?branch=master
-.. _Travis: https://travis-ci.org/cmry/omesa
-
-.. |Docs| image:: https://readthedocs.org/projects/omesa/badge/?version=latest
-.. _Docs: http://omesa.readthedocs.org/en/latest/?badge=latest
-
-.. |Landscape| image:: https://landscape.io/github/cmry/Omesa/master/landscape.svg?style=flat
-.. _Landscape: https://landscape.io/github/cmry/Omesa/master
-
-.. |Coveralls| image:: https://coveralls.io/repos/cmry/omesa/badge.svg?branch=master&service=github
-.. _Coveralls: https://coveralls.io/github/cmry/omesa?branch=master
-
-.. |Python2.x| image:: https://img.shields.io/badge/python-2.7-blue.svg
-
-.. |Python3.x| image:: https://img.shields.io/badge/python-3.5-blue.svg
-
-.. |License| image:: https://img.shields.io/badge/license-MIT-blue.svg
-.. _License: https://github.com/cmry/omesa/blob/master/LICENSE
-
 Omesa
 =====
+
+.. image:: https://travis-ci.org/cmry/Omesa.svg?branch=master
+    :target: https://travis-ci.org/cmry/Omesa
+    :alt: Travis-CI
+
+.. image:: https://readthedocs.org/projects/omesa/badge/?version=latest
+    :target: http://omesa.readthedocs.org/en/latest/?badge=latest
+    :alt: Docs
+
+.. image:: https://landscape.io/github/cmry/Omesa/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/cmry/Omesa/master
+    :alt: Landscape
+
+.. image:: https://coveralls.io/repos/cmry/omesa/badge.svg?branch=master&service=github
+    :target: https://coveralls.io/github/cmry/omesa?branch=master
+    :alt: Coveralls
+
+.. image:: https://img.shields.io/badge/python-2.7-blue.svg
+    :alt: Python 2.7
+
+.. image:: https://img.shields.io/badge/python-3.5-blue.svg
+    :alt: Python 3.4
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://github.com/cmry/omesa/blob/master/LICENSE
 
 .. _scikit-learn: http://scikit-learn.org/stable/
 .. _readthedocs: http://omesa.readthedocs.org/
@@ -40,6 +42,7 @@ automated, optimized, and well recorded. To this end it features:
 Read the documentation at readthedocs_.
 
 .. image:: http://chris.emmery.nl/dump/shed.png
+    :alt: Pipeline
 
 Important Note
 ''''''''''''''
@@ -114,7 +117,8 @@ Output
 The log file will be printed during run time, as well as stored in the
 script's directory. The output of the current experiment is as follows:
 
-.. code-block:: json
+.. code-block:: shell
+
     ---- Omesa ----
 
      Config:

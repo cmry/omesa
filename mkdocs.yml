@@ -1,8 +1,8 @@
-site_name: Shed
+site_name: Omesa
 theme: readthedocs
 
-repo_url: http://github.com/cmry/shed
-site_url: http://shed.readthedocs.org/
+repo_url: http://github.com/cmry/omesa
+site_url: http://omesa.readthedocs.org/
 
 site_description: Documentation for reproducible Text Mining research framework.
 
@@ -14,7 +14,7 @@ pages:
 - [featurizer.md, Features, Featurizer]
 - [dataloader.md, Backend, Dataloader]
 - [processor.md, Backend, Taggers]
-- [shed.md, Examples, End-To-End]
+- [omesa.md, Examples, End-To-End]
 - [df.md, Examples, Data-To-Features]
 - [examples.md, Examples, Text Classification]
 - [faq.md, Home]
