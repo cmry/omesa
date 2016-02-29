@@ -2,14 +2,14 @@
 
 |Travis|_ |Docs|_ |Landscape|_ |Coveralls|_ |Python2.x| |Python3.x| |License|_
 
-.. |Travis| image:: https://travis-ci.org/cmry/omesa.svg?branch=master
+.. |Travis| image:: https://travis-ci.org/cmry/Omesa.svg?branch=master
 .. _Travis: https://travis-ci.org/cmry/omesa
 
 .. |Docs| image:: https://readthedocs.org/projects/omesa/badge/?version=latest
 .. _Docs: http://omesa.readthedocs.org/en/latest/?badge=latest
 
-.. |Landscape| image:: https://landscape.io/github/cmry/omesa/master/landscape.svg?style=flat
-.. _Landscape: https://landscape.io/github/cmry/omesa/master
+.. |Landscape| image:: https://landscape.io/github/cmry/Omesa/master/landscape.svg?style=flat
+.. _Landscape: https://landscape.io/github/cmry/Omesa/master
 
 .. |Coveralls| image:: https://coveralls.io/repos/cmry/omesa/badge.svg?branch=master&service=github
 .. _Coveralls: https://coveralls.io/github/cmry/omesa?branch=master
@@ -28,7 +28,7 @@ Omesa
 .. _readthedocs: http://omesa.readthedocs.org/
 
 A small framework for reproducible Text Mining research that largely builds
-on top of "_scikit-learn". Its goal is to make common research procedures fully
+on top of scikit-learn_. Its goal is to make common research procedures fully
 automated, optimized, and well recorded. To this end it features:
 
 - Exhaustive search over best features, pipeline options, to classifier optimization.
@@ -37,7 +37,7 @@ automated, optimized, and well recorded. To this end it features:
 - Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
 - Dump an easily deployable version of the final model for plug-and-play demos.
 
-Read the documentation at "_readthedocs".
+Read the documentation at readthedocs_.
 
 .. image:: http://chris.emmery.nl/dump/shed.png
 
@@ -79,7 +79,7 @@ With the end-to-end ``Experiment`` pipeline and a configuration dictionary,
 several experiments or set-ups can be ran and evaluated with a very minimal
 piece of code. One of the test examples provided is that of `n-gram classification`_
 of Wikipedia documents. In this experiment, we are provided with a toy set
-`n-gram.csv`_ that features 10 articles about Machine Learning, and 10 random
+`n_gram.csv`_ that features 10 articles about Machine Learning, and 10 random
 other articles. To run the experiment, the following configuration is used:
 
 .. code-block:: python
