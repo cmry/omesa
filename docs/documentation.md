@@ -1,4 +1,4 @@
-# shed Documentation Index
+# Omesa Documentation Index
 
 ## Introduction
 

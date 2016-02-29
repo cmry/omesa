@@ -1,4 +1,4 @@
-# Shed FAQ: Frequently Asked Shed Questions
+# Shed FAQ: Frequently Asked Omesa Questions
 
 [Why is there nothing here yet?](why-is-there-nothing-here-yet)
 

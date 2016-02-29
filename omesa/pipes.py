@@ -36,7 +36,7 @@ class Pipeline(object):
     ----------
 
     featurizer : class
-        Environment class (might be replace by Featurizer) from shed.
+        Environment class (might be replace by Featurizer) from Omesa.
 
     handle : class
         LabelHandler instance defined earlier in this file.

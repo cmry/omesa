@@ -62,7 +62,7 @@ class Experiment(object):
             "name": "experiment_name",
 
             Same as the above. This will function as a hook to save your model,
-            features and shed environment under one name.
+            features and Omesa config under one name.
             ---
 
             "train_data": ["/somedir/train.csv", "/somedir/train2.csv"],
@@ -79,7 +79,7 @@ class Experiment(object):
 
             This works similar to the train_data. However, when a test set is
             provided, the performance of the model will be measured on this
-            test data only. Shed will dump a classification report for you.
+            test data only. Omesa will dump a classification report for you.
             ---
 
             "test_proportion": 0.3,                # or
@@ -91,7 +91,7 @@ class Experiment(object):
 
             "features": [Ngrams()],
 
-            These can be features imported from shed.featurizer or can be
+            These can be features imported from omesa.featurizer or can be
             any class you create your self. As long as it adheres to a fit /
             transform structure and returns a feature dictionary per instance
             as can be provided to, for example, the sklearn FeatureHasher.

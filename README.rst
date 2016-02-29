@@ -1,12 +1,12 @@
-[![Build Status](https://travis-ci.org/cmry/shed.svg?branch=master)](https://travis-ci.org/cmry/shed)
-[![Documentation Status](https://readthedocs.org/projects/shed/badge/?version=latest)](http://shed.readthedocs.org/en/latest/?badge=latest)
-[![Code Health](https://landscape.io/github/cmry/shed/master/landscape.svg?style=flat)](https://landscape.io/github/cmry/shed/master)
-[![Coverage Status](https://coveralls.io/repos/cmry/shed/badge.svg?branch=master&service=github)](https://coveralls.io/github/cmry/shed?branch=master)
+[![Build Status](https://travis-ci.org/cmry/omesa.svg?branch=master)](https://travis-ci.org/cmry/omesa)
+[![Documentation Status](https://readthedocs.org/projects/omesa/badge/?version=latest)](http://omesa.readthedocs.org/en/latest/?badge=latest)
+[![Code Health](https://landscape.io/github/cmry/omesa/master/landscape.svg?style=flat)](https://landscape.io/github/cmry/omesa/master)
+[![Coverage Status](https://coveralls.io/repos/cmry/omesa/badge.svg?branch=master&service=github)](https://coveralls.io/github/cmry/omesa?branch=master)
 ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)
 ![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cmry/shed/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cmry/omesa/blob/master/LICENSE)
 
-# shed
+# Omesa
 A small framework for reproducible Text Mining research that largely builds on top of [scikit-learn](http://scikit-learn.org/stable/). Its goal is to make common research procedures fully automated, optimized, and well recorded. To this end it features:
 
   - Exhaustive search over best features, pipeline options, to classifier optimization.
@@ -15,7 +15,7 @@ A small framework for reproducible Text Mining research that largely builds on t
   - Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
   - Dump an easily deployable version of the final model for plug-and-play demos.
 
-Read the documentation at [readthedocs](http://shed.readthedocs.org/).
+Read the documentation at [readthedocs](http://omesa.readthedocs.org/).
 
 ![diagram](http://chris.emmery.nl/dump/shed.png)
 
@@ -25,12 +25,12 @@ This repository is currently in development, so don't expect any stable function
 
 #### Dependencies
 
-shed currently heavily relies on `numpy`, `scipy` and `sklearn`. To use
+Omesa currently heavily relies on `numpy`, `scipy` and `sklearn`. To use
 [Frog](https://languagemachines.github.io/frog/) as a Dutch back-end, we
 strongly recommend using [LaMachine](https://proycon.github.io/LaMachine/). For
 English, there is a [spaCy](https://spacy.io/) wrapper available.
 
-## Shed Only - End-To-End In 2 Minutes
+## Omesa Only - End-To-End In 2 Minutes
 
 With the end-to-end `Experiment` pipeline and a configuration dictionary, several experiments or set-ups can be ran and evaluated with a very minimal piece of code. One of the test examples provided is that of n-gram classification of Wikipedia documents. In this experiment, we are provided with a toy set n_gram.csv that features 10 articles about Machine Learning, and 10 random other articles. To run the experiment, the following configuration is used:
 
@@ -39,15 +39,15 @@ With the end-to-end `Experiment` pipeline and a configuration dictionary, severa
 With the end-to-end `Experiment` pipeline and a configuration dictionary,
 several experiments or set-ups can be ran and evaluated with a very minimal
 piece of code. One of the test examples provided is that of
-[n-gram classification](https://github.com/cmry/shed/blob/master/examples/n_gram.py)
+[n-gram classification](https://github.com/cmry/omesa/blob/master/examples/n_gram.py)
 of Wikipedia documents. In this experiment, we are provided with a toy set
-[n_gram.csv](https://github.com/cmry/shed/blob/master/examples/n_gram.csv) that
+[n_gram.csv](https://github.com/cmry/omesa/blob/master/examples/n_gram.csv) that
 features 10 articles about Machine Learning, and 10 random other articles. To
 run the experiment, the following configuration is used:
 
 ``` python
-from shed.experiment import Experiment
-from shed.featurizer import Ngrams
+from omesa.experiment import Experiment
+from omesa.featurizer import Ngrams
 
 conf = {
     "gram_experiment": {
@@ -77,7 +77,7 @@ The log file will be printed during run time, as well as stored in the
 script's directory. The output of the current experiment is as follows:
 
 ``` yml
----- Shed ----
+---- Omesa ----
 
  Config:
 
@@ -125,4 +125,4 @@ This returns a `{word: frequency}` dict per instance that can easily be transfor
 
 ## Acknowledgements
 
-Part of the work on shed was carried out in the context of the [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded by the government agency for Innovation by Science and Technology (IWT).
+Part of the work on Omesa was carried out in the context of the [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded by the government agency for Innovation by Science and Technology (IWT).

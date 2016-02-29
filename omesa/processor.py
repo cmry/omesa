@@ -180,10 +180,10 @@ class Spacy(object):
     statistical models, according to specifications that follow common
     practice in the research community."
 
-    spaCy is currently used in shed to provide the English part of the
+    spaCy is currently used in Omesa to provide the English part of the
     backbone. It's faster than CoreNLP, and Python <3. While spaCy can also
     extract things such as NER (it lacks sentiment and co-reference), this
-    is currently not enabled for shed.
+    is currently not enabled for Omesa.
     """
 
     def __init__(self, raw=True):
@@ -224,9 +224,9 @@ class Frog(object):
     added. Where possible, Frog makes use of multi-processor support to run
     subtasks in parallel.
 
-    Frog is currently used in shed to provide the Dutch part of the backbone.
+    Frog is currently used in Omesa to provide the Dutch part of the backbone.
     As the other backbones, it currently only uses a subset of features. Full
-    list of potential extractions (not enabled for shed) are:
+    list of potential extractions (not enabled for Omesa) are:
 
     - Morphological segmentation (according to MBMA).
     - Confidence in the POS tag, a number between 0 and 1, representing the

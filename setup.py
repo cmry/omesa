@@ -4,8 +4,8 @@ from setuptools import setup
 from setuptools import find_packages
 
 
-setup(name='shed',
-      version='0.0.1',
+setup(name='omesa',
+      version='0.2.1.alpha',
       description='A small framework for reproducible text mining research',
       author='Chris Emmery',
       author_email='chris.emmery@uantwerpen.be',

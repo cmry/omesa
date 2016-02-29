@@ -41,7 +41,7 @@ class Log(object):
         """Set log dict. Empty buffer."""
         self.file_name = file_name + '.log'
         self.log = {
-            'head':   "\n---- Shed ---- \n\n Config: \n" +
+            'head':   "\n---- Omesa ---- \n\n Config: \n" +
                       "\t {0} \n\tname: {1} \n\tseed: {2} " +
                       "\n\t \n",
             # 'read':   "\n Reading from {0}... Acquired {1} from data.\n ",

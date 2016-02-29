@@ -4,8 +4,8 @@
 
 This module contains several helper classes for extracting textual features
 used in Text Mining applications, partly based on instances parsed with parse.
-It also includes a wrapper class to cleverly hanlde this within the shed
-environment.
+It also includes a wrapper class to cleverly hanlde this within the Omesa
+framework.
 
 """
 
