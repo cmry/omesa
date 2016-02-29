@@ -29,15 +29,15 @@ Starts the framework's environment and initiates its namespace.
 Typical experiment:
 
 ```python
->>> import shed
+>>> import omesa
 >>> from os import getcwd
 
 >>> data = [getcwd()+'/data/data.csv', getcwd()+'/data/data2.csv']
 
->>> from shed.featurizer import *
+>>> from omesa.featurizer import *
 >>> features = [SimpleStats(), Ngrams(level='pos'), FuncWords()]
 
->>> env = shed.Environment(name='bayes_age_v1')
+>>> env = omesa.Environment(name='bayes_age_v1')
 >>> loader = env.load(data=data, target_label='age')
 >>> space, labels = env.transform(loader(), features)
 ```

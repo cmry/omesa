@@ -1,17 +1,17 @@
-# Shed Only - End-To-End In 2 Minutes
+# Omesa Only - End-To-End In 2 Minutes
 
 With the end-to-end `Experiment` pipeline and a configuration dictionary,
 several experiments or set-ups can be ran and evaluated with a very minimal
 piece of code. One of the test examples provided is that of
-[n-gram classification](https://github.com/cmry/shed/blob/master/examples/n_gram.py)
+[n-gram classification](https://github.com/cmry/omesa/blob/master/examples/n_gram.py)
 of Wikipedia documents. In this experiment, we are provided with a toy set
-[n_gram.csv](https://github.com/cmry/shed/blob/master/examples/n_gram.csv) that
+[n_gram.csv](https://github.com/cmry/omesa/blob/master/examples/n_gram.csv) that
 features 10 articles about Machine Learning, and 10 random other articles. To
 run the experiment, the following configuration is used:
 
 ``` python
-from shed.experiment import Experiment
-from shed.featurizer import Ngrams
+from omesa.experiment import Experiment
+from omesa.featurizer import Ngrams
 
 conf = {
     "gram_experiment": {
@@ -41,7 +41,7 @@ The log file will be printed during run time, as well as stored in the
 script's directory. The output of the current experiment is as follows:
 
 ``` yml
----- Shed ----
+---- Omesa ----
 
  Config:
 

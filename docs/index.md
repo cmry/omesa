@@ -1,4 +1,4 @@
-# shed
+# Omesa
 A small framework for reproducible Text Mining research that largely builds
 on top of [scikit-learn](http://scikit-learn.org/stable/). Its goal is to make
 common research procedures quick to set up, structed according to best
@@ -26,14 +26,14 @@ guaranteed as long as this message is showing.*
 
 We offer two quick examples to demonstrate the functionality:
 
-- **2 minutes**: using [Shed only](shed.md) for text classification.
-- **5 minutes**: integrating Shed for [data-to-features](df.md).
+- **2 minutes**: using [Omesa only](omesa.md) for text classification.
+- **5 minutes**: integrating Omesa for [data-to-features](df.md).
 
 ---
 
 ## Dependencies
 
-Shed currently heavily relies on `numpy`, `scipy` and `sklearn`. To use the
+Omesa currently heavily relies on `numpy`, `scipy` and `sklearn`. To use the
 [Frog](https://languagemachines.github.io/frog/) wrapper as a Dutch back-end, we
 strongly recommend using [LaMachine](https://proycon.github.io/LaMachine/). For
 English, there is a [spaCy](https://spacy.io/) wrapper available.
@@ -42,6 +42,6 @@ English, there is a [spaCy](https://spacy.io/) wrapper available.
 
 ## Acknowledgements
 
-Part of the work on Shed was carried out in the context of the
+Part of the work on Omesa was carried out in the context of the
 [AMiCA](http://www.amicaproject.be/) (IWT SBO-project 120007) project, funded
 by the government agency for Innovation by Science and Technology (IWT).

@@ -4,8 +4,8 @@
 
 This module contains several helper classes for extracting textual features
 used in Text Mining applications, partly based on instances parsed with parse.
-It also includes a wrapper class to cleverly hanlde this within the shed
-environment.
+It also includes a wrapper class to cleverly hanlde this within the Omesa
+framework.
 
 """
 
@@ -94,7 +94,7 @@ class Featurizer(object):
             if not parse and self.parser:
                 parse = self.parser.parse(raw if self.parser.raw else text)
             for helper in self.helpers:
-                v.update(helper.transform(raw, parse))
+                v.update(helper.transform(text, parse))
             if meta:
                 for meta_inst in meta:
                     if meta_inst not in self.metaf:
@@ -172,7 +172,7 @@ class Ngrams(object):
         c = Counter()
         for n in self.n_list:
             c += Counter([self.level+"-"+"_".join(item) for
-                          item in self._find_ngrams(needle, n)])
+                          item in self.find_ngrams(needle, n)])
         return c
 
 
@@ -206,7 +206,7 @@ class FuncWords(object):
         return Counter(tokens)
 
 
-class DuSent():
+class DuSent(object):
     """
     Lexicon based sentiment features.
 
@@ -271,7 +271,7 @@ class DuSent():
         return {self.name: self.calculate_sentiment(parse)}
 
 
-class SimpleStats:
+class SimpleStats(object):
     r"""Word and token based features.
 
     Parameters
@@ -391,7 +391,7 @@ class SimpleStats:
         return self.v
 
 
-class Readability:
+class Readability(object):
     """Get readability-related features.
 
     Notes
@@ -437,9 +437,7 @@ class Readability:
         self.url = re.compile(r"https?://[^\s]+")
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I)
 
-        return NotImplementedError
-
-    def transform(self, raw, _):
+    def transform(self, _, __):
         """Add each metric to the feature vector."""
         # TODO: add stuff here
-        pass
+        return NotImplementedError
