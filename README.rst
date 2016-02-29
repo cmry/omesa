@@ -1,6 +1,6 @@
 .. -*- mode: rst -*-
 
-|Travis|_ |Docs|_ |Landscape|_ |Coveralls|_ |Python2.x|_ |Python3.x|_ |License|_
+|Travis|_ |Docs|_ |Landscape|_ |Coveralls|_ |Python2.x| |Python3.x| |License|_
 
 .. |Travis| image:: https://travis-ci.org/cmry/omesa.svg?branch=master
 .. _Travis: https://travis-ci.org/cmry/omesa
@@ -31,11 +31,11 @@ A small framework for reproducible Text Mining research that largely builds
 on top of "_scikit-learn". Its goal is to make common research procedures fully
 automated, optimized, and well recorded. To this end it features:
 
-  - Exhaustive search over best features, pipeline options, to classifier optimization.
-  - Flexible wrappers to plug in your tools and features of choice.
-  - Completely sparse pipeline through hashing - from data to feature space.
-  - Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
-  - Dump an easily deployable version of the final model for plug-and-play demos.
+- Exhaustive search over best features, pipeline options, to classifier optimization.
+- Flexible wrappers to plug in your tools and features of choice.
+- Completely sparse pipeline through hashing - from data to feature space.
+- Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
+- Dump an easily deployable version of the final model for plug-and-play demos.
 
 Read the documentation at "_readthedocs".
 
@@ -56,8 +56,8 @@ Dependencies
 .. _spaCy: https://spacy.io/
 
 Omesa currently heavily relies on ``numpy``, ``scipy`` and ``sklearn``. To use
-"_Frog" as a Dutch back-end, we strongly recommend using "_LaMachine". For
-English, there is a "_spaCy" wrapper available.
+Frog_ as a Dutch back-end, we strongly recommend using LaMachine_. For
+English, there is a spaCy_ wrapper available.
 
 Omesa Only - End-To-End In 2 Minutes
 ------------------------------------
@@ -72,14 +72,14 @@ random other articles. To run the experiment, the following configuration is use
 Example
 '''''''
 
-.. _n-gram classification: https://github.com/cmry/omesa/blob/master/examples/n_gram.py
-.. _n_gram.csv: https://github.com/cmry/omesa/blob/master/examples/n_gram.csv
+.. _`n-gram classification`: https://github.com/cmry/omesa/blob/master/examples/n_gram.py
+.. _`n_gram.csv`: https://github.com/cmry/omesa/blob/master/examples/n_gram.csv
 
 With the end-to-end ``Experiment`` pipeline and a configuration dictionary,
 several experiments or set-ups can be ran and evaluated with a very minimal
-piece of code. One of the test examples provided is that of "_n-gram classification"
+piece of code. One of the test examples provided is that of `n-gram classification`_
 of Wikipedia documents. In this experiment, we are provided with a toy set
-"_n-gram.csv" that features 10 articles about Machine Learning, and 10 random
+`n-gram.csv`_ that features 10 articles about Machine Learning, and 10 random
 other articles. To run the experiment, the following configuration is used:
 
 .. code-block:: python
@@ -168,5 +168,5 @@ Acknowledgements
 .. _AMiCA: http://www.amicaproject.be/
 
 Part of the work on Omesa was carried out in the context of the
-"_AMiCA" (IWT SBO-project 120007) project, funded by the government agency for
+AMiCA_ (IWT SBO-project 120007) project, funded by the government agency for
 Innovation by Science and Technology (IWT).
