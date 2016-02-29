@@ -31,8 +31,8 @@ for this, the following configuration is used:
 # pylint:    disable=E0603
 
 __author__ = 'Chris Emmery'
-__contrb__ = ('Mike Kestemont', 'Florian Kunneman', 'Janneke van de Loo',
-              'Ben Verhoeven')
+__contrb__ = ('Ákos Kádár', 'Mike Kestemont', 'Florian Kunneman',
+              'Janneke van de Loo', 'Ben Verhoeven')
 __license__ = 'MIT'
 
 import omesa.experiment
