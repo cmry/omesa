@@ -1,7 +1,7 @@
 Omesa
 =====
 
-.. image:: https://travis-ci.org/cmry/Omesa.svg?branch=master
+.. image:: https://travis-ci.org/cmry/omesa.svg?branch=master
     :target: https://travis-ci.org/cmry/Omesa
     :alt: Travis-CI
 
@@ -9,8 +9,8 @@ Omesa
     :target: http://omesa.readthedocs.org/en/latest/?badge=latest
     :alt: Docs
 
-.. image:: https://landscape.io/github/cmry/Omesa/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/cmry/Omesa/master
+.. image:: https://landscape.io/github/cmry/omesa/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/cmry/omesa/master
     :alt: Landscape
 
 .. image:: https://coveralls.io/repos/cmry/omesa/badge.svg?branch=master&service=github
