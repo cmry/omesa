@@ -231,7 +231,7 @@ class Experiment(object):
 
         # report performance
         if not conf.get('test_data'):
-            res = cross_val_predict(clf, X, y, cv=10, n_jobs=-1)
+            res = cross_val_predict(clf, X, y, cv=5, n_jobs=-1)
             self.log.post('cr', (metrics.classification_report(y, res),))
         else:
             print("\n Fetching test data...")

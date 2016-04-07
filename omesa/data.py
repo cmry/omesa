@@ -73,7 +73,11 @@ class Dataloader(object):
         i_ann, i_feats = conf.get('ann_column'), conf.get('feature_columns')
 
         # so that data can also be an iterable
-        loader = self.load_csv(data) if data[0][-4:] == '.csv' else data
+        try:
+            loader = self.load_csv(data) if data[0][-4:] == '.csv' else data
+        except TypeError:
+            loader = data
+
         for x in loader:
             label = self.handle.check(x[i_label], test)
             if label == 'break':

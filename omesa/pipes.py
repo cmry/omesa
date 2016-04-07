@@ -151,7 +151,7 @@ class Grid(Pipeline):
 
             pipe = pipeline.Pipeline(steps)
             print("\n", "Grid: ", param_grid)
-            grid = GridSearchCV(pipe, scoring='f1_micro', param_grid=param_grid,
+            grid = GridSearchCV(pipe, scoring='f1', param_grid=param_grid,
                                 n_jobs=-1)
 
             print("\n Starting Grid Search...")
