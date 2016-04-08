@@ -10,8 +10,12 @@ framework.
 """
 
 import re
+import json
 import pickle
 from collections import OrderedDict, Counter
+from sys import exit
+from urllib3 import PoolManager
+from urllib.parse import urlencode
 import numpy as np
 
 # Author:       Chris Emmery
@@ -88,7 +92,8 @@ class Featurizer(object):
         X : numpy array of shape [n_samples, n_features]
             Training data returns when applying the transform function.
         """
-        for label, raw, parse, meta in stream:
+        for instance in stream:
+            label, raw, parse, meta = instance + (None,) * (4 - len(instance))
             v = {}
             text = self.preprocessor.clean(raw) if self.preprocessor else raw
             if not parse and self.parser:
@@ -101,7 +106,7 @@ class Featurizer(object):
                         self.metaf[label] = self.metafc
                         self.metafc += 1
                         v.update({self.metaf[meta_inst]: 1})
-            yield label, v
+            yield v, label
 
 
 class Ngrams(object):
@@ -165,7 +170,7 @@ class Ngrams(object):
             needle = raw.split()
         elif self.level == 'token' or self.level == 'pos':
             # FIXME: parses are not handled well
-            needle = parse[self.row] if parse[0][0] else raw.split()
+            needle = parse[self.row] if parse else raw.split()
             if self.level == 'pos' and not parse:
                 raise EnvironmentError("There's no POS annotation.")
 
@@ -204,6 +209,60 @@ class FuncWords(object):
         tokens = [item[0] for item in parse if item[2].split('(')[0]
                   in self.functors]
         return Counter(tokens)
+
+
+class APISent(object):
+
+    def __init__(self, mode='deep'):
+        """Sentiment features using API tools.
+
+        Interacts with web and therefore needs urllib3. Might be _very_ slow,
+        use with caution and prefrably store features.
+
+        Parameters
+        ----------
+        mode : string, optional, default 'deep'
+            Can be either 'deep' for Twitter-based neural sentiment (py2, boots
+            local server instance), or 'nltk' for the text-processing.com API.
+
+        Examples
+        --------
+        >>> sent = APISent()
+        >>> sent.transform("you're gonna have a bad time")
+        ... 0.030120761495050809
+        >>> sent = APISent(mode='nltk')
+        >>> sent.transform("you're gonna have a bad time")
+        ...
+        """
+        from urllib3 import PoolManager
+        self.name = 'apisent'
+        self.mode = mode
+        self.pool = PoolManager()
+
+    def __str__(self):
+        return '''
+        feature:    {0}
+        mode:       {1}
+        '''.format(self.name, self.mode)
+
+    def transform(self, raw, parse=None):
+        """Return a dictionary of feature values."""
+        if self.mode == 'deep':
+            jsf = json.dumps({'text': raw})
+            header = {'content-type': 'application/json'}
+            request = "http://localhost:6667/api"
+            r = self.pool.request('POST', request, headers=header, body=jsf)
+            out = {'deepsent': float(r.data.decode('utf-8'))}
+        elif self.mode == 'nltk':
+            qf = urlencode({'text': raw})
+            request = "http://text-processing.com/api/sentiment/"
+            r = self.pool.request('POST', request, body=qf)
+            try:
+                out = json.loads(r.data.decode('utf-8'))["probability"]
+            except ValueError:
+                exit("SentAPI threw unexpected response, " +
+                     "probably reached rate limit.")
+        return out
 
 
 class DuSent(object):
@@ -285,7 +344,7 @@ class SimpleStats(object):
         - Emoticon frequencies.
 
     token : boolean, optional, default True
-        Token-based features to be extracted, can includes:
+        Token-based features to be extracted, includes:
 
         - Word lengths.
         - Number of all CAPITAL words.

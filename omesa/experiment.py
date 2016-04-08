@@ -7,13 +7,16 @@
 
 import pickle
 from time import time
+from types import GeneratorType
 
 import numpy as np
 from sklearn import metrics
 from sklearn.cross_validation import cross_val_predict
 
-from .logger import Log
-from .pipes import Pipeline, Grid
+from .logger import Logger
+from .pipes import Vectorizer, Optimizer
+
+from os import getcwd
 
 
 class Model(object):
@@ -37,7 +40,7 @@ class Model(object):
         """Given a data iterator, return a (label, probability) tuple."""
         self.pipeline.conf['label_column'] = 0
         self.pipeline.conf['text_column'] = 1
-        self.pipeline.handle.labs = None
+        # self.pipeline.loader.handle.labs = None
         v, _ = self.pipeline.test(data)
         # FIXME: this is like a java call
         enc = dict(map(reversed, self.pipeline.featurizer.labels.items()))
@@ -65,7 +68,8 @@ class Experiment(object):
             features and Omesa config under one name.
             ---
 
-            "train_data": ["/somedir/train.csv", "/somedir/train2.csv"],
+            "train_data": [CSV("/somedir/train.csv", label=1, text=2),
+                           CSV("/somedir/train2.csv", label=3, text=5],
 
             The data on which the experiment will train. If the location of a
             .csv is provided, it will open these up and create an iterator for
@@ -75,14 +79,14 @@ class Experiment(object):
             default.
             ---
 
-            "test_data": ["/somedir/test.csv"],    # either
+            "test_data": [CSV("/somedir/test.csv", label=1, text=2)], # either
 
             This works similar to the train_data. However, when a test set is
             provided, the performance of the model will be measured on this
             test data only. Omesa will dump a classification report for you.
             ---
 
-            "test_proportion": 0.3,                # or
+            "test_proportion": 0.3,                                    # or
 
             As opposed to a test FILE, one can also provide a test proportion,
             after which a certain amount of instances will be held out from the
@@ -95,47 +99,6 @@ class Experiment(object):
             any class you create your self. As long as it adheres to a fit /
             transform structure and returns a feature dictionary per instance
             as can be provided to, for example, the sklearn FeatureHasher.
-            ---
-
-            "text_column": 2,                      # index
-
-            Index integer of the .csv or iterator where the text is located.
-            ---
-
-            "label_column": 0,                     # index
-
-            Index integer of the .csv or iterator where the label is located.
-            ---
-
-            "ann_column": 3,                       # list (token, lemma, POS)
-
-            Index integer of the .csv or iterator where the annotations are
-            provided. Currently it assumes that these are per instance a list
-            of, for every word, (token, lemma, POS). Frog and spaCy are
-            implemented to provide these for you.
-            ---
-
-            "feature_columns": [1],                # if .csv contains features
-
-            If you have columns in your .csv or iterator that should serve as
-            features (meta-data) for example, you can add a multitude of their
-            indices in this setting.
-            ---
-
-            "label_selection": {                   # optional
-                'Label1': (100, 'GroupA'),
-                'Label2': (100, 'GroupB'),
-                'Label3': (-1,  'GroupC'),
-                'Label4': (100)
-            },
-
-            A dict of {label: (amount, new_label)} pairs. With this, you can
-            somewhat control how many of a certain label you wish to include
-            in loading your data (due to memory constraints for example). If
-            you want all, you can just put -1. The new_label part of the tuple
-            can be used in the rare case you might want to convert the labels
-            at load time. This is pure convenience, you should have probably
-            already done this before providing the data, though.
             ---
 
             "backbone": Spacy(),                   # or Frog() - optional
@@ -194,9 +157,9 @@ class Experiment(object):
     def __init__(self, conf, cold=False):
         """Set all relevant classes, run experiment (currently)."""
         self.conf = conf
-        self.log = Log(conf['name'])
-        self.pipe = Pipeline(conf)
-        self.grid = Grid(conf)
+        self.log = Logger(conf['name'])
+        self.vec = Vectorizer(conf)
+        self.opt = Optimizer(conf)
         if not cold:
             self.run(conf)
 
@@ -208,8 +171,15 @@ class Experiment(object):
             if 'features' in self.conf['save']:
                 self.log.echo(" Feature saving has not been implemented yet!")
             if 'model' in self.conf['save']:
-                pickle.dump(Model(self.pipe, clf),
-                            open(self.conf['name'] + '.pickle', 'wb'))
+                # TODO: rewrite this
+                # n_conf = {}
+                # for k, v in self.conf.items():
+                #     n_conf[k] = [] if isinstance(v, GeneratorType) else v
+                # self.pipe.loader.conf = n_conf
+                # self.pipe.conf = n_conf
+                # pickle.dump(Model(self.pipe, clf),
+                #             open(self.conf['name'] + '.pickle', 'wb'))
+                raise NotImplementedError
 
     def run(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
@@ -221,10 +191,10 @@ class Experiment(object):
         self.log.post('head', ('\n'.join([str(c) for c in conf['features']]),
                                conf['name'], seed))
 
-        X, y = self.pipe.train(conf['train_data'])
+        X, y = self.vec.fit_transform(conf['train_data'])
         self.log.loop('sparse', ('train', X.shape))
 
-        X, y, clf = self.grid.choose_classifier(X, y, seed)
+        X, y, clf = self.opt.choose_classifier(X, y, seed)
         print("\n Training model...")
         clf.fit(X, y)
         print(" done!")
@@ -235,7 +205,7 @@ class Experiment(object):
             self.log.post('cr', (metrics.classification_report(y, res),))
         else:
             print("\n Fetching test data...")
-            Xi, yi = self.pipe.test(conf['test_data'])
+            Xi, yi = self.vec.transform(conf['test_data'])
             self.log.loop('sparse', ('test', Xi.shape))
             self.log.dump('sparse')
             print(" done!")
