@@ -6,6 +6,40 @@ import sys
 # pylint:       disable=R0903,R0913,W0141
 
 
+class Pipeline(object):
+    """Shell for experiment pipeline storing and handling.
+
+    Parameters
+    ----------
+    vec : class
+        Instance of Vectorizer with fitted pipes.
+
+    clf : class
+        Classifier that adheres to the sklearn type (with a predict function).
+    """
+
+    def __init__(self, vec, clf):
+        """Set the pipeline for transformation and clf for classification."""
+        self.vec = vec
+        self.clf = clf
+
+    def save(self):
+        pass
+
+    def load(self):
+        pass
+
+    def classify(self, data):
+        """Given a data iterator, return a (label, probability) tuple."""
+        self.pipeline.conf['label_column'] = 0
+        self.pipeline.conf['text_column'] = 1
+        # self.pipeline.loader.handle.labs = None
+        v, _ = self.pipeline.test(data)
+        # FIXME: this is like a java call
+        enc = dict(map(reversed, self.pipeline.featurizer.labels.items()))
+        return [enc[l] for l in self.clf.predict(v)], self.clf.predict_proba(v)
+
+
 class CSV:
     """Quick and dirty csv loader.
 

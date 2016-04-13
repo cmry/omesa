@@ -5,7 +5,6 @@
 # License:      MIT
 # pylint:       disable=E1103,E1101,E0611,C0103,C0325,C0330,W0141,E0401,R0903
 
-import pickle
 from time import time
 from types import GeneratorType
 
@@ -15,36 +14,9 @@ from sklearn.cross_validation import cross_val_predict
 
 from .logger import Logger
 from .pipes import Vectorizer, Optimizer
+from .io import Pipeline
 
 from os import getcwd
-
-
-class Model(object):
-    """Shell for experiment model storing and handling.
-
-    Parameters
-    ----------
-    pipe : class
-        Instance of Pipeline with fitted models.
-
-    clf : class
-        Classifier that adheres to the sklearn type (with a predict function).
-    """
-
-    def __init__(self, pipe, clf):
-        """Set the pipeline for transformation and clf for classification."""
-        self.pipeline = pipe
-        self.clf = clf
-
-    def classify(self, data):
-        """Given a data iterator, return a (label, probability) tuple."""
-        self.pipeline.conf['label_column'] = 0
-        self.pipeline.conf['text_column'] = 1
-        # self.pipeline.loader.handle.labs = None
-        v, _ = self.pipeline.test(data)
-        # FIXME: this is like a java call
-        enc = dict(map(reversed, self.pipeline.featurizer.labels.items()))
-        return [enc[l] for l in self.clf.predict(v)], self.clf.predict_proba(v)
 
 
 class Experiment(object):
@@ -160,10 +132,11 @@ class Experiment(object):
         self.log = Logger(conf['name'])
         self.vec = Vectorizer(conf)
         self.opt = Optimizer(conf)
+        self.clf = None
         if not cold:
             self.run(conf)
 
-    def save(self, clf):
+    def save(self):
         """Save desired Experiment data."""
         if self.conf.get('save'):
             if 'log' in self.conf['save']:
@@ -171,15 +144,7 @@ class Experiment(object):
             if 'features' in self.conf['save']:
                 self.log.echo(" Feature saving has not been implemented yet!")
             if 'model' in self.conf['save']:
-                # TODO: rewrite this
-                # n_conf = {}
-                # for k, v in self.conf.items():
-                #     n_conf[k] = [] if isinstance(v, GeneratorType) else v
-                # self.pipe.loader.conf = n_conf
-                # self.pipe.conf = n_conf
-                # pickle.dump(Model(self.pipe, clf),
-                #             open(self.conf['name'] + '.pickle', 'wb'))
-                raise NotImplementedError
+                Pipeline(self).save()
 
     def run(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
@@ -194,9 +159,9 @@ class Experiment(object):
         X, y = self.vec.fit_transform(conf['train_data'])
         self.log.loop('sparse', ('train', X.shape))
 
-        X, y, clf = self.opt.choose_classifier(X, y, seed)
+        X, y, self.clf = self.opt.choose_classifier(X, y, seed)
         print("\n Training model...")
-        clf.fit(X, y)
+        self.clf.fit(X, y)
         print(" done!")
 
         # report performance
@@ -210,11 +175,11 @@ class Experiment(object):
             self.log.dump('sparse')
             print(" done!")
 
-            res = clf.predict(Xi)
+            res = self.clf.predict(Xi)
             yi = list(yi)
             self.log.post('cr', (metrics.classification_report(yi, res),))
 
-        self.save(clf)
+        self.save()
         t2 = time()
         print("\n Experiment took {0} seconds".format(round(t2-t1, 1)))
         print("\n" + '-'*10, "\n")
