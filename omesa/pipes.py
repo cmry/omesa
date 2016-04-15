@@ -121,11 +121,16 @@ class Optimizer(object):
 
     def __init__(self, conf=None, classifiers=None, scoring='f1'):
         """Initialize optimizer with classifier dict and scoring, or conf."""
+
+        std_clf = [{'clf': LinearSVC(class_weight='balanced'),
+                    'C': np.logspace(-3, 2, 6)}]
+        if not classifiers:
+            classifiers = std_clf
+        if not conf.get('classifiers'):
+            conf['classifiers'] = std_clf
+
         self.scores = {}
-        if not classifiers and not conf:
-            classifiers = [{'clf': LinearSVC(class_weight='balanced'),
-                            'C': np.logspace(-3, 2, 6)}]
-        self.score = conf.get('scoring', scoring)
+        self.met = conf.get('scoring', scoring)
         self.conf = conf if conf else classifiers
 
     def split_dev(self, X, y, seed=42):
@@ -164,7 +169,7 @@ class Optimizer(object):
             print("\n", "Clf: ", str(clf))
             print("\n", "Grid: ", grid)
             grid = GridSearchCV(pipeline.Pipeline([('clf', clf)]),
-                                scoring=self.score, param_grid=grid, n_jobs=-1)
+                                scoring=self.met, param_grid=grid, n_jobs=-1)
 
             print("\n Starting Grid Search...")
             # grid search approximated on dev

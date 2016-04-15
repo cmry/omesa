@@ -31,6 +31,7 @@ class Pipeline(object):
         """bla."""
         print(" Saving experiment...")
         top = self.vec.__dict__
+        print(top)
         ser = sr.data_to_json(top)
         print(" done!")
         if 'db' in top['conf']['save']:
@@ -91,8 +92,8 @@ class CSV:
         self.file = csv.reader(open(csv_dir, 'r'))
 
         if header:
-            self.file.next()
-        if isinstance(features, int):
+            self.file.__next__()
+        if isinstance(features, (int, type(None))):
             features = [features]
 
         self.idx = list(filter(None.__ne__, [label, data, parse] + features))
@@ -104,10 +105,10 @@ class CSV:
 
     def __next__(self):
         """Iterate through csv file."""
-        row = self.file.next()
+        row = self.file.__next__()
         if self.selection.get(self.idx[0]):
             if self.selection[self.idx[0]]:
                 self.selection[self.idx[0]] -= 1
-                return (row[i] for i in self.idx)
+                return tuple(row[i] for i in self.idx)
         else:
-            return (row[i] for i in self.idx)
+            return tuple(row[i] for i in self.idx)

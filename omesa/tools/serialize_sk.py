@@ -27,6 +27,7 @@
 from collections import namedtuple, Iterable, OrderedDict
 import numpy as np
 import json
+import sys
 
 def isnamedtuple(obj):
     """Heuristic check if an object is a namedtuple."""
@@ -57,7 +58,8 @@ def serialize(data):
         pass
     try:
         if not isinstance(data, type):  # not numpy type
-            return {'py/class': {'repr': data.__name__,
+            return {'py/class': {'name': data.__class__.__name__,
+                                 'mod': data.__module__,
                                  'attr': data_to_json(data.__dict__)}}
     except AttributeError as e:
         pass
@@ -85,13 +87,16 @@ def serialize(data):
 
 def restore(dct):
     # --- custom ---
+    print(dct)
     if "py/generator" in dct:
         return []
     if "py/class" in dct:
-        cls_ = eval(dct['repr'])
-        for k, v in dct['attr']:
-            setattr(class_init, k, json_to_data(v))
-        return cls_
+        obj = dct["py/class"]
+        cls_ = getattr(sys.modules[obj['mod']], obj['name'])
+        class_init = cls_()
+        for k, v in restore(obj['attr']):
+            setattr(class_init, k, v)
+        return class_init
     if "py/numpy.type" in dct:
         return np.dtype(dct["py/numpy.type"]).type
     if "py/numpy.int" in dct:
