@@ -123,11 +123,8 @@ class Optimizer(object):
         """Initialize optimizer with classifier dict and scoring, or conf."""
         self.scores = {}
         if not classifiers and not conf:
-            classifiers = {
-                LinearSVC(class_weight='balanced'): {
-                    'C': np.logspace(-3, 2, 6)
-                }
-            }
+            classifiers = [{'clf': LinearSVC(class_weight='balanced'),
+                            'C': np.logspace(-3, 2, 6)}]
         self.score = conf.get('scoring', scoring)
         self.conf = conf if conf else classifiers
 
@@ -161,7 +158,8 @@ class Optimizer(object):
         """Choose a classifier based on settings."""
         X, y, X_dev, y_dev = self.split_dev(X, y, seed)
 
-        for clf, grid in self.conf['classifiers'].items():
+        for grid in self.conf['classifiers']:
+            clf = grid.pop('clf')
             grid = {'clf__' + k: v for k, v in grid.items()}
             print("\n", "Clf: ", str(clf))
             print("\n", "Grid: ", grid)

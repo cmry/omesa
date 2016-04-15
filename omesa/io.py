@@ -2,6 +2,10 @@
 
 import csv
 import sys
+import json
+import numpy as np
+from inspect import isclass, isgenerator
+from .tools import serialize_sk as sr
 
 # pylint:       disable=R0903,R0913,W0141
 
@@ -18,13 +22,21 @@ class Pipeline(object):
         Classifier that adheres to the sklearn type (with a predict function).
     """
 
-    def __init__(self, vec, clf):
+    def __init__(self, exp):
         """Set the pipeline for transformation and clf for classification."""
-        self.vec = vec
-        self.clf = clf
+        self.vec = exp.vec
+        self.clf = exp.clf
 
     def save(self):
-        pass
+        """bla."""
+        print(" Saving experiment...")
+        top = self.vec.__dict__
+        ser = sr.data_to_json(top)
+        print(" done!")
+        if 'db' in top['conf']['save']:
+            pass
+        else:
+            json.dump(ser, open(top['conf']['name'] + '.json', 'w'))
 
     def load(self):
         pass
