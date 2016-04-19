@@ -64,39 +64,20 @@ class Vectorizer(object):
         self.normalizers = conf.get('normalizers', normalizers)
         self.decomposers = conf.get('decompositer', decomposers)
 
-    def fit_transform(self, data):
+    def transform(self, data, fit=False):
         """Send the data through all applicable steps to vectorize."""
-        D, y = zip(*[point for point in self.featurizer.transform(data)])
+        D, y = zip(*[(self.featurizer.transform(x), y) for y, x in data])
+        func = 'transform' if not fit else 'fit_transform'
 
-        X = self.hasher.fit_transform(D)
-        y = self.encoder.fit_transform(y)
+        X = getattr(self.hasher, func)(D)
+        y = getattr(self.encoder, func)(y)
 
         # TODO: this could be moved to grid to also search over these settings
-        if self.normalizers:
-            for norm in self.normalizers:
-                norm.copy = False
-                X = norm.fit_transform(X)
-        if self.decomposers:
-            for dcmp in self.decomposers:
-                X = dcmp.fit_transform(X, copy=False)
-
-        return X, y
-
-    def transform(self, data):
-        """Send the data through all applicable steps to vectorize."""
-        D, y = zip(*[point for point in self.featurizer.transform(data)])
-
-        X = self.hasher.transform(D)
-        y = self.encoder.transform(y)
-
-        # TODO: this could be moved to grid to also search over these settings
-        if self.normalizers:
-            for norm in self.normalizers:
-                norm.copy = False
-                X = norm.transform(X)
-        if self.decomposers:
-            for dcmp in self.decomposers:
-                X = dcmp.transform(X, copy=False)
+        for norm in self.normalizers:
+            norm.copy = False
+            X = getattr(norm, func)(X)
+        for dcmp in self.decomposers:
+            X = getattr(dcmp, func)(X, copy=False)
 
         return X, y
 

@@ -14,7 +14,6 @@ import json
 import pickle
 from collections import OrderedDict, Counter
 from sys import exit
-from urllib3 import PoolManager
 from urllib.parse import urlencode
 import numpy as np
 
@@ -72,42 +71,37 @@ class Featurizer(object):
 
     def __init__(self, features, preprocessor=False, parser=False):
         """Initialize the wrapper and set the provided features to a var."""
-        self.metaf, self.metafc = {}, 0
         self.helpers = features
         self.preprocessor = preprocessor
         self.parser = parser
 
-    def transform(self, stream):
+    def transform(self, instance):
         """Call all the helpers to extract features.
 
         Parameters
         ----------
-        stream : generator
-            Yields an instance with (label, raw, parse, meta).
-        func : function
-            Function object from etiher the fit or transform method.
+        instance : tuple
+            Containing at least (raw) and optionally (parse, meta).
 
         Returns
         -------
-        X : numpy array of shape [n_samples, n_features]
-            Training data returns when applying the transform function.
+        v : dict
+            Feature vector where key, value = feature, value.
+        label : str
+
         """
-        # FIXME: move this outside of transform scope so can deal with 1 inst.
-        for instance in stream:
-            label, raw, parse, meta = instance + (None,) * (4 - len(instance))
-            v = {}
-            text = self.preprocessor.clean(raw) if self.preprocessor else raw
-            if not parse and self.parser:
-                parse = self.parser.parse(raw if self.parser.raw else text)
-            for helper in self.helpers:
-                v.update(helper.transform(text, parse))
-            if meta:
-                for meta_inst in meta:
-                    if meta_inst not in self.metaf:
-                        self.metaf[label] = self.metafc
-                        self.metafc += 1
-                        v.update({self.metaf[meta_inst]: 1})
-            yield v, label
+        # FIXME: this is broken currently
+        raw, parse, meta = instance
+        v = {}
+        text = self.preprocessor.clean(raw) if self.preprocessor else raw
+        if not parse and self.parser:
+            parse = self.parser.parse(raw if self.parser.raw else text)
+        for helper in self.helpers:
+            v.update(helper.transform(text, parse))
+        if meta:
+            for name, value in meta:
+                v.update({"meta_" + name: value})
+        return v
 
 
 class Ngrams(object):
@@ -213,40 +207,42 @@ class FuncWords(object):
 
 
 class APISent(object):
+    """Sentiment features using API tools.
+
+    Interacts with web and therefore needs urllib3. Might be _very_ slow,
+    use with caution and prefrably store features.
+
+    Parameters
+    ----------
+    mode : string, optional, default 'deep'
+        Can be either 'deep' for Twitter-based neural sentiment (py2, boots
+        local server instance), or 'nltk' for the text-processing.com API.
+
+    Examples
+    --------
+    >>> sent = APISent()
+    >>> sent.transform("you're gonna have a bad time")
+    ... 0.030120761495050809
+    >>> sent = APISent(mode='nltk')
+    >>> sent.transform("you're gonna have a bad time")
+    ...
+    """
 
     def __init__(self, mode='deep'):
-        """Sentiment features using API tools.
-
-        Interacts with web and therefore needs urllib3. Might be _very_ slow,
-        use with caution and prefrably store features.
-
-        Parameters
-        ----------
-        mode : string, optional, default 'deep'
-            Can be either 'deep' for Twitter-based neural sentiment (py2, boots
-            local server instance), or 'nltk' for the text-processing.com API.
-
-        Examples
-        --------
-        >>> sent = APISent()
-        >>> sent.transform("you're gonna have a bad time")
-        ... 0.030120761495050809
-        >>> sent = APISent(mode='nltk')
-        >>> sent.transform("you're gonna have a bad time")
-        ...
-        """
+        """Load poolmanager and set API location."""
         from urllib3 import PoolManager
         self.name = 'apisent'
         self.mode = mode
         self.pool = PoolManager()
 
     def __str__(self):
+        """String representation for APISent."""
         return '''
         feature:    {0}
         mode:       {1}
         '''.format(self.name, self.mode)
 
-    def transform(self, raw, parse=None):
+    def transform(self, raw, _):
         """Return a dictionary of feature values."""
         if self.mode == 'deep':
             jsf = json.dumps({'text': raw})
@@ -497,7 +493,9 @@ class Readability(object):
         self.url = re.compile(r"https?://[^\s]+")
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I)
 
-    def transform(self, _, __):
+    def transform(self, raw, _):
         """Add each metric to the feature vector."""
         # TODO: add stuff here
+        _ = self.name
+        _ = raw
         return NotImplementedError

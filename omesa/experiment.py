@@ -141,7 +141,7 @@ class Experiment(object):
         self.log.post('head', ('\n'.join([str(c) for c in conf['features']]),
                                conf['name'], seed))
 
-        X, y = self.vec.fit_transform(conf['train_data'])
+        X, y = self.vec.transform(conf['train_data'], fit=True)
         self.log.loop('sparse', ('train', X.shape))
 
         X, y, self.clf = self.opt.choose_classifier(X, y, seed)
