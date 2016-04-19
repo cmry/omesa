@@ -1,13 +1,16 @@
 """Data handling functions."""
 
 import csv
-import sys
 import json
-import numpy as np
+import pickle
+import sys
+from types import GeneratorType
 from inspect import isclass, isgenerator
+
+import numpy as np
 from .tools import serialize_sk as sr
 
-# pylint:       disable=R0903,R0913,W0141
+# pylint:       disable=R0903,R0913,W0141,C0103
 
 
 class Pipeline(object):
@@ -15,42 +18,78 @@ class Pipeline(object):
 
     Parameters
     ----------
-    vec : class
-        Instance of Vectorizer with fitted pipes.
+    exp : class, optional, default None
+        Instance of Experimen with fitted pipes. If not supplied, name and
+        source should be set.
 
-    clf : class
-        Classifier that adheres to the sklearn type (with a predict function).
+    name : str, optional, default None
+        Name that the pipeline should be saved/loaded under/from.
+
+    source : tuple, optional, default None
+        Tuple with storage options, can be "man" (manual json serialization),
+        "json" (for jsonpickle, requires this package), "db" (for database
+        storage, requires blitzdb).
     """
 
-    def __init__(self, exp):
+    def __init__(self, exp=None, name=None, source=None):
         """Set the pipeline for transformation and clf for classification."""
-        self.vec = exp.vec
-        self.clf = exp.clf
+        if not exp:
+            assert name
+        self.vec = exp.vec if exp else None
+        self.clf = exp.clf if exp else None
+        self.hook = self.vec.conf['name'] if not name else name
+        self.serialize = None
+        self.storage = self.vec.conf['save'] if not source else source
+        if 'db' in self.storage:
+            from .database import Database, Experiment
+            self.db = Database()
+            self.data = Experiment
+        if 'json' in self.storage:
+            import jsonpickle
+            self.serialize = jsonpickle
+        # FIXME: jsonpickle should be preferred, doesn't currently work though
+        elif 'man' in self.storage or 'db' in self.storage:
+            self.serialize = sr
+            # self.hook += '_man'
 
     def save(self):
-        """bla."""
+        """Save experiment and classifier in format specified."""
         print(" Saving experiment...")
-        top = self.vec.__dict__
-        print(top)
-        ser = sr.data_to_json(top)
-        print(" done!")
-        if 'db' in top['conf']['save']:
-            pass
-        else:
-            json.dump(ser, open(top['conf']['name'] + '.json', 'w'))
+        top = {'name': self.hook, 'vec': self.vec, 'clf': self.clf}
+
+        fl = self.hook
+        if self.serialize:
+            serialized = self.serialize.encode(top)
+
+        if any([x in self.storage for x in ('man', 'json')]) and serialized:
+            json.dump(serialized, open(self.hook + '.json', 'w'))
+        if 'pickle' in self.storage:
+            for t in ('train', 'test'):
+                c = top['conf']['{0}_data'].format(t)
+                c = '' if isinstance(c, GeneratorType) else c
+            pickle.dump(top, open(fl + '.pickle', 'wb'))
+        if 'db' in self.storage:
+            doc = self.data(json.loads(serialized))
+            self.db.save(doc)
 
     def load(self):
-        pass
+        """Load experiment and classifier from source specified."""
+        if any([x in self.storage for x in ('man', 'json')]):
+            mod = self.serialize.decode(json.load(open(self.hook + '.json')))
+        if 'pickle' in self.storage:
+            mod = pickle.load(open(self.hook + '.pickle', 'rb'))
+        if 'db' in self.storage:
+            mod = self.db.fetch(self.data, {'name': self.hook})
+            mod = self.serialize.decode(json.dumps(dict(mod)))
+        self.clf = mod['clf']
+        self.vec = mod['vec']
 
     def classify(self, data):
-        """Given a data iterator, return a (label, probability) tuple."""
-        self.pipeline.conf['label_column'] = 0
-        self.pipeline.conf['text_column'] = 1
-        # self.pipeline.loader.handle.labs = None
-        v, _ = self.pipeline.test(data)
-        # FIXME: this is like a java call
-        enc = dict(map(reversed, self.pipeline.featurizer.labels.items()))
-        return [enc[l] for l in self.clf.predict(v)], self.clf.predict_proba(v)
+        """Given a data point, return a (label, probability) tuple."""
+        X, y = self.vec.transform(data)
+        X = X.todense().reshape((1, -1))
+                                    # LinearSVC no predict proba?
+        return self.clf.predict(X)  # , self.clf.predict_proba(X)
 
 
 class CSV:

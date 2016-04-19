@@ -15,4 +15,15 @@ class Database(object):
 
     def __init__(self):
         """Load backend."""
-        self.db = FileBackend("./db")
+        #TODO: I'm sure the path here can be done neater
+        self.db = FileBackend(__file__.split('/database.py')[0] + "/db")
+
+    def save(self, doc):
+        self.db.save(doc)
+        self.db.commit()
+
+    def fetch(self, doc, q):
+        try:
+            return self.db.filter(doc, q)[0]
+        except IndexError:
+            print("File does not exist.")

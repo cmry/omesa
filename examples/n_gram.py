@@ -20,7 +20,7 @@ conf = {
         "features": [Ngrams(level='char', n_list=[3])],
         "text_column": 1,
         "label_column": 0,
-        "save": ("log", "model")
+        "save": ("log", "model", "db")
     }
 }
 

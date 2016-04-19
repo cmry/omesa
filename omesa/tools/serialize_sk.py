@@ -29,13 +29,17 @@ import numpy as np
 import json
 import sys
 
+class Dummy:
+
+    def __init__(self):
+        pass
+
 def isnamedtuple(obj):
     """Heuristic check if an object is a namedtuple."""
     return isinstance(obj, tuple) \
            and hasattr(obj, "_fields") \
            and hasattr(obj, "_asdict") \
            and callable(obj._asdict)
-
 
 def serialize(data):
     if data is None or isinstance(data, (bool, int, float, str)):
@@ -51,18 +55,6 @@ def serialize(data):
             "fields": list(data._fields),
             "values": [serialize(getattr(data, f)) for f in data._fields]}}
     # --- custom ---
-    try:
-        _ = data.__next__  # generator as string
-        return {'py/generator': str(data)}
-    except AttributeError:
-        pass
-    try:
-        if not isinstance(data, type):  # not numpy type
-            return {'py/class': {'name': data.__class__.__name__,
-                                 'mod': data.__module__,
-                                 'attr': data_to_json(data.__dict__)}}
-    except AttributeError as e:
-        pass
     if isinstance(data, type):
         return {"py/numpy.type": data.__name__}
     if isinstance(data, np.integer):
@@ -82,21 +74,25 @@ def serialize(data):
         return {"py/numpy.ndarray": {
             "values": data.tolist(),
             "dtype":  str(data.dtype)}}
+    # --- custom ---
+    try:
+        _ = data.__next__  # generator as string
+        return {'py/generator': str(data)}
+    except AttributeError:
+        pass
+    try:
+        if not isinstance(data, type):  # not numpy type
+            return {'py/class': {'name': data.__class__.__name__,
+                                 'mod': data.__module__,
+                                 'attr': serialize(data.__dict__)}}
+    except AttributeError as e:
+        print(e)
     raise TypeError("Type %s not data-serializable" % type(data))
 
 
 def restore(dct):
     # --- custom ---
-    print(dct)
-    if "py/generator" in dct:
-        return []
-    if "py/class" in dct:
-        obj = dct["py/class"]
-        cls_ = getattr(sys.modules[obj['mod']], obj['name'])
-        class_init = cls_()
-        for k, v in restore(obj['attr']):
-            setattr(class_init, k, v)
-        return class_init
+    # print(dct)
     if "py/numpy.type" in dct:
         return np.dtype(dct["py/numpy.type"]).type
     if "py/numpy.int" in dct:
@@ -118,10 +114,21 @@ def restore(dct):
         return np.array(data["values"], dtype=data["dtype"])
     if "py/collections.OrderedDict" in dct:
         return OrderedDict(dct["py/collections.OrderedDict"])
+    # --- custom ---
+    if "py/generator" in dct:
+        return []
+    if "py/class" in dct:
+        obj = dct["py/class"]
+        cls_ = getattr(sys.modules[obj['mod']], obj['name'])
+        class_init = Dummy()
+        class_init.__class__ = cls_
+        for k, v in restore(obj['attr']).items():
+            setattr(class_init, k, v)
+        return class_init
     return dct
 
-def data_to_json(data):
+def encode(data):
     return json.dumps(serialize(data))
 
-def json_to_data(s):
+def decode(s):
     return json.loads(s, object_hook=restore)

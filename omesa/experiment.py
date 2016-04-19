@@ -91,22 +91,7 @@ class Experiment(object):
             classifiers that can be set to output probabilities.
             ---
 
-            "setting": "grid",                     # optional
-
-            Currently only can be set to grid. If this is done, the classifier
-            of choice will be an SVM, for which the experiment will try to
-            optimize the parameter settings through CVGridSearch. At some
-            point, it might be useful to be able to provide the parameters
-            yourself (for other classifiers for example).
-            ---
-
-            "components": 200,                     # n for SVD - optional
-
-            Simply the n_components for TruncatedSVD. If not included, SVD
-            will not run for your experiment.
-            ---
-
-            "save": ("log", model")                # include whichever
+            "save": ("log", model", "db", "man", "json", "pickle")  # any combi
 
             Save the output of the log, or dump the entire model with its
             classification method and pipeline wrapper for new data instances.

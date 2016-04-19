@@ -92,6 +92,7 @@ class Featurizer(object):
         X : numpy array of shape [n_samples, n_features]
             Training data returns when applying the transform function.
         """
+        # FIXME: move this outside of transform scope so can deal with 1 inst.
         for instance in stream:
             label, raw, parse, meta = instance + (None,) * (4 - len(instance))
             v = {}
