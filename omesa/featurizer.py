@@ -81,7 +81,7 @@ class Featurizer(object):
         Parameters
         ----------
         instance : tuple
-            Containing at least (raw) and optionally (parse, meta).
+            Containing at least (label, raw) and optionally (parse, meta).
 
         Returns
         -------
@@ -90,8 +90,9 @@ class Featurizer(object):
         label : str
 
         """
-        # FIXME: this is broken currently
-        raw, parse, meta = instance
+        if isinstance(instance, str):
+            instance = tuple([instance])
+        raw, parse, meta = instance + (None,) * (3 - (len(instance)))
         v = {}
         text = self.preprocessor.clean(raw) if self.preprocessor else raw
         if not parse and self.parser:

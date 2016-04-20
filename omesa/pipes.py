@@ -73,11 +73,13 @@ class Vectorizer(object):
         y = getattr(self.encoder, func)(y)
 
         # TODO: this could be moved to grid to also search over these settings
-        for norm in self.normalizers:
-            norm.copy = False
-            X = getattr(norm, func)(X)
-        for dcmp in self.decomposers:
-            X = getattr(dcmp, func)(X, copy=False)
+        if self.normalizers:
+            for norm in self.normalizers:
+                norm.copy = False
+                X = getattr(norm, func)(X)
+        if self.decomposers:
+            for dcmp in self.decomposers:
+                X = getattr(dcmp, func)(X, copy=False)
 
         return X, y
 
