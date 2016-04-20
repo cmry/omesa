@@ -4,6 +4,7 @@
 
 from .featurizer import Featurizer
 from operator import itemgetter
+from multiprocessing import Pool
 
 import numpy as np
 from sklearn import pipeline
@@ -66,7 +67,8 @@ class Vectorizer(object):
 
     def transform(self, data, fit=False):
         """Send the data through all applicable steps to vectorize."""
-        D, y = zip(*[(self.featurizer.transform(x), y) for y, x in data])
+        p = Pool(processes=self.conf.get('n_jobs', None))
+        D, y = zip(*p.map(self.featurizer.transform, data))
         func = 'transform' if not fit else 'fit_transform'
 
         X = getattr(self.hasher, func)(D)
@@ -152,7 +154,8 @@ class Optimizer(object):
             print("\n", "Clf: ", str(clf))
             print("\n", "Grid: ", grid)
             grid = GridSearchCV(pipeline.Pipeline([('clf', clf)]),
-                                scoring=self.met, param_grid=grid, n_jobs=-1)
+                                scoring=self.met, param_grid=grid,
+                                n_jobs=self.conf.get('n_jobs', -1))
 
             print("\n Starting Grid Search...")
             # grid search approximated on dev

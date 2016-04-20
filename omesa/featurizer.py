@@ -81,7 +81,7 @@ class Featurizer(object):
         Parameters
         ----------
         instance : tuple
-            Containing at least (label, raw) and optionally (parse, meta).
+            Containing at least (raw) and optionally (parse, meta).
 
         Returns
         -------
@@ -92,18 +92,20 @@ class Featurizer(object):
         """
         if isinstance(instance, str):
             instance = tuple([instance])
-        raw, parse, meta = instance + (None,) * (3 - (len(instance)))
-        v = {}
+        raw, label, parse, meta = instance + (None,) * (4 - (len(instance)))
+
         text = self.preprocessor.clean(raw) if self.preprocessor else raw
         if not parse and self.parser:
             parse = self.parser.parse(raw if self.parser.raw else text)
+
+        v = {}
         for helper in self.helpers:
             v.update(helper.transform(text, parse))
         if meta:
             for name, value in meta:
                 v.update({"meta_" + name: value})
-        return v
 
+        return (v, label) if label else v
 
 class Ngrams(object):
     """Calculate n-gram frequencies.

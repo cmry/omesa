@@ -97,11 +97,11 @@ class CSV:
 
     Parameters
     ----------
-    label : integer
-        Index integer of the .csv where the label is located.
-
     text : integer
         Index integer of the .csv where the text is located.
+
+    label : integer
+        Index integer of the .csv where the label is located.
 
     parse : integer, optional, default None
         Index integer of the .csv where the annotations are provided. Currently
@@ -124,7 +124,7 @@ class CSV:
         just put -1.
     """
 
-    def __init__(self, csv_dir, label, data, parse=None, features=None,
+    def __init__(self, csv_dir, data, label, parse=None, features=None,
                  header=False, selection=None):
         """Set configuration and label handler."""
         csv.field_size_limit(sys.maxsize)
@@ -135,7 +135,7 @@ class CSV:
         if isinstance(features, (int, type(None))):
             features = [features]
 
-        self.idx = list(filter(None.__ne__, [label, data, parse] + features))
+        self.idx = list(filter(None.__ne__, [data, label, parse] + features))
         self.selection = {} if not selection else selection
 
     def __iter__(self):
