@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Text feature extraction module.
 
 This module contains several helper classes for extracting textual features
@@ -15,12 +13,8 @@ import pickle
 from collections import OrderedDict, Counter
 from sys import exit
 from urllib.parse import urlencode
-import numpy as np
 
-# Author:       Chris Emmery
-# Contributors: Mike Kestemont, Ben Verhoeven, Janneke van de Loo
-# License:      BSD 3-Clause
-# pylint:       disable=E1103,W0512,R0903,C0103
+import numpy as np
 
 
 class Featurizer(object):
@@ -105,7 +99,8 @@ class Featurizer(object):
             for name, value in meta:
                 v.update({"meta_" + name: value})
 
-        return (v, label) if label else v
+        return v, label
+
 
 class Ngrams(object):
     """Calculate n-gram frequencies.
@@ -229,6 +224,12 @@ class APISent(object):
     >>> sent = APISent(mode='nltk')
     >>> sent.transform("you're gonna have a bad time")
     ...
+
+    Notes
+    -----
+    Implemented by: Chris Emmery
+    Deep sentiment: https://github.com/xiaohan2012/twitter-sent-dnn
+    NLTK API: http://text-processing.com
     """
 
     def __init__(self, mode='deep'):
@@ -367,8 +368,8 @@ class SimpleStats(object):
 
     Notes
     -----
-    Features by: Janneke van de Loo
     Implemented by: Chris Emmery
+    Features by: Janneke van de Loo
     """
 
     def __init__(self, text=True, token=True, sentence_length=True):

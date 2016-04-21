@@ -12,7 +12,7 @@ sys.path.append('../')
 try:
     from omesa.experiment import Experiment
     from omesa.featurizer import Ngrams
-    from omesa.io import CSV
+    from omesa.containers import CSV
 except ImportError as e:
     print(e)
     exit("Could not load omesa. Please update the path in this file.")
@@ -23,8 +23,8 @@ Experiment({
     "features": [Ngrams(level='char', n_list=[3])],
     "normalizers": [MaxAbsScaler()],
     "classifiers": [
-        {'clf': SGDClassifier(n_jobs=-1, n_iter=5), 'alpha': 10.0**-np.arange(1, 7)},
+        # {'clf': SGDClassifier(n_jobs=-1, n_iter=5), 'alpha': 10.0**-np.arange(1, 7)},
         {'clf': LinearSVC(), 'C': np.logspace(-2.0, 1.0, 50)}
     ],
-    "save": ("log", "model") #, "db")
+    "save": ("log", "model", "db")
 })

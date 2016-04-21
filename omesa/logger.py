@@ -1,12 +1,9 @@
 """Classes to log and display pipeline information."""
 
-# pylint:       disable=E1103,W0512,R0903,C0103
-
 from collections import OrderedDict
 
 
 class Logger(object):
-
     """Provides feedback to the user and can store settings in a log file.
 
     Class holds a log string that can be formatted according to the used
@@ -85,5 +82,7 @@ class Logger(object):
         """Save log."""
         with open(self.file_name, 'w') as f:
             o = ['head', 'sparse', 'svd', 'rep', 'grid', 'tfcv', 'f1sc', 'cr']
-            f.write(' '.join([v for v in OrderedDict(sorted(self.log.items(),
-                              key=lambda i: o.index(i[0]))).values()]))
+            f.write(' '.join(
+                [v for v in OrderedDict(
+                    sorted(self.log.items(), key=lambda i: o.index(i[0]))
+                    ).values()]))

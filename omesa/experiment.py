@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
 """Experiment wrapper code."""
 
 # License:      MIT
-# pylint:       disable=E1103,E1101,E0611,C0103,C0325,C0330,W0141,E0401,R0903
 
 from time import time
-from types import GeneratorType
 
 import numpy as np
 from sklearn import metrics
@@ -14,9 +10,7 @@ from sklearn.cross_validation import cross_val_predict
 
 from .logger import Logger
 from .pipes import Vectorizer, Optimizer
-from .io import Pipeline
-
-from os import getcwd
+from .containers import Pipeline
 
 
 class Experiment(object):

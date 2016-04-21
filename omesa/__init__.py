@@ -28,8 +28,6 @@ for this, the following configuration is used:
 >>> Experiment(conf)
 """
 
-# pylint:    disable=E0603
-
 __author__ = 'Chris Emmery'
 __contrb__ = ('Akos Kadar', 'Mike Kestemont', 'Florian Kunneman',
               'Janneke van de Loo', 'Ben Verhoeven')

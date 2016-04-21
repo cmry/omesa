@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
-
 """Processor methods."""
 
 import re
-
-# Author:       Chris Emmery
-# Contributors: Florian Kunneman
-# License:      BSD 3-Clause
-# pylint:       disable=F0401,R0903
 
 
 class SimpleCleaner(object):
@@ -29,12 +22,12 @@ class SimpleCleaner(object):
         ))
 
     def clean(self, text):
-        """Lowers text and removes special stuff."""
+        """Lower text and removes special stuff."""
         text = text.lower().replace('|', ' ')  # ask.fm specific
         text = ' '.join([re.sub('[^a-zA-Z0-9-_*?!]', ' ', word) if not
                          any([emo in word for emo in self.emoticons]) else
                          ' ' + word for word in text.split()])
-        text = re.sub('\s{2,}', ' ', text)
+        text = re.sub(r'\s{2,}', ' ', text)
         return text
 
 
@@ -237,6 +230,10 @@ class Frog(object):
     - Base (non-embedded) phrase chunk in BIO encoding.
     - Token number of head word in dependency graph (according to CSI-DP).
     - Type of dependency relation with head word.
+
+    Notes
+    -----
+    General help: Florian Kunneman
     """
 
     def __init__(self, lmdir, sleep=False, raw=True):

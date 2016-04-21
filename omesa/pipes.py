@@ -1,8 +1,5 @@
 """Piplines and optimization."""
 
-# pylint:       disable=E1103,E1101,E0611,C0103,C0325,C0330,W0141,R0914
-
-from .featurizer import Featurizer
 from operator import itemgetter
 from multiprocessing import Pool
 
@@ -15,9 +12,10 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.svm import LinearSVC
 from sklearn.utils import shuffle
 
+from .featurizer import Featurizer
+
 
 class Vectorizer(object):
-
     """Small text mining vectorizer.
 
     The purpose of this class is to provide a small set of methods that can
@@ -71,6 +69,7 @@ class Vectorizer(object):
         D, y = zip(*p.map(self.featurizer.transform, data))
         func = 'transform' if not fit else 'fit_transform'
 
+        # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
         y = getattr(self.encoder, func)(y)
 
@@ -87,7 +86,6 @@ class Vectorizer(object):
 
 
 class Optimizer(object):
-
     """Current placeholder for grid methods. Should be fleshed out.
 
     Parameters
@@ -106,7 +104,6 @@ class Optimizer(object):
 
     def __init__(self, conf=None, classifiers=None, scoring='f1'):
         """Initialize optimizer with classifier dict and scoring, or conf."""
-
         std_clf = [{'clf': LinearSVC(class_weight='balanced'),
                     'C': np.logspace(-3, 2, 6)}]
         if not classifiers:
@@ -140,8 +137,8 @@ class Optimizer(object):
             if score > highest_score:
                 highest_score = score
         print("\n\n Best scores: {0}".format(
-              {str(y).split('(')[2][7:]: round(x, 3)
-               for x, y in score_sum.items()}))
+            {str(y).split('(')[2][7:]: round(x, 3)
+             for x, y in score_sum.items()}))
         return highest_score, score_sum[highest_score]
 
     def choose_classifier(self, X, y, seed):
