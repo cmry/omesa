@@ -48,10 +48,23 @@ class Pipeline(object):
             self.serialize = sr
             # self.hook += '_man'
 
+    def _make_top(self):
+        top = {'name': self.hook, 'vec': self.vec, 'clf': self.clf,
+               'clf_name': self.clf.__dict__['steps'][0][1].__class__.__name__}
+        for n in ('train', 'test'):
+            try:
+                top.update({n + '_data':
+                            self.vec.__dict__['conf'][n + '_data'].source})
+            except Exception as e:
+                print("\n\n Couldn't determine data source: {0}.".format(e))
+                top.update({n + '_data': '-'})
+
+        print("TOPPPPPPP ------------", top)
+
     def save(self):
         """Save experiment and classifier in format specified."""
         print(" Saving experiment...")
-        top = {'name': self.hook, 'vec': self.vec, 'clf': self.clf}
+        top = self._make_top()
 
         fl = self.hook
         if self.serialize:
@@ -124,6 +137,7 @@ class CSV:
                  header=False, selection=None):
         """Set configuration and label handler."""
         csv.field_size_limit(sys.maxsize)
+        self.source = csv_dir
         self.file = csv.reader(open(csv_dir, 'r'))
 
         if header:

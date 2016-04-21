@@ -54,9 +54,18 @@ def experiment():
 @bottle.route('/outp')
 def results():
     """Experiment page."""
+    res, out = db.getall(Experiment), {}
+    for exp in res:
+        out.update({
+            str(exp['pk']): {
+                'name': exp['name'],
+                # 'features': ', '.join([v['name'] for v in exp['features']]),
+                # 'clf': exp['clf']['name']
+            }
+        })
+    print(out)
     return skeleton(page='Results', layout='outp',
-                    hook=bottle.template('outp',
-                        data=db.getall(Experiment)))
+                    hook=bottle.template('outp', data=res))
 
 
 def main():
