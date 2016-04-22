@@ -2,37 +2,35 @@
                     <div class="col-xs-12">
                         <div class="box">
                             <div class="box-header">
-                                <h3 class="box-title">Experimental Results {{ !data }}</h3>
+                                <h3 class="box-title">Experimental Results</h3>
                             </div>
                             <div class="box-body">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
+                                            <th>Project</th>
                                             <th>Name</th>
                                             <th>Training Set</th>
                                             <th>Test Set</th>
                                             <th>Features</th>
                                             <th>Classifier</th>
-                                            <th>Result</th>
+                                            <th>Time</th>
+                                            <th>Score</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        % for id, exp in data.items():
                                         <tr>
-                                            <td><a href="./exp?=test">test</a></td>
-                                            <td>n_grams.csv</td>
-                                            <td>n_grams.csv</td>
-                                            <td>NGrams(n_list=[1, 2], level='token'), NGrams(n_list=[3], level='char'), APISent()</td>
-                                            <td>LinearSVC</td>
-                                            <td>0: 0.95, 1: 0.90</td>
+                                            <td>{{exp['project']}}
+                                            <td><a href="./res?={{id}}">{{exp['name']}}</a></td>
+                                            <td>{{exp['train_data']}}</td>
+                                            <td>{{exp['test_data']}}</td>
+                                            <td>{{exp['features']}}</td>
+                                            <td>{{exp['clf_name']}}</td>
+                                            <td>{{exp['dur']}}</td>
+                                            <td>{{exp['test_score']}}</td>
                                         </tr>
-                                        <tr>
-                                            <td><a href="./exp?=test_2">test_2</a></td>
-                                            <td>n_grams.csv</td>
-                                            <td>n_grams.csv</td>
-                                            <td>NGrams(n_list=[1], level='token'), NGrams(n_list=[3], level='char')</td>
-                                            <td>LinearSVC</td>
-                                            <td>0: 0.85, 1: 0.75</td>
-                                        </tr>
+                                        % end
                                     </tbody>
                                 </table>
                             </div>

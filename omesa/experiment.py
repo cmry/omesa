@@ -7,6 +7,7 @@ from time import time
 import numpy as np
 from sklearn import metrics
 from sklearn.cross_validation import cross_val_predict
+from sklearn.cross_validation import train_test_split
 
 from .logger import Logger
 from .pipes import Vectorizer, Optimizer
@@ -21,77 +22,74 @@ class Experiment(object):
     dictionary. The full list of options for this is listed below:
 
     conf = {
-        "experiment_name": {
+        "project": "project_name",
 
-        The experiment name functions as a hook to for example call the best
+        The project name functions as a hook to for example call the best
         performing set of parameters out of a series of experiments on the same
         data.
         ---
 
-            "name": "experiment_name",
+        "name": "experiment_name",
 
-            Same as the above. This will function as a hook to save your model,
-            features and Omesa config under one name.
-            ---
+        Same as the above. This will function as a hook to save your model,
+        features and Omesa config under one name.
+        ---
 
-            "train_data": [CSV("/somedir/train.csv", label=1, text=2),
-                           CSV("/somedir/train2.csv", label=3, text=5],
+        "train_data": [CSV("/somedir/train.csv", label=1, text=2),
+                       CSV("/somedir/train2.csv", label=3, text=5],
 
-            The data on which the experiment will train. If the location of a
-            .csv is provided, it will open these up and create an iterator for
-            you. Alternatively, you can provide your own iterators or iterable
-            structures providing instances of the data. If only training data
-            is provided, the experiment will evaluate in a tenfold setting by
-            default.
-            ---
+        The data on which the experiment will train. If the location of a .csv
+        is provided, it will open these up and create an iterator for you.
+        Alternatively, you can provide your own iterators or iterable
+        structures providing instances of the data. If only training data is
+        provided, the experiment will evaluate in a tenfold setting by default.
+        ---
 
-            "test_data": [CSV("/somedir/test.csv", label=1, text=2)], # either
+        "test_data": [CSV("/somedir/test.csv", label=1, text=2)], # either
 
-            This works similar to the train_data. However, when a test set is
-            provided, the performance of the model will be measured on this
-            test data only. Omesa will dump a classification report for you.
-            ---
+        This works similar to the train_data. However, when a test set is
+        provided, the performance of the model will be measured on this test
+        data only. Omesa will dump a classification report for you.
+        ---
 
-            "test_proportion": 0.3,                                    # or
+        "test_proportion": 0.3,                                    # or
 
-            As opposed to a test FILE, one can also provide a test proportion,
-            after which a certain amount of instances will be held out from the
-            training data to test on.
-            ---
+        As opposed to a test FILE, one can also provide a test proportion,
+        after which a certain amount of instances will be held out from the
+        training data to test on.
+        ---
 
-            "features": [Ngrams()],
+        "features": [Ngrams()],
 
-            These can be features imported from omesa.featurizer or can be
-            any class you create your self. As long as it adheres to a fit /
-            transform structure and returns a feature dictionary per instance
-            as can be provided to, for example, the sklearn FeatureHasher.
-            ---
+        These can be features imported from omesa.featurizer or can be any
+        class you create your self. As long as it adheres to a fit / transform
+        structure and returns a feature dictionary per instance as can be
+        provided to, for example, the sklearn FeatureHasher.
+        ---
 
-            "backbone": Spacy(),                   # or Frog() - optional
+        "backbone": Spacy(),                   # or Frog() - optional
 
-            The backbone is used as an all-round NLP toolkit for tagging,
-            parsing and in general annotating the text that is provided to the
-            experiment. If you wish to utilize features that need for example
-            tokens, lemmas or POS tags, they can be parsed during loading.
-            Please be advised that it's more convenient to do this yourself
-            beforehand.
-            ---
+        The backbone is used as an all-round NLP toolkit for tagging, parsing
+        and in general annotating the text that is provided to the experiment.
+        If you wish to utilize features that need for example tokens, lemmas or
+        POS tags, they can be parsed during loading. Please be advised that
+        it's more convenient to do this yourself beforehand.
+        ---
 
-            "classifier": GaussianNB()             # SVC by default - optional
+        "classifier": GaussianNB()             # SVC by default - optional
 
-            Used to switch the classifier used in the experiment. By default,
-            an SVM with low parameter settings is used if you do NOT want to
-            use grid search. In any other case, you can provide other sklearn
-            classifiers that can be set to output probabilities.
-            ---
+        Used to switch the classifier used in the experiment. By default, an
+        SVM with low parameter settings is used if you do NOT want to use grid
+        search. In any other case, you can provide other sklearn classifiers
+        that can be set to output probabilities.
+        ---
 
-            "save": ("log", model", "db", "man", "json", "pickle")  # any combi
+        "save": ("log", model", "db", "man", "json", "pickle")  # any combi
 
-            Save the output of the log, or dump the entire model with its
-            classification method and pipeline wrapper for new data instances.
-            In development: save the features for a certain setting.
-            ---
-        }
+        Save the output of the log, or dump the entire model with its
+        classification method and pipeline wrapper for new data instances. In
+        development: save the features for a certain setting.
+        ---
     }
 
     Parameters
@@ -112,6 +110,7 @@ class Experiment(object):
         self.vec = Vectorizer(conf)
         self.opt = Optimizer(conf)
         self.clf = None
+        self.res = {}
         if not cold:
             self.run(conf)
 
@@ -135,18 +134,35 @@ class Experiment(object):
         self.log.post('head', ('\n'.join([str(c) for c in conf['features']]),
                                conf['name'], seed))
 
+        # stream data to sparse features
         X, y = self.vec.transform(conf['train_data'], fit=True)
         self.log.loop('sparse', ('train', X.shape))
 
+        # split off test data
+        if not conf.get('test_data'):
+            X, Xi, y, yi = train_test_split(X, y, test_size=0.1, stratify=y)
+
+        # grid search and fit best model choice
         X, y, self.clf = self.opt.choose_classifier(X, y, seed)
         print("\n Training model...")
         self.clf.fit(X, y)
         print(" done!")
 
+        # if user wants to report more than best score, do another CV on train
+        if conf.get('detailed_train'):
+            res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
+            # TODO: print this to log ^
+            self.res['train'] = {'y': y, 'res': res,
+                                 'score': metrics.f1_score(y, res,
+                                                           average='micro')}
+
         # report performance
         if not conf.get('test_data'):
-            res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
-            self.log.post('cr', (metrics.classification_report(y, res),))
+            res = self.clf.predict(Xi)
+            self.log.post('cr', (metrics.classification_report(yi, res),))
+            self.res['test'] = {'y': yi, 'res': res,
+                                'score': metrics.f1_score(yi, res,
+                                                          average='micro')}
         else:
             print("\n Fetching test data...")
             Xi, yi = self.vec.transform(conf['test_data'])
@@ -157,8 +173,14 @@ class Experiment(object):
             res = self.clf.predict(Xi)
             yi = list(yi)
             self.log.post('cr', (metrics.classification_report(yi, res),))
+            self.res['test'] = {'y': yi, 'res': res,
+                                'score': metrics.f1_score(yi, res,
+                                                          average='micro')}
+
+        t2 = time()
+        dur = round(t2-t1, 1)
+        self.res['dur'] = dur
+        print("\n Experiment took {0} seconds".format(dur))
 
         self.save()
-        t2 = time()
-        print("\n Experiment took {0} seconds".format(round(t2-t1, 1)))
         print("\n" + '-'*10, "\n")

@@ -55,17 +55,11 @@ def experiment():
 def results():
     """Experiment page."""
     res, out = db.getall(Experiment), {}
-    for exp in res:
-        out.update({
-            str(exp['pk']): {
-                'name': exp['name'],
-                # 'features': ', '.join([v['name'] for v in exp['features']]),
-                # 'clf': exp['clf']['name']
-            }
-        })
-    print(out)
+    rows = ['project', 'name', 'train_data', 'test_data', 'features',
+            'clf_name', 'dur', 'test_score']
+    out.update({str(exp['pk']): {k: exp[k] for k in rows} for exp in res})
     return skeleton(page='Results', layout='outp',
-                    hook=bottle.template('outp', data=res))
+                    hook=bottle.template('outp', data=out))
 
 
 def main():

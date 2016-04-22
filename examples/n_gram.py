@@ -18,6 +18,7 @@ except ImportError as e:
     exit("Could not load omesa. Please update the path in this file.")
 
 Experiment({
+    "project": "unit_tests",
     "name": "gram_experiment",
     "train_data": CSV("n_gram.csv", data=1, label=0, header=True),
     "features": [Ngrams(level='char', n_list=[3])],

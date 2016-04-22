@@ -140,10 +140,8 @@ class Ngrams(object):
 
     def __str__(self):
         """Report on feature settings."""
-        return '''
-        feature:   {0}
-        n_list:    {1}
-        '''.format(self.name, self.n_list)
+        return '''NGrams(level={0}, n_list={1})'''.format(self.level,
+                                                          self.n_list)
 
     @staticmethod
     def find_ngrams(input_list, n):

@@ -33,6 +33,7 @@ class Pipeline(object):
             assert name
         self.vec = exp.vec if exp else None
         self.clf = exp.clf if exp else None
+        self.res = exp.res if exp else None
         self.hook = self.vec.conf['name'] if not name else name
         self.serialize = None
         self.storage = self.vec.conf['save'] if not source else source
@@ -49,17 +50,27 @@ class Pipeline(object):
             # self.hook += '_man'
 
     def _make_top(self):
+        """Top level experiment representation.
+
+        Generates a top-level representation of an experiment. This stores
+        JSON native information ONLY, and is used for the experiment table in
+        the front-end, as deserializing a lot of experiments will be expensive
+        in terms of loading times."""
+        # TODO: check if this can't be handled in front-end
         top = {'name': self.hook, 'vec': self.vec, 'clf': self.clf,
-               'clf_name': self.clf.__dict__['steps'][0][1].__class__.__name__}
+               'clf_name': self.clf.__dict__['steps'][0][1].__class__.__name__,
+               'project': self.vec.conf.get('project', '-')}
         for n in ('train', 'test'):
             try:
                 top.update({n + '_data':
                             self.vec.__dict__['conf'][n + '_data'].source})
             except Exception as e:
-                print("\n\n Couldn't determine data source: {0}.".format(e))
-                top.update({n + '_data': '-'})
-
-        print("TOPPPPPPP ------------", top)
+                top.update({n + '_data': 'split'})
+        top.update({'features': ','.join([x.__str__() for x in
+                                          self.vec.featurizer.helpers]),
+                    'test_score': self.res['test']['score'],
+                    'dur': self.res['dur']})
+        return top
 
     def save(self):
         """Save experiment and classifier in format specified."""

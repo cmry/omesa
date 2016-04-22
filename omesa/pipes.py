@@ -5,12 +5,10 @@ from multiprocessing import Pool
 
 import numpy as np
 from sklearn import pipeline
-from sklearn.cross_validation import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.grid_search import GridSearchCV
 from sklearn.svm import LinearSVC
-from sklearn.utils import shuffle
 
 from .featurizer import Featurizer
 
@@ -115,17 +113,6 @@ class Optimizer(object):
         self.met = conf.get('scoring', scoring)
         self.conf = conf if conf else classifiers
 
-    def split_dev(self, X, y, seed=42):
-        """Split dev if should be hold out (test_set here is X)."""
-        X_dev, y_dev = None, None
-        if 'hold_grid' in self.conf.get('settings', ''):
-            X_dev, X, y_dev, y = train_test_split(X, y, test_size=0.8,
-                                                  random_state=seed,
-                                                  stratify=y)
-        else:
-            X, y = shuffle(X, y, random_state=seed)
-        return X, y, X_dev, y_dev
-
     def best_model(self):
         """Choose best parameters of trained classifiers."""
         score_sum = {}
@@ -143,7 +130,6 @@ class Optimizer(object):
 
     def choose_classifier(self, X, y, seed):
         """Choose a classifier based on settings."""
-        X, y, X_dev, y_dev = self.split_dev(X, y, seed)
 
         for grid in self.conf['classifiers']:
             clf = grid.pop('clf')
@@ -155,11 +141,7 @@ class Optimizer(object):
                                 n_jobs=self.conf.get('n_jobs', -1))
 
             print("\n Starting Grid Search...")
-            # grid search approximated on dev
-            if X_dev and y_dev:
-                grid.fit(X_dev, y_dev)
-            else:
-                grid.fit(X, y)
+            grid.fit(X, y)
             print(" done!")
 
             self.scores[clf] = (grid.grid_scores_, grid.best_estimator_)
