@@ -68,9 +68,9 @@ def overview():
 def experiment(name):
     """Experiment page."""
     exp = Pipeline(name=name, source='db')
-    x = exp.load()
-    return x
-    return exp.__dict__
+    exp.load()
+    return skeleton(page=name, layout='res',
+                    hook=bottle.template('res'))
 
 
 def main():

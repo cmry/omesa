@@ -68,6 +68,7 @@ class Pipeline(object):
                 top.update({n + '_data': 'split'})
         top.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),
+                    'res': self.res,
                     'test_score': self.res['test']['score'],
                     'dur': self.res['dur']})
         return top
@@ -100,12 +101,10 @@ class Pipeline(object):
             mod = pickle.load(open(self.hook + '.pickle', 'rb'))
         if 'db' in self.storage:
             mod = self.db.fetch(self.data, {'name': self.hook})
-            unfold = dict(mod)  # bottle errors if this is is not var'ed first
-            bla = json.dumps(unfold)
-            return bla, self.serialize
-            # mod = self.serialize.decode(json.dumps(unfold))
+            mod = self.serialize.decode(json.dumps(dict(mod)))
         self.clf = mod['clf']
         self.vec = mod['vec']
+        self.res = mod['res']
 
     def classify(self, data):
         """Given a data point, return a (label, probability) tuple."""
