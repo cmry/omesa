@@ -22,7 +22,7 @@
                                         % for id, exp in data.items():
                                         <tr>
                                             <td>{{exp['project']}}
-                                            <td><a href="./res?={{id}}">{{exp['name']}}</a></td>
+                                            <td><a href="./exp/{{exp['name']}}">{{exp['name']}}</a></td>
                                             <td>{{exp['train_data']}}</td>
                                             <td>{{exp['test_data']}}</td>
                                             <td>{{exp['features']}}</td>

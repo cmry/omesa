@@ -3,7 +3,6 @@
 from blitzdb import Document
 from blitzdb import FileBackend
 
-
 class Experiment(Document):
     """Blitzdb document placeholder."""
 

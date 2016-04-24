@@ -7,8 +7,10 @@ sys.path.append(os.path.dirname(__file__))
 sys.path.append('../')
 
 import bottle
-from database import Database, Experiment
-
+from omesa.database import Database, Experiment
+from omesa.containers import Pipeline
+from sklearn import *
+import omesa.featurizer
 
 @bottle.route('/static/<filename:path>')
 def server_static(filename):
@@ -44,22 +46,31 @@ def root():
     return skeleton(page='Dashboard')
 
 
+@bottle.route('/run')
+def run():
+    """Run experiment page."""
+    return skeleton(page='Run Experiment', layout='run',
+                    hook=bottle.template('run'))
+
+
 @bottle.route('/exp')
-def experiment():
-    """Experiment page."""
-    return skeleton(page='Experiment', layout='exp',
-                    hook=bottle.template('exp'))
-
-
-@bottle.route('/outp')
-def results():
-    """Experiment page."""
+def overview():
+    """Experiment overview page."""
     res, out = db.getall(Experiment), {}
     rows = ['project', 'name', 'train_data', 'test_data', 'features',
             'clf_name', 'dur', 'test_score']
     out.update({str(exp['pk']): {k: exp[k] for k in rows} for exp in res})
-    return skeleton(page='Results', layout='outp',
-                    hook=bottle.template('outp', data=out))
+    return skeleton(page='Experimental Results', layout='exp',
+                    hook=bottle.template('exp', data=out))
+
+
+@bottle.route('/exp/<name>')
+def experiment(name):
+    """Experiment page."""
+    exp = Pipeline(name=name, source='db')
+    x = exp.load()
+    return x
+    return exp.__dict__
 
 
 def main():

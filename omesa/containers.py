@@ -100,7 +100,10 @@ class Pipeline(object):
             mod = pickle.load(open(self.hook + '.pickle', 'rb'))
         if 'db' in self.storage:
             mod = self.db.fetch(self.data, {'name': self.hook})
-            mod = self.serialize.decode(json.dumps(dict(mod)))
+            unfold = dict(mod)  # bottle errors if this is is not var'ed first
+            bla = json.dumps(unfold)
+            return bla, self.serialize
+            # mod = self.serialize.decode(json.dumps(unfold))
         self.clf = mod['clf']
         self.vec = mod['vec']
 
