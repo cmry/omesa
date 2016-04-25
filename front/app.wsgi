@@ -1,19 +1,20 @@
 """Main stuff."""
 
 import os, sys
+import json
 
 os.chdir(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(__file__))
 sys.path.append('../')
 
 import bottle
-from sklearn import *
-import omesa.featurizer
 from omesa.containers import Pipeline
 from omesa.database import Database, Experiment
+from sklearn import *
 import plotly.offline as py
 import plotly.graph_objs as go
 import omesa.tools.lime_eval as le
+import omesa.tools.serialize_sk as sr
 
 
 @bottle.route('/static/<filename:path>')
@@ -93,16 +94,28 @@ def experiment(name):
     conf = [(n, res['tab'][k]) for k, n in rows]
 
     # lime eval
-    lime = le.LimeEval(exp.clf, exp.vec)
+    lime = le.LimeEval(exp.clf, exp.vec,
+                       exp.vec.encoder.inverse_transform([0, 1]))
     docs = lime.load_omesa(res['tab']['lime_data_repr'])
     exps = lime.explain(docs)
     lime = [x for x in lime.graphs(exps)] if exps else \
         ["Model does not support probability prediction and can't do LIME."]
 
+    # heatmap
+    scores = sr.decode(json.dumps(res['res']))
+    heats = []
+    for t in ('train', 'test'):
+        y_true, y_pred = scores[t]['y'], scores[t]['res']
+        data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred))]
+        plot_url = py.plot(data, filename='./static/heat-' + t + '.html',
+                           auto_open=False, show_link=False,
+                           output_type='file')
+        heats.append((t, '/static/heat-' + t + '.html'))
+
     return skeleton(page=name, layout='res',
                     hook=bottle.template('res', conf=conf,
                                          plot="/static/basic-bar.html",
-                                         lime=lime))
+                                         lime=lime, heat=heats))
 
 
 def main():

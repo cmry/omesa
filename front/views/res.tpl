@@ -53,5 +53,20 @@
                         </div>
                       </div>
                     </div>
+                    <div class="box box-standard">
+                      <div class="box-header with-border">
+                        <h3 class="box-title">Confusion Matrix</h3>
+                      </div>
+                      <div class="box-body">
+                        <div class="chart">
+                          %for t, url in heat:
+                          <div class="col-xs-6">
+                            <h4>{{t}}</h4>
+                            <iframe width="100%" height="300px" src="{{url}}" scrolling="no" frameborder="0"></iframe>
+                          </div>
+                          %end
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>

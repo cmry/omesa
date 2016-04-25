@@ -13,7 +13,7 @@ class LimeEval(object):
         self.docs = []
 
     def explain(self, docs):
-        explainer = LimeTextExplainer(class_names=[0, 1])
+        explainer = LimeTextExplainer(class_names=self.names)
         exps = []
         for doc in docs:
             exp = explainer.explain_instance(doc, self.c.predict_proba)
@@ -26,7 +26,6 @@ class LimeEval(object):
         for i, row in enumerate(reader):
             if reader_dict.get('header') and not i:
                 continue
-            print(row[ti])
             docs.append(row[ti])
             if i == 5:
                 break
@@ -44,7 +43,7 @@ class LimeEval(object):
                 f_names.append(f.name[1:])
         return f_names
 
-    def graphs(self, exps):
+    def graphs(self, exps, encoder=None):
         order = []
         for i, exp in enumerate(exps):
             expl = exp.as_list()
@@ -56,7 +55,7 @@ class LimeEval(object):
             data = [
                 go.Bar(
                     x=list(prb),
-                    y=['neg' if not x else 'pos' for x in cln],
+                    y=cln,
                     marker=dict(color=['#1f77b4', '#ff7f0e']),
                     orientation='h',
                 )
