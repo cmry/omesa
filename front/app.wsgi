@@ -7,10 +7,14 @@ sys.path.append(os.path.dirname(__file__))
 sys.path.append('../')
 
 import bottle
-from omesa.database import Database, Experiment
-from omesa.containers import Pipeline
 from sklearn import *
 import omesa.featurizer
+from omesa.containers import Pipeline
+from omesa.database import Database, Experiment
+import plotly.offline as py
+import plotly.graph_objs as go
+import omesa.tools.lime_eval as le
+
 
 @bottle.route('/static/<filename:path>')
 def server_static(filename):
@@ -22,11 +26,6 @@ def server_static(filename):
 def get_favicon():
     """Favicon."""
     return server_static('favicon.ico')
-
-
-def post_get(name):
-    """POST GET."""
-    return bottle.request.forms.get(name)
 
 
 def skeleton(hook='', layout='main', page=''):
@@ -58,8 +57,8 @@ def overview():
     """Experiment overview page."""
     res, out = db.getall(Experiment), {}
     rows = ['project', 'name', 'train_data', 'test_data', 'features',
-            'clf_name', 'dur', 'test_score']
-    out.update({str(exp['pk']): {k: exp[k] for k in rows} for exp in res})
+            'clf', 'dur', 'test_score']
+    out.update({str(xp['pk']): {k: xp['tab'][k] for k in rows} for xp in res})
     return skeleton(page='Experimental Results', layout='exp',
                     hook=bottle.template('exp', data=out))
 
@@ -69,8 +68,41 @@ def experiment(name):
     """Experiment page."""
     exp = Pipeline(name=name, source='db')
     exp.load()
+
+    # test/train plot
+    data = [
+        go.Bar(
+            x=['train', 'test'],
+            y=[exp.res['train']['score'] if exp.res.get('train') else 0.0,
+               exp.res['test']['score'] if exp.res.get('test') else 0.0]
+        )
+    ]
+    plot_html = py.plot(data, filename='./static/basic-bar',
+                        auto_open=False, show_link=False, output_type='file')
+
+    # unwind config
+    res, conf = db.fetch(Experiment, {'name': name}), []
+    rows = [('project', 'project name'),
+            ('name', 'experiment name'),
+            ('train_data_path', 'training data'),
+            ('test_data_path', 'testing data'),
+            ('features', 'features'),
+            ('clf_full', 'classifier'),
+            ('dur', 'duration'),
+            ('test_score', 'score on test')]
+    conf = [(n, res['tab'][k]) for k, n in rows]
+
+    # lime eval
+    lime = le.LimeEval(exp.clf, exp.vec)
+    docs = lime.load_omesa(res['tab']['lime_data_repr'])
+    exps = lime.explain(docs)
+    lime = [x for x in lime.graphs(exps)] if exps else \
+        ["Model does not support probability prediction and can't do LIME."]
+
     return skeleton(page=name, layout='res',
-                    hook=bottle.template('res'))
+                    hook=bottle.template('res', conf=conf,
+                                         plot="/static/basic-bar.html",
+                                         lime=lime))
 
 
 def main():

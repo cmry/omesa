@@ -68,6 +68,7 @@ class Featurizer(object):
         self.helpers = features
         self.preprocessor = preprocessor
         self.parser = parser
+        self.head = []
 
     def transform(self, instance):
         """Call all the helpers to extract features.

@@ -5,6 +5,7 @@ import json
 import pickle
 import sys
 from types import GeneratorType
+from os import getcwd
 
 from .tools import serialize_sk as sr
 
@@ -58,19 +59,30 @@ class Pipeline(object):
         in terms of loading times."""
         # TODO: check if this can't be handled in front-end
         top = {'name': self.hook, 'vec': self.vec, 'clf': self.clf,
-               'clf_name': self.clf.__dict__['steps'][0][1].__class__.__name__,
-               'project': self.vec.conf.get('project', '-')}
-        for n in ('train', 'test'):
+               'res': self.res}
+        tab = {'project': self.vec.conf.get('project', '-'), 'name': self.hook,
+               'clf': self.clf.__dict__['steps'][0][1].__class__.__name__,
+               'clf_full': str(self.clf.__dict__['steps'][0][1])}
+
+        for n in ('train', 'test', 'lime'):
             try:
-                top.update({n + '_data':
-                            self.vec.__dict__['conf'][n + '_data'].source})
+                tab.update({n + '_data':
+                            self.vec.__dict__['conf'][n + '_data'].source,
+                            n + '_data_path':
+                            self.vec.__dict__['conf'][n + '_data'].path,
+                            n + '_data_repr':
+                            self.vec.__dict__['conf'][n + '_data'].__dict__})
             except Exception as e:
-                top.update({n + '_data': 'split'})
-        top.update({'features': ','.join([x.__str__() for x in
+                tab.update({n + '_data': 'split'})
+                tab.update({n + '_data_path': 'split'})
+                tab.update({n + '_data_repr': 'split'})
+
+        tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),
-                    'res': self.res,
                     'test_score': self.res['test']['score'],
-                    'dur': self.res['dur']})
+                    'dur': self.res['dur'],
+                    })
+        top.update({'tab': tab})
         return top
 
     def save(self):
@@ -151,7 +163,10 @@ class CSV:
         """Set configuration and label handler."""
         csv.field_size_limit(sys.maxsize)
         self.source = csv_dir
+        self.path = getcwd() + ("/" if not csv_dir.startswith('/') else '') + \
+            csv_dir
         self.file = csv.reader(open(csv_dir, 'r'))
+        self.header = header
 
         if header:
             self.file.__next__()

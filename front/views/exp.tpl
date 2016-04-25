@@ -26,7 +26,7 @@
                                             <td>{{exp['train_data']}}</td>
                                             <td>{{exp['test_data']}}</td>
                                             <td>{{exp['features']}}</td>
-                                            <td>{{exp['clf_name']}}</td>
+                                            <td>{{exp['clf']}}</td>
                                             <td>{{exp['dur']}}</td>
                                             <td>{{exp['test_score']}}</td>
                                         </tr>

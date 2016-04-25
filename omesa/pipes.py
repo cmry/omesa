@@ -1,4 +1,4 @@
-"""Piplines and optimization."""
+"""Vectorizer and optimization."""
 
 from operator import itemgetter
 from multiprocessing import Pool
@@ -69,7 +69,7 @@ class Vectorizer(object):
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
-        y = getattr(self.encoder, func)(y)
+        y = getattr(self.encoder, func)(y) if len(set(y)) != 1 else ''
 
         # TODO: this could be moved to grid to also search over these settings
         if self.normalizers:
@@ -80,7 +80,10 @@ class Vectorizer(object):
             for dcmp in self.decomposers:
                 X = getattr(dcmp, func)(X, copy=False)
 
-        return X, y
+        if len(y):
+            return X, y
+        else:
+            return X
 
 
 class Optimizer(object):
@@ -133,6 +136,8 @@ class Optimizer(object):
 
         for grid in self.conf['classifiers']:
             clf = grid.pop('clf')
+            clf.probability = True
+            clf.random_state = seed
             grid = {'clf__' + k: v for k, v in grid.items()}
             print("\n", "Clf: ", str(clf))
             print("\n", "Grid: ", grid)
@@ -148,7 +153,5 @@ class Optimizer(object):
 
         score, clf = self.best_model()
         self.scores['best'] = score
-        clf.probability = True
-        clf.random_state = seed
 
         return X, y, clf

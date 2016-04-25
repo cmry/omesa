@@ -15,12 +15,12 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body class="hold-transition skin-custom sidebar-mini">
+  <body class="sidebar-collapse skin-custom sidebar-mini">
   <div class="wrapper">
     <header class="main-header">
       <a href="/" class="logo">
-          <span class="logo-mini"><object height="40mm" type="image/svg+xml" data="static/omesa_plain_white.svg">O</object></span>
-          <span class="logo-lg"><object height="40mm" type="image/svg+xml" data="static/omesa_plain_white.svg">O</object></span>
+          <span class="logo-mini"><object height="25mm" type="image/svg+xml" data="/static/omesa_plain_white.svg">_O_</object></span>
+          <span class="logo-lg"><object height="25mm" type="image/svg+xml" data="/static/omesa_plain_white.svg">_O_</object></span>
       </a>
       <nav class="navbar navbar-static-top">
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -32,10 +32,10 @@
       <section class="sidebar">
         <ul class="sidebar-menu">
           <li {{! 'class="active"' if page == 'Dashboard' else ''}}><a href="/"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-          <li {{! 'class="active"' if page == 'Experiment' else ''}}><a href="run"><i class="fa fa-flask"></i> <span>Experiment</span></a></li>
-          <li {{! 'class="active"' if page == 'Results' else ''}}><a href="exp"><i class="fa fa-line-chart"></i> <span>Results</span></a></li>
-          <li {{! 'class="active"' if page == 'Data' else ''}}><a href="data"><i class="fa fa-database"></i> <span>Data</span></a></li>
-          <li {{! 'class="active"' if page == 'Documentation' else ''}}><a href="docs"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+          <li {{! 'class="active"' if page == 'Experiment' else ''}}><a href="/run"><i class="fa fa-flask"></i> <span>Experiment</span></a></li>
+          <li {{! 'class="active"' if page == 'Results' else ''}}><a href="/exp"><i class="fa fa-line-chart"></i> <span>Results</span></a></li>
+          <li {{! 'class="active"' if page == 'Data' else ''}}><a href="/data"><i class="fa fa-database"></i> <span>Data</span></a></li>
+          <li {{! 'class="active"' if page == 'Documentation' else ''}}><a href="/docs"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
         </ul>
       </section>
     </aside>

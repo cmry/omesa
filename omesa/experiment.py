@@ -149,7 +149,7 @@ class Experiment(object):
         print(" done!")
 
         # if user wants to report more than best score, do another CV on train
-        if conf.get('detailed_train'):
+        if conf.get('detailed_train', True):
             res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
             # TODO: print this to log ^
             self.res['train'] = {'y': y, 'res': res,
