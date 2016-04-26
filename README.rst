@@ -56,11 +56,11 @@ Development Preview
 .. _dev: https://github.com/cmry/omesa/tree/dev
 .. _lime: https://github.com/marcotcr/lime
 
-In the dev_ branch a web front-end is being developed that can be used in
-combination with a database for storing models to visualize and compare
-model performance. This introduces some extra dependencies, such as ``bottle``,
-``blitzdb``, ``plotly`` and lime_. Currently
-only the 'Results' section works, teaser below:
+In the dev_ branch a web front-end is being developed that uses a standalone
+database for storing models. This provides visualization and comparison of
+model performance. Some extra dependencies are introduced, such as ``bottle``,
+``blitzdb``, ``plotly`` and lime_. Currently only the 'Results' section works,
+teaser below:
 
 .. image:: http://chris.emmery.nl/dump/omesa.png
     :alt: Front
