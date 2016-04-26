@@ -78,7 +78,9 @@ def experiment(name):
                exp.res['test']['score'] if exp.res.get('test') else 0.0]
         )
     ]
-    plot_html = py.plot(data, filename='./static/basic-bar',
+    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
+    fig = go.Figure(data=data, layout=layout)
+    plot_html = py.plot(fig, filename='./static/basic-bar.html',
                         auto_open=False, show_link=False, output_type='file')
 
     # unwind config
@@ -108,8 +110,10 @@ def experiment(name):
     for t in ('train', 'test'):
         y_true = exp.vec.encoder.inverse_transform(scores[t]['y'])
         y_pred = exp.vec.encoder.inverse_transform(scores[t]['res'])
-        data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred))]
-        plot_url = py.plot(data, filename='./static/heat-' + t + '.html',
+        data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred),
+                           colorscale=[[0, '#1f77b4'], [1, '#ff7f0e']])]
+        fig = go.Figure(data=data, layout=layout)
+        plot_url = py.plot(fig, filename='./static/heat-' + t + '.html',
                            auto_open=False, show_link=False,
                            output_type='file')
         heats.append((t, '/static/heat-' + t + '.html'))

@@ -2,7 +2,7 @@
 
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import SGDClassifier
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.preprocessing import MaxAbsScaler, StandardScaler
 import numpy as np
 # for as long as it's not yet pip installable
@@ -27,7 +27,7 @@ Experiment({
     "normalizers": [MaxAbsScaler()],
     "classifiers": [
         # {'clf': SGDClassifier(n_jobs=-1, n_iter=5), 'alpha': 10.0**-np.arange(1, 7)},
-        {'clf': LinearSVC(), 'C': np.logspace(-2.0, 1.0, 50)}
+        {'clf': SVC(kernel='linear'), 'C': np.logspace(-2.0, 1.0, 50)}
     ],
     "save": ("log", "model", "db")
 })

@@ -90,7 +90,7 @@
                           %for t, url in heat:
                           <div class="col-xs-6">
                             <h5>{{t}}</h5>
-                            <iframe width="100%" height="300px" src="{{url}}" scrolling="no" frameborder="0"></iframe>
+                            <iframe width="100%" height="200px" src="{{url}}" scrolling="no" frameborder="0"></iframe>
                           </div>
                           %end
                         </div>
