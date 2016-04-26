@@ -15,6 +15,34 @@
                         </table>
                       </div>
                     </div>
+                    <div class="box box-standard">
+                      <div class="box-header with-border">
+                        <h3 class="box-title">Classification report</h3>
+                      </div>
+                      <div class="box-body">
+                        <table class="table table-bordered">
+                          <tr>
+                            <th></th>
+                            <th>precision</th>
+                            <th>recall</th>
+                            <th>f-1 score</th>
+                            <th>support</th>
+                          </tr>
+                          %for t in rep:
+                            <tr>
+                              <th>{{t.pop(0)}}</th>
+                            </tr>
+                            %for exp in t.pop(0):
+                              <tr>
+                              %for score in exp:
+                              <td>{{score}}</td>
+                              %end
+                            </tr>
+                            %end
+                          %end
+                        </table>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="col-xs-4">
@@ -61,7 +89,7 @@
                         <div class="chart">
                           %for t, url in heat:
                           <div class="col-xs-6">
-                            <h4>{{t}}</h4>
+                            <h5>{{t}}</h5>
                             <iframe width="100%" height="300px" src="{{url}}" scrolling="no" frameborder="0"></iframe>
                           </div>
                           %end
