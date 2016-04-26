@@ -50,6 +50,34 @@ Important Note
 This repository is currently in alpha development, so don't expect any stable
 functionality until this part is removed.
 
+Development Preview
+'''''''''''''''''''
+
+.. _dev: https://github.com/cmry/omesa/tree/dev
+.. _lime: https://github.com/marcotcr/lime
+
+In the dev_ branch a web front-end is being developed that can be used in
+combination with a database for storing models to visualize and compare
+model performance. This introduces some extra dependencies, such as ``bottle``,
+``blitzdb``, ``plotly`` and lime_. Currently
+only the 'Results' section works, teaser below:
+
+.. image:: http://chris.emmery.nl/dump/omesa.png
+    :alt: Front
+    
+If you want to take a peek, install all above dependencies, switch to the
+``dev`` branch, and do the following:
+
+.. code-block:: shell
+
+    $ cd /dir/to/omesa/examples
+    $ python3 n_gram.py
+    $ cd ../front
+    $ python3 ./app.wsgi
+
+And follow the ``localhost`` link that is shown to access the web app. Please
+note that it's all very unstable. Bug reports are welcome though.
+
 
 Dependencies
 ''''''''''''
