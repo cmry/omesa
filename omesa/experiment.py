@@ -3,6 +3,7 @@
 # License:      MIT
 
 from time import time
+from copy import deepcopy
 
 import numpy as np
 from sklearn import metrics
@@ -140,7 +141,8 @@ class Experiment(object):
 
         # split off test data
         if not conf.get('test_data'):
-            X, Xi, y, yi = train_test_split(X, y, test_size=0.1, stratify=y)
+            X, Xi, y, yi = train_test_split(
+                X, y, test_size=conf.get('test_proportion', 0.1), stratify=y)
 
         # grid search and fit best model choice
         X, y, self.clf = self.opt.choose_classifier(X, y, seed)
@@ -176,6 +178,23 @@ class Experiment(object):
             self.res['test'] = {'y': yi, 'res': res,
                                 'score': metrics.f1_score(yi, res,
                                                           average='micro')}
+
+        if conf.get('proportions'):
+            pr = conf.get('proportions')
+            for i in range(1, pr):
+                clff = deepcopy(self.clf)
+                Xp, _, _, _ = train_test_split(
+                    X, y, test_size=(1 / pr) * (pr - i), stratify=y)
+                clff.fit(Xp)
+                res = clff.predict(Xi)
+                print(" Testing proportion {0}...".format(i+1))
+                self.log.post('cr', (metrics.classification_report(yi, res),))
+                prop = 'prop_{0}'.format(i)
+                self.res[prop] = {'y': yi, 'res': res,
+                                  'score': metrics.f1_score(yi, res,
+                                                            average='micro')}
+
+            # NOTE: refit model, don't tune params, use Xi for test
 
         t2 = time()
         dur = round(t2-t1, 1)
