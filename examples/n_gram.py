@@ -23,7 +23,7 @@ Experiment({
     "name": "gram_experiment",
     "train_data": CSV("n_gram.csv", data=1, label=0, header=True),
     "lime_data": CSV("n_gram.csv", data=1, label=0, header=True),
-    "proportions": 10,
+#    "proportions": 10,
     "features": [Ngrams(level='char', n_list=[3])],
     "normalizers": [MaxAbsScaler()],
     "classifiers": [

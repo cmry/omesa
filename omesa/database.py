@@ -3,8 +3,33 @@
 from blitzdb import Document
 from blitzdb import FileBackend
 
-class Experiment(Document):
-    """Blitzdb document placeholder."""
+
+class Configuration(Document):
+    """Blitzdb configuration placeholder."""
+
+    pass
+
+
+class Vectorizer(Document):
+    """Blitzdb vectorizer placeholder."""
+
+    pass
+
+
+class Classifier(Document):
+    """Blitzdb classifier placeholder."""
+
+    pass
+
+
+class Results(Document):
+    """Blitzdb results placeholder."""
+
+    pass
+
+
+class Table(Document):
+    """Blitzdb table placeholder."""
 
     pass
 

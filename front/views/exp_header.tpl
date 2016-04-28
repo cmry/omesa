@@ -1,1 +1,1 @@
-    <link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="/static/plugins/datatables/dataTables.bootstrap.css">

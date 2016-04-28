@@ -8,6 +8,11 @@ from types import GeneratorType
 from os import getcwd
 
 from .tools import serialize_sk as sr
+try:
+    from .database import Database, Configuration, Vectorizer, \
+                          Classifier, Results, Table
+except ImportError as e:
+    print("Database could not be loaded, functionality disabled.")
 
 
 class Pipeline(object):
@@ -32,46 +37,39 @@ class Pipeline(object):
         """Set the pipeline for transformation and clf for classification."""
         if not exp:
             assert name
+
         self.vec = exp.vec if exp else None
+        self.cnf = exp.vec.conf if exp else None
         self.clf = exp.clf if exp else None
         self.res = exp.res if exp else None
+
         self.hook = self.vec.conf['name'] if not name else name
-        self.serialize = None
         self.storage = self.vec.conf['save'] if not source else source
+        try:
+            self.vec.conf = self.hook
+        except AttributeError:  # when loading
+            pass
+
         if 'db' in self.storage:
-            from .database import Database, Experiment
             self.db = Database()
-            self.data = Experiment
-        if 'json' in self.storage:
-            import jsonpickle
-            self.serialize = jsonpickle
-        # FIXME: jsonpickle should be preferred, doesn't currently work though
-        elif 'man' in self.storage or 'db' in self.storage:
-            self.serialize = sr
-            # self.hook += '_man'
 
-    def _make_top(self):
-        """Top level experiment representation.
+    def _make_tab(self):
+        """Tabular level experiment representation.
 
-        Generates a top-level representation of an experiment. This stores
+        Generates a table-level representation of an experiment. This stores
         JSON native information ONLY, and is used for the experiment table in
         the front-end, as deserializing a lot of experiments will be expensive
-        in terms of loading times."""
-        # TODO: check if this can't be handled in front-end
-        top = {'name': self.hook, 'vec': self.vec, 'clf': self.clf,
-               'res': self.res}
-        tab = {'project': self.vec.conf.get('project', '-'), 'name': self.hook,
+        in terms of loading times.
+        """
+        tab = {'project': self.cnf.get('project', '-'), 'name': self.hook,
                'clf': self.clf.__dict__['steps'][0][1].__class__.__name__,
                'clf_full': str(self.clf.__dict__['steps'][0][1])}
 
         for n in ('train', 'test', 'lime'):
             try:
-                tab.update({n + '_data':
-                            self.vec.__dict__['conf'][n + '_data'].source,
-                            n + '_data_path':
-                            self.vec.__dict__['conf'][n + '_data'].path,
-                            n + '_data_repr':
-                            self.vec.__dict__['conf'][n + '_data'].__dict__})
+                tab.update({n + '_data': self.cnf[n + '_data'].source,
+                            n + '_data_path': self.cnf[n + '_data'].path,
+                            n + '_data_repr': self.cnf[n + '_data'].__dict__})
             except Exception as e:
                 tab.update({n + '_data': 'split'})
                 tab.update({n + '_data_path': 'split'})
@@ -82,48 +80,57 @@ class Pipeline(object):
                     'test_score': self.res['test']['score'],
                     'dur': self.res['dur'],
                     })
-        top.update({'tab': tab})
-        return top
+        return tab
 
     def save(self):
         """Save experiment and classifier in format specified."""
         print(" Saving experiment...")
-        top = self._make_top()
-
+        tab = self._make_tab()
         fl = self.hook
-        if self.serialize:
-            serialized = self.serialize.encode(top)
 
-        if any([x in self.storage for x in ('man', 'json')]) and serialized:
+        if any([x in self.storage for x in ('json', 'pickle')]):
+            top = {'name': self.hook, 'cnf': self.cnf, 'vec': self.vec,
+                   'clf': self.clf, 'res': self.res, 'tab': tab}
+        if 'json' in self.storage:
+            serialized = sr.encode(top)
             json.dump(serialized, open(self.hook + '.json', 'w'))
         if 'pickle' in self.storage:
-            for t in ('train', 'test'):
+            for t in ('train', 'test', 'lime'):
                 c = top['conf']['{0}_data'].format(t)
                 c = '' if isinstance(c, GeneratorType) else c
             pickle.dump(top, open(fl + '.pickle', 'wb'))
         if 'db' in self.storage:
-            doc = self.data(json.loads(serialized))
-            self.db.save(doc)
+            top = {Configuration: self.cnf, Vectorizer: self.vec,
+                   Classifier: self.clf, Results: self.res, Table: tab}
+            for doc, bind in top.items():
+                js = json.loads(sr.encode(bind))
+                js['name'] = self.hook
+                self.db.save(doc(js))
 
     def load(self):
         """Load experiment and classifier from source specified."""
         if any([x in self.storage for x in ('man', 'json')]):
-            mod = self.serialize.decode(json.load(open(self.hook + '.json')))
+            mod = sr.decode(json.load(open(self.hook + '.json')))
         if 'pickle' in self.storage:
             mod = pickle.load(open(self.hook + '.pickle', 'rb'))
         if 'db' in self.storage:
-            mod = self.db.fetch(self.data, {'name': self.hook})
-            mod = self.serialize.decode(json.dumps(dict(mod)))
+            mod = {'clf': Classifier, 'vec': Vectorizer, 'res': Results,
+                   'cnf': Configuration}
+            for k, doc in mod.items():
+                mod[k] = sr.decode(json.dumps(dict(
+                    self.db.fetch(doc, {'name': self.hook}))))
         self.clf = mod['clf']
         self.vec = mod['vec']
+        if 'db' in self.storage:
+            self.vec.conf = mod['cnf']
         self.res = mod['res']
 
     def classify(self, data):
         """Given a data point, return a (label, probability) tuple."""
-        X, _ = self.vec.transform(data)
-        X = X.todense().reshape((1, -1))
-        # LinearSVC no predict proba?
-        return self.clf.predict(X)  # , self.clf.predict_proba(X)
+        X = self.vec.transform(data)
+        # X = X.todense().reshape((1, -1))
+        # FIXME: some clfs like LinearSVC have no predict proba
+        return self.clf.predict(X), self.clf.predict_proba(X)
 
 
 class CSV:
