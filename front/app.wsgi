@@ -2,6 +2,7 @@
 
 import os, sys
 import json
+from collections import OrderedDict
 
 os.chdir(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(__file__))
@@ -75,13 +76,35 @@ def save_graph(tag, data):
 
 
 def test_train_plot(exp):
-    data = [
-        go.Bar(
-            x=['train', 'test'],
-            y=[exp.res['train']['score'] if exp.res.get('train') else 0.0,
-               exp.res['test']['score'] if exp.res.get('test') else 0.0]
+    tr_score = exp.res['train']['score'] if exp.res.get('train') else 0.0
+    te_score = exp.res['test']['score'] if exp.res.get('test') else 0.0
+    if not exp.res['prop']:
+        data = [
+            go.Bar(
+                x=['train', 'test'],
+                y=[tr_score, te_score]
+            )
+        ]
+    else:
+        props, train, test = [], [], []
+        d = OrderedDict(sorted(exp.res['prop'].items(), key=lambda t: t[0]))
+        for prop, scores in d.items():
+            props.append(prop)
+            train.append(scores['train'])
+            test.append(scores.get('test', 0.0))
+        train_trace = go.Scatter(
+            x=props + [1.0],
+            y=train + [tr_score],
+            mode='lines+markers',
+            name='train'
         )
-    ]
+        test_trace = go.Scatter(
+            x=props + [1.0],
+            y=test + [te_score],
+            mode='lines+markers',
+            name='test'
+        )
+        data = [train_trace, test_trace]
     return save_graph('basic-bar', data)
 
 
@@ -106,6 +129,7 @@ def get_scores(labs, y_true, y_pred):
     for i, label in enumerate(labs):
         scr.append([label] +
                    [round(v, 3) for v in (p[i], r[i], f1[i], s[i])])
+    return scr, acc, auc
 
 
 def unwind_conf(name, tab):
@@ -123,7 +147,10 @@ def unwind_conf(name, tab):
 
 def lime_eval(exp, tab, labs):
     lime = le.LimeEval(exp.clf, exp.vec, labs)
-    docs = lime.load_omesa(tab['lime_data_repr'])
+    if isinstance(tab['lime_data_repr'], dict):
+        docs = lime.load_omesa(reader_dict=tab['lime_data_repr'])
+    else:
+        docs = lime.load_omesa(doc_iter=tab['lime_data_repr'])
     exps = lime.explain(docs)
     return [x for x in lime.graphs(exps)] if exps else \
         ["Model does not support probability prediction and can't do LIME."]

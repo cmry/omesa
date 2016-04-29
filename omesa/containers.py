@@ -71,9 +71,10 @@ class Pipeline(object):
                             n + '_data_path': self.cnf[n + '_data'].path,
                             n + '_data_repr': self.cnf[n + '_data'].__dict__})
             except Exception as e:
-                tab.update({n + '_data': 'split'})
-                tab.update({n + '_data_path': 'split'})
-                tab.update({n + '_data_repr': 'split'})
+                tag = 'split' if n == 'test' else self.cnf[n + '_data']
+                tab.update({n + '_data': tag})
+                tab.update({n + '_data_path': tag})
+                tab.update({n + '_data_repr': tag})
 
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),

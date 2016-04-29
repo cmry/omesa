@@ -181,21 +181,22 @@ class Experiment(object):
                                                           average='micro')}
 
         if conf.get('proportions'):
+            self.res['prop'] = {}
+            tmp_opt = self.opt
             pr = conf.get('proportions')
             for i in range(1, pr):
-                Xp, _, yp, _ = train_test_split(
-                    X, y, test_size=(1 / pr) * (pr - i), stratify=y)
+                self.opt, prop = Optimizer(conf), (1 / pr) * (pr - i)
+                Xp, _, yp, _ = train_test_split(X, y, test_size=prop,
+                                                stratify=y)
                 clff = self.opt.choose_classifier(Xp, yp, seed)
-                clff.fit(Xp)
-                res = clff.predict(Xi)
-                print(" Testing proportion {0}: {1}...".format(i+1, pr))
-                self.log.post('cr', (metrics.classification_report(yi, res),))
-                prop = 'prop_{0}'.format(i)
-                self.res[prop] = {'y': yi, 'res': res,
-                                  'score': metrics.f1_score(yi, res,
-                                                            average='micro')}
-
-            # NOTE: refit model, don't tune params, use Xi for test
+                clff.fit(Xp, yp)
+                tres = cross_val_predict(clff, Xp, yp, cv=5, n_jobs=-1)
+                tscore = metrics.f1_score(yp, tres, average='micro')
+                score = metrics.f1_score(yi, clff.predict(Xi), average='micro')
+                print(" Testing proportion {0}: {1}...".format(1-prop, score))
+                self.res['prop'].update(
+                    {1-prop: {'train': tscore, 'test': score}})
+            self.opt = tmp_opt
 
         t2 = time()
         dur = round(t2-t1, 1)

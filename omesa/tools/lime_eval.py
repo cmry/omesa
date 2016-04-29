@@ -90,7 +90,7 @@ class LimeEval(object):
             exps.append(exp)
         return exps
 
-    def load_omesa(self, reader_dict):
+    def load_omesa(self, reader_dict=None, doc_iter=None):
         """Special LIME loader for Omesa pipelines.
 
         Tries to find a path location to extract example documents from, and
@@ -112,14 +112,18 @@ class LimeEval(object):
             The top 5 (assuming it has a header) documents from a
             omesa.containers object.
         """
-        reader = csv.reader(open(reader_dict['path']), quotechar='"')
-        ti, docs = reader_dict['idx'][0], []
-        for i, row in enumerate(reader):
-            if reader_dict.get('header') and not i:
-                continue
-            docs.append(row[ti])
-            if i == 5:
-                break
+        docs = []
+        if reader_dict:
+            reader = csv.reader(open(reader_dict['path']), quotechar='"')
+            ti, docs = reader_dict['idx'][0], []
+            for i, row in enumerate(reader):
+                if reader_dict.get('header') and not i:
+                    continue
+                docs.append(row[ti])
+                if i == 5:
+                    break
+        else:
+            docs = doc_iter
         self.docs = docs
         return docs
 

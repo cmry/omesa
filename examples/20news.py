@@ -38,11 +38,12 @@ Experiment({
     "name": "20_news",
     "train_data": loader('train'),
     "test_data": loader('test'),
-    "lime_data": loader('test', emax=5),
+    "lime_data": [dat[0] for dat in loader('test', emax=5)],
+    "proportions": 10,
     "features": [Ngrams(level='char', n_list=[3])],
     "normalizers": [MaxAbsScaler()],
     "classifiers": [
-        {'clf': SVC(kernel='linear'), 'C': np.logspace(-2.0, 1.0, 50)},
+        # {'clf': SVC(kernel='linear'), 'C': np.logspace(-2.0, 1.0, 5)},
         {'clf': MultinomialNB()}
     ],
     "save": ("log", "model", "db")
