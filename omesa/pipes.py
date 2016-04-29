@@ -1,5 +1,6 @@
 """Vectorizer and optimization."""
 
+from copy import deepcopy
 from operator import itemgetter
 from multiprocessing import Pool
 
@@ -134,7 +135,7 @@ class Optimizer(object):
     def choose_classifier(self, X, y, seed):
         """Choose a classifier based on settings."""
 
-        for grid in self.conf['classifiers']:
+        for grid in deepcopy(self.conf['classifiers']):
             clf = grid.pop('clf')
             clf.probability = True
             clf.random_state = seed
@@ -154,4 +155,4 @@ class Optimizer(object):
         score, clf = self.best_model()
         self.scores['best'] = score
 
-        return X, y, clf
+        return clf

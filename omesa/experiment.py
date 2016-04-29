@@ -111,6 +111,7 @@ class Experiment(object):
         self.vec = Vectorizer(conf)
         self.opt = Optimizer(conf)
         self.clf = None
+        self.clf_unfit = None
         self.res = {}
         if not cold:
             self.run(conf)
@@ -145,7 +146,7 @@ class Experiment(object):
                 X, y, test_size=conf.get('test_proportion', 0.1), stratify=y)
 
         # grid search and fit best model choice
-        X, y, self.clf = self.opt.choose_classifier(X, y, seed)
+        self.clf = self.opt.choose_classifier(X, y, seed)
         print("\n Training model...")
         self.clf.fit(X, y)
         print(" done!")
@@ -182,12 +183,12 @@ class Experiment(object):
         if conf.get('proportions'):
             pr = conf.get('proportions')
             for i in range(1, pr):
-                clff = deepcopy(self.clf)
-                Xp, _, _, _ = train_test_split(
+                Xp, _, yp, _ = train_test_split(
                     X, y, test_size=(1 / pr) * (pr - i), stratify=y)
+                clff = self.opt.choose_classifier(Xp, yp, seed)
                 clff.fit(Xp)
                 res = clff.predict(Xi)
-                print(" Testing proportion {0}...".format(i+1))
+                print(" Testing proportion {0}: {1}...".format(i+1, pr))
                 self.log.post('cr', (metrics.classification_report(yi, res),))
                 prop = 'prop_{0}'.format(i)
                 self.res[prop] = {'y': yi, 'res': res,

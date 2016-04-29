@@ -65,7 +65,16 @@ def overview():
                     hook=bottle.template('exp', data=out))
 
 
-def test_train_plot(exp, layout):
+def save_graph(tag, data):
+    """Quick binder to tag plot, dumps plotly data and layout."""
+    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
+    fig = go.Figure(data=data, layout=layout)
+    fn = './static/{0}.html'.format(tag)
+    py.plot(fig, filename=fn, auto_open=False, show_link=False)
+    return fn[1:]
+
+
+def test_train_plot(exp):
     data = [
         go.Bar(
             x=['train', 'test'],
@@ -73,9 +82,30 @@ def test_train_plot(exp, layout):
                exp.res['test']['score'] if exp.res.get('test') else 0.0]
         )
     ]
-    fig = go.Figure(data=data, layout=layout)
-    py.plot(fig, filename='./static/basic-bar.html', auto_open=False,
-            show_link=False, output_type='file')
+    return save_graph('basic-bar', data)
+
+
+def confusion_matrix(t, y_true, y_pred):
+    data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred),
+                       colorscale=[[0, '#1f77b4'], [1, '#ff7f0e']])]
+    return save_graph('heat-' + t, data)
+
+
+def get_scores(labs, y_true, y_pred):
+    # classification report
+    p, r, f1, s = metrics.precision_recall_fscore_support(y_true, y_pred,
+                                                          average=None,
+                                                          labels=labs)
+    try:
+        acc = metrics.accuracy_score(y_true, y_pred)
+        auc = metrics.roc_auc_score(y_true, y_pred, average=None)
+    except (AttributeError, ValueError):  # mutliclass
+        acc, auc = None, None
+
+    scr = []
+    for i, label in enumerate(labs):
+        scr.append([label] +
+                   [round(v, 3) for v in (p[i], r[i], f1[i], s[i])])
 
 
 def unwind_conf(name, tab):
@@ -105,15 +135,13 @@ def experiment(name):
     exp = Pipeline(name=name, source='db')
     exp.load()
 
-    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
-    test_train_plot(exp, layout)
     tab = db.fetch(Table, {'name': name})
     conf = unwind_conf(name, tab)
-
     # TODO: replace labels with multi-class variant
     labs = exp.vec.encoder.inverse_transform([0, 1])
 
     lime = lime_eval(exp, tab, labs)
+    test_train_plot(exp)
 
     # heatmap
     scores = sr.decode(json.dumps(dict(db.fetch(Results, {'name': name}))))
@@ -121,32 +149,9 @@ def experiment(name):
     for t in ('train', 'test'):
         y_true = exp.vec.encoder.inverse_transform(scores[t]['y'])
         y_pred = exp.vec.encoder.inverse_transform(scores[t]['res'])
-        data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred),
-                           colorscale=[[0, '#1f77b4'], [1, '#ff7f0e']])]
-        fig = go.Figure(data=data, layout=layout)
-        plot_url = py.plot(fig, filename='./static/heat-' + t + '.html',
-                           auto_open=False, show_link=False,
-                           output_type='file')
-        heats.append((t, '/static/heat-' + t + '.html'))
-
-        # classification report
-        p, r, f1, s = metrics.precision_recall_fscore_support(y_true, y_pred,
-                                                              average=None,
-                                                              labels=labs)
-        try:
-            acc = metrics.accuracy_score(y_true, y_pred)
-            auc = metrics.roc_auc_score(y_true, y_pred, average=None)
-        except (AttributeError, ValueError):  # mutliclass
-            acc, auc = None, None
-
-        scr = []
-        for i, label in enumerate(labs):
-            scr.append([label] +
-                       [round(v, 3) for v in (p[i], r[i], f1[i], s[i])])
+        heats.append((t, confusion_matrix(t, y_true, y_pred)))
+        scr, acc, auc = get_scores(labs, y_true, y_pred)
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
-
-    del(exp)
-
     return skeleton(page=name, layout='res',
                     hook=bottle.template('res', conf=conf,
                                          plot="/static/basic-bar.html",
