@@ -9,13 +9,13 @@ site_description: Documentation for reproducible Text Mining research framework.
 
 pages:
 - [index.md, Home]
-- [containers.md, Backend, Containers]
+- [faq.md, FAQ]
 - [experiment.md, Main, Experiment]
+- [featurizer.md, Main, Featurizer]
 - [example_simple.md, Examples, End-To-End]
 - [example_df.md, Examples, Data-To-Features]
 - [example_web.md, Examples, Web App]
-- [featurizer.md, Main, Featurizer]
+- [containers.md, Backend, Containers]
 - [logger.md, Backend, Logger]
 - [pipes.md, Backend, Pipes]
 - [processor.md, Backend, Taggers]
-- [faq.md, Home]
