@@ -1,6 +1,10 @@
 Omesa
 =====
 
+.. image:: https://travis-ci.org/cmry/omesa.svg?branch=master
+    :target: https://travis-ci.org/cmry/Omesa
+    :alt: Travis-CI
+
 .. image:: https://readthedocs.org/projects/omesa/badge/?version=latest
     :target: http://omesa.readthedocs.org/en/latest/?badge=latest
     :alt: Docs
