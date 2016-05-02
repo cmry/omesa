@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Text feature extraction module.
 
 This module contains several helper classes for extracting textual features
