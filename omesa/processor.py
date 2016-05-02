@@ -1,4 +1,5 @@
-"""Processor methods."""
+"""Processor methods.
+"""
 
 import re
 
@@ -140,7 +141,7 @@ class SocialCleaner(object):
         """
         if repl:
             self.applied.append('repl_emoticons')
-        emoticon_string = r"""
+        emoticon_string = r'''
         (?:
           [<>]?
           [:;=8xX]                         # eyes L
@@ -159,7 +160,7 @@ class SocialCleaner(object):
           [\-Oo~\^]                        # eyes R
           [\)] ?                           # body R
           [\~<>]?                          # hands
-        )"""
+        )'''
         pat = re.compile(emoticon_string, re.VERBOSE | re.I | re.UNICODE)
         return re.sub(pat, repl, text) if repl else re.findall(pat, text)
 

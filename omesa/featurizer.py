@@ -4,7 +4,6 @@ This module contains several helper classes for extracting textual features
 used in Text Mining applications, partly based on instances parsed with parse.
 It also includes a wrapper class to cleverly hanlde this within the Omesa
 framework.
-
 """
 
 import re
@@ -83,7 +82,6 @@ class Featurizer(object):
         v : dict
             Feature vector where key, value = feature, value.
         label : str
-
         """
         if isinstance(instance, str):
             instance = tuple([instance])
@@ -266,8 +264,7 @@ class APISent(object):
 
 
 class DuSent(object):
-    """
-    Lexicon based sentiment features.
+    """Lexicon based sentiment features.
 
     Calculates four features related to sentiment: average polarity, number of
     positive, negative and neutral words. Counts based on the Duoman and

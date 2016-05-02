@@ -8,7 +8,7 @@ from sys import argv
 
 ERR = '''
 - """ used for non-docstring strings.
-- Class or function Documentation has newline after """.
+- Class or function Documentation has newline after opening """.
 '''
 
 
@@ -73,12 +73,14 @@ class Doc2Markdown:
         """Split a python file on docstring."""
         lines = [x for x in doc.split('\n') if x]
         name, det = '', False
+        # for i, l in enumerate(lines):
+        #     print("{0}: ".format(i+1), l)
         # skip lines until class/def, end if :
         while ':' not in name:
             try:
-                if 'class' in lines[0] or 'def' in lines[0]:
+                if 'class ' in lines[0] or 'def ' in lines[0]:
                     det = True
-            except IndexError:
+            except IndexError as e:
                 exit("Malformed code. \n\nSome common errors: {0}".format(ERR))
             line = lines.pop(0)
             if det:
@@ -127,14 +129,14 @@ class Doc2Markdown:
         """Place parameters and attributes in a table overview."""
         head, buff, lines = '', (), []
         table = self.md_table.format(name)
-        # given var : type \n description, splits these up into 3 cellss
+        # given var : type \n description, splits these up into 3 cells
         if doc:
             for row in doc:
-                if ':' in row and not buff:
+                if ' : ' in row and not buff:
                     head = row.split(' : ')
                     for part in head:
                         buff += (part.replace('  ', ''), )
-                elif ':' in row and buff:
+                elif ' : ' in row and buff:
                     buff += (''.join(lines), )
                     table += self.md_table_row.format(*buff)
                     buff = ()

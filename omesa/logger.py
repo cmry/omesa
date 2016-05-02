@@ -1,4 +1,5 @@
-"""Classes to log and display pipeline information."""
+"""Classes to log and display pipeline information.
+"""
 
 from collections import OrderedDict
 
@@ -15,19 +16,19 @@ class Logger(object):
 
     Parameters
     ----------
-    fn: str
+    fn : str
         File name of the logfile (and the experiment).
 
     Attributes
     ----------
-    fn: str
+    fn : str
         File name.
 
-    log: dict
+    log : dict
         Keys are short names for each step, values are strings with .format
         placeholders. Formatting is sort of handled by the strings as well.
 
-    buffer: list
+    buffer : list
         Used to stack lines in a loop that can be written to the log line once
         the loop has been completed.
     """
@@ -45,7 +46,7 @@ class Logger(object):
             'rep':    "\n\n---- {0} Results ---- \n" +
                       "\n Distribution: {1}" +
                       "\n Accuracy @ baseline: \t {2}" +
-                      "\n Reporting on class {3}",
+                      "\n Reporting on label {3}",
             'grid':   "\n Model with rank: {0} " +
                       "\n Mean validation score: {1:.3f} (std: {2:.3f}) " +
                       "\n Parameters: {3} \n",
