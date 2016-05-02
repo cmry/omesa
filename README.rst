@@ -65,6 +65,9 @@ teaser below:
 .. image:: http://chris.emmery.nl/dump/omesa.png
     :alt: Front
     
+.. image:: http://chris.emmery.nl/dump/omesa_prop.png
+    :alt: Front Prop
+    
 If you want to take a peek, install all above dependencies, switch to the
 ``dev`` branch, and do the following:
 
