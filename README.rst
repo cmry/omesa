@@ -1,10 +1,6 @@
 Omesa
 =====
 
-.. image:: https://travis-ci.org/cmry/omesa.svg?branch=master
-    :target: https://travis-ci.org/cmry/Omesa
-    :alt: Travis-CI
-
 .. image:: https://readthedocs.org/projects/omesa/badge/?version=latest
     :target: http://omesa.readthedocs.org/en/latest/?badge=latest
     :alt: Docs
@@ -13,18 +9,11 @@ Omesa
     :target: https://landscape.io/github/cmry/omesa/master
     :alt: Landscape
 
-.. image:: https://coveralls.io/repos/cmry/omesa/badge.svg?branch=master&service=github
-    :target: https://coveralls.io/github/cmry/omesa?branch=master
-    :alt: Coveralls
-
 .. image:: https://img.shields.io/badge/python-2.7-blue.svg
     :alt: Python 2.7
 
 .. image:: https://img.shields.io/badge/python-3.5-blue.svg
     :alt: Python 3.4
-
-.. image:: https://img.shields.io/badge/license-MIT-blue.svg
-    :target: https://github.com/cmry/omesa/blob/master/LICENSE
 
 .. _scikit-learn: http://scikit-learn.org/stable/
 .. _readthedocs: http://omesa.readthedocs.org/
