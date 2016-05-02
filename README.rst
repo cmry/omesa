@@ -51,17 +51,17 @@ This repository is currently in alpha development, so don't expect any stable
 functionality until this part is removed. The `dev` branch will usually have the
 latest (not always stable) version.
 
-Development Preview
+Front-end Preview
 '''''''''''''''''''
 
 .. _dev: https://github.com/cmry/omesa/tree/dev
 .. _lime: https://github.com/marcotcr/lime
 
-In the dev_ branch a web front-end is being developed that uses a standalone
+In 'front' a web front-end is being developed that uses a standalone
 database for storing models. This provides visualization and comparison of
 model performance. Some extra dependencies are introduced, such as ``bottle``,
 ``blitzdb``, ``plotly`` and lime_. Currently only the 'Results' section works,
-teaser below:
+preview below:
 
 .. image:: http://chris.emmery.nl/dump/omesa.png
     :alt: Front
@@ -69,8 +69,7 @@ teaser below:
 .. image:: http://chris.emmery.nl/dump/omesa_prop.png
     :alt: Front Prop
     
-If you want to take a peek, install all above dependencies, switch to the
-``dev`` branch, and do the following:
+If you want to take a peek, install all above dependencies, do the following:
 
 .. code-block:: shell
 
@@ -80,7 +79,7 @@ If you want to take a peek, install all above dependencies, switch to the
     $ python3 ./app.wsgi
 
 And follow the ``localhost`` link that is shown to access the web app. Please
-note that it's all very unstable. Bug reports are welcome though.
+note that this part can be quite unstable. Bug reports are welcome.
 
 
 Dependencies
@@ -121,24 +120,22 @@ other articles. To run the experiment, the following configuration is used:
 
     from omesa.experiment import Experiment
     from omesa.featurizer import Ngrams
+    from omesa.containers import CSV
+    from sklearn.naive_bayes import MultinomialNB
 
-    conf = {
-        "gram_experiment": {
-            "name": "gram_experiment",
-            "train_data": ["./n_gram.csv"],
-            "has_header": True,
-            "features": [Ngrams(level='char', n_list=[3])],
-            "text_column": 1,
-            "label_column": 0,
-            "folds": 10,
-            "save": ("log")
-        }
-    }
+    Experiment({
+        "project": "unit_tests",
+        "name": "gram_experiment",
+        "train_data": CSV("n_gram.csv", data=1, label=0, header=True),
+        "lime_data": CSV("n_gram.csv", data=1, label=0, header=True),
+        "features": [Ngrams(level='char', n_list=[3])],
+        "classifiers": [
+            {'clf': MultinomialNB()}
+        ],
+        "save": ("log")
+    })
 
-    for experiment, configuration in conf.items():
-        Experiment(configuration)
-
-This will ten-fold cross validate performance on the ``.csv``, selecting text
+This will cross validate performance on the ``.csv``, selecting text
 and label columns and indicating a header is present in the ``.csv`` document.
 We provide the ``Ngrams`` function and parameters to be used as features, and
 store the log.
