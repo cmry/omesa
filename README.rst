@@ -9,6 +9,9 @@ Omesa
     :target: https://landscape.io/github/cmry/omesa/master
     :alt: Landscape
 
+.. image:: https://img.shields.io/badge/license-GPLv3-blue.svg
+    :alt: GPLv3
+    
 .. image:: https://img.shields.io/badge/python-2.7-blue.svg
     :alt: Python 2.7
 
