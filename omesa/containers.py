@@ -1,4 +1,5 @@
-"""Data handling containers."""
+"""Data handling containers.
+"""
 
 import csv
 import json
@@ -27,13 +28,12 @@ class Pipeline(object):
     name : str, optional, default None
         Name that the pipeline should be saved/loaded under/from.
 
-    source : tuple, optional, default None
-        Tuple with storage options, can be "man" (manual json serialization),
-        "json" (for jsonpickle, requires this package), "db" (for database
-        storage, requires blitzdb).
+    out : tuple, optional, default None
+        Tuple with storage options, can be "json" (json serialization),
+        or "db" (for database storage, requires blitzdb).
     """
 
-    def __init__(self, exp=None, name=None, source=None):
+    def __init__(self, exp=None, name=None, out=None):
         """Set the pipeline for transformation and clf for classification."""
         if not exp:
             assert name
@@ -44,7 +44,7 @@ class Pipeline(object):
         self.res = exp.res if exp else None
 
         self.hook = self.vec.conf['name'] if not name else name
-        self.storage = self.vec.conf['save'] if not source else source
+        self.storage = self.vec.conf['save'] if not out else out
         try:
             self.vec.conf = self.hook
         except AttributeError:  # when loading

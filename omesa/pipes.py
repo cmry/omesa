@@ -1,4 +1,5 @@
-"""Vectorizer and optimization."""
+"""Vectorizer and optimization.
+"""
 
 from copy import deepcopy
 from operator import itemgetter
@@ -30,6 +31,8 @@ class Vectorizer(object):
 
     Attributes
     ----------
+    conf : dict
+        Configuration dictionary passed to the experiment class.
 
     featurizer : class
         Environment class (might be replace by Featurizer) from Omesa.
@@ -42,9 +45,6 @@ class Vectorizer(object):
 
     decomposers : class
         TruncatedSVD class from sklearn.
-
-    conf : dict
-
     """
 
     def __init__(self, conf=None, featurizer=None, normalizers=None,
@@ -94,7 +94,7 @@ class Optimizer(object):
     ----------
     classifiers : dict, optional, default None
         Dictionary where the key is a initiated model class, and the values
-        are a dictionary with parameter settings in a {string: array} format,
+        are a dictionary with parameter settings in a (string-array) format,
         same as used in the scikit-learn pipeline. So for example, we provide:
         {LinearSVC(class_weight='balanced'): {'C': np.logspace(-3, 2, 6)}}.
         Note that pipeline requires some namespace (like clf__C), but the class

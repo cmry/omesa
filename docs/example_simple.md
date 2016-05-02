@@ -6,31 +6,27 @@ piece of code. One of the test examples provided is that of
 [n-gram classification](https://github.com/cmry/omesa/blob/master/examples/n_gram.py)
 of Wikipedia documents. In this experiment, we are provided with a toy set
 [n_gram.csv](https://github.com/cmry/omesa/blob/master/examples/n_gram.csv) that
-features 10 articles about Machine Learning, and 10 random other articles. To
+features 20 articles about Machine Learning, and 20 random other articles. To
 run the experiment, the following configuration is used:
 
 ``` python
 from omesa.experiment import Experiment
 from omesa.featurizer import Ngrams
 
-conf = {
-    "gram_experiment": {
-        "name": "gram_experiment",
-        "train_data": ["./n_gram.csv"],
-        "has_header": True,
-        "features": [Ngrams(level='char', n_list=[3])],
-        "text_column": 1,
-        "label_column": 0,
-        "folds": 10,
-        "save": ("log")
-    }
-}
-
-for experiment, configuration in conf.items():
-    Experiment(configuration)
+Experiment({
+    "project": "unit_tests",
+    "name": "gram_experiment",
+    "train_data": CSV("n_gram.csv", data=1, label=0, header=True),
+    "lime_data": CSV("n_gram.csv", data=1, label=0, header=True),
+    "features": [Ngrams(level='char', n_list=[3])],
+    "classifiers": [
+        {'clf': MultinomialNB()}
+    ],
+    "save": ("log")
+})
 ```
 
-This will ten-fold cross validate performance on the `.csv`, selecting text
+This will cross validate performance on the `.csv`, selecting text
 and label columns and indicating a header is present in the `.csv` document.
 We provide the `Ngrams` function and parameters to be used as features, and
 store the log.

@@ -9,10 +9,17 @@
 
 ---
 
-## Base functionality
+## API
 
-- [Environment](environment.md)
+- [Containers](containers.md)
 - [Experiment](experiment.md)
-- [Dataloader](dataloader.md)
-- [Processor](processor.md)
 - [Featurizer](featurizer.md)
+- [Logger](logger.md)
+- [Pipes](pipes.md)
+- [Processor](processor.md)
+
+## Examples
+
+- [Simple](example_simple.md)
+- [Data-to-Features](example_df.md)
+- [Web Integration](example_web.md)
