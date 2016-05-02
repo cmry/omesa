@@ -139,7 +139,7 @@ class Doc2Markdown:
                 elif ' : ' in row and buff:
                     buff += (''.join(lines), )
                     table += self.md_table_row.format(*buff)
-                    buff = ()
+                    buff, lines = (), []
                 elif buff:
                     lines.append(row.replace('\n', ' '))
             if buff:

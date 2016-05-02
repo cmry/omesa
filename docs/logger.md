@@ -24,7 +24,7 @@ order.
 | Attributes    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | fn | str |         File name. |
-        | buffer | list | File name.Used to stack lines in a loop that can be written to the log line oncethe loop has been completed. |
+        | buffer | list | Used to stack lines in a loop that can be written to the log line oncethe loop has been completed. |
         
 
 --------- 

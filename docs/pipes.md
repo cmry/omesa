@@ -23,8 +23,8 @@ through a settings dict that is provided in conf.
 | Attributes    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | conf | dict |         Configuration dictionary passed to the experiment class. |
-        | hasher | class |         Configuration dictionary passed to the experiment class.        DictVectorizer class from sklearn. |
-        | decomposers | class | Configuration dictionary passed to the experiment class.DictVectorizer class from sklearn.TruncatedSVD class from sklearn. |
+        | hasher | class |         DictVectorizer class from sklearn. |
+        | decomposers | class | TruncatedSVD class from sklearn. |
         
 
 --------- 

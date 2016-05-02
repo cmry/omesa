@@ -28,7 +28,7 @@ transform methods.
 | Attributes    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | helper | list of classes |         Store for the provided features. |
-        | Y | list of labels | Store for the provided features.Labels for X. |
+        | Y | list of labels | Labels for X. |
         
 
 ------- 
@@ -339,7 +339,7 @@ Get the sentiment belonging to the words in the parse string.
 | Parameters    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | boolean, optional, default True |         Text-based features to be extracted, includes:        - Total amount of flooding, and individually punctuation and          alphanumeric stats.        - Frequency of punctuation and number sequences.        - Emoticon frequencies. |
-        | sentence_lenth | boolean, optional, default True | Text-based features to be extracted, includes:- Total amount of flooding, and individually punctuation andalphanumeric stats.- Frequency of punctuation and number sequences.- Emoticon frequencies.Add the sentence length as a feature. |
+        | sentence_lenth | boolean, optional, default True | Add the sentence length as a feature. |
         
 
 ------- 

@@ -1,40 +1,40 @@
 # Processor methods
 
 
-# SimpleCleaner
+# SimpleCleaner 
 
-``` python
- class SimpleCleaner def __init__(self)
+``` python 
+ class SimpleCleaner def __init__(self) 
 ```
 
 Very simple data cleaner.
 
----------
+--------- 
 
-## Methods
+## Methods 
 
-
+ 
 
 | Function    | Doc             |
 |:-------|:----------------|
         | clean | Lower text and removes special stuff. |
-
-
+         
+ 
 
 ### clean
 
-``` python
-    clean(text)
+``` python 
+    clean(text) 
 ```
 
 
 Lower text and removes special stuff.
 
 
-# SocialCleaner
+# SocialCleaner 
 
-``` python
- class SocialCleaner(object)
+``` python 
+ class SocialCleaner(object) 
 ```
 
 Preprocess raw social media data.
@@ -44,11 +44,11 @@ as well as the texts that are provided. Current implementations are the
 standard replacement of bbcode, emoticons and urls with their own
 __TOKENS__. These are placed in the `basic` preprocessing.
 
----------
+--------- 
 
-## Methods
+## Methods 
 
-
+ 
 
 | Function    | Doc             |
 |:-------|:----------------|
@@ -56,13 +56,13 @@ __TOKENS__. These are placed in the `basic` preprocessing.
         | replace_bbcode_tags | Replace BBCode tags. |
         | replace_url_email | Replace URLs and e-mail addresses. |
         | find_emoticons | Replace or find emoticons in given text. |
-
-
+         
+ 
 
 ### clean
 
-``` python
-    clean(text)
+``` python 
+    clean(text) 
 ```
 
 
@@ -70,8 +70,8 @@ Clean according to ALL the preprocessors.
 
 ### replace_bbcode_tags
 
-``` python
-    replace_bbcode_tags(text)
+``` python 
+    replace_bbcode_tags(text) 
 ```
 
 
@@ -90,17 +90,17 @@ The new tags are:
 | Parameters    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string | Input text. |
-
+        
 
 | Returns    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string | The text in which the Netlog tags with [] have been replaced. |
-
+        
 
 ### replace_url_email
 
-``` python
-    replace_url_email(text, repl=('_URL_', '_EMAIL_'))
+``` python 
+    replace_url_email(text, repl=('_URL_', '_EMAIL_')) 
 ```
 
 
@@ -112,17 +112,17 @@ Replace e-mail addresses with the tag _EMAIL_
 | Parameters    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string | Input text. |
-
+        
 
 | Returns    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string | The text in which the URLs and e-mail addresses have been replaced. |
-
+        
 
 ### find_emoticons
 
-``` python
-    find_emoticons(text, repl="_EMOTICON_")
+``` python 
+    find_emoticons(text, repl="_EMOTICON_") 
 ```
 
 
@@ -135,18 +135,18 @@ eastern ^_^.
 | Parameters    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string |             Input text. |
-
+        
 
 | Returns    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | re.sub | string |             The text with the emoticons replaced by repl. |
+        
 
 
+# Spacy 
 
-# Spacy
-
-``` python
- class Spacy(object)
+``` python 
+ class Spacy(object) 
 ```
 
 Wrapper to spaCy.io. From their docs @ http://http://spacy.io/docs/.
@@ -161,22 +161,22 @@ backbone. It's faster than CoreNLP, and Python <3. While spaCy can also
 extract things such as NER (it lacks sentiment and co-reference), this
 is currently not enabled for Omesa.
 
----------
+--------- 
 
-## Methods
+## Methods 
 
-
+ 
 
 | Function    | Doc             |
 |:-------|:----------------|
         | parse | Extract spaCy tags. |
-
-
+         
+ 
 
 ### parse
 
-``` python
-    parse(text)
+``` python 
+    parse(text) 
 ```
 
 
@@ -188,18 +188,18 @@ token, lemma, POS.
 | Parameters    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string | A raw string of characters. |
-
+        
 
 | Returns    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | instance | list | The token, lemma, POS list that can be used in featurizers. |
+        
 
 
+# Frog 
 
-# Frog
-
-``` python
- class Frog(object)
+``` python 
+ class Frog(object) 
 ```
 
 Wrapper to python-frog, loaded from LaMachine.
@@ -224,22 +224,22 @@ probability mass assigned to the best guess tag in the tag distribution.
 - Token number of head word in dependency graph (according to CSI-DP).
 - Type of dependency relation with head word.
 
----------
+--------- 
 
-## Methods
+## Methods 
 
-
+ 
 
 | Function    | Doc             |
 |:-------|:----------------|
         | parse | Extract frog tags. |
-
-
+         
+ 
 
 ### parse
 
-``` python
-    parse(text)
+``` python 
+    parse(text) 
 ```
 
 
@@ -251,7 +251,7 @@ token, lemma, POS.
 | Parameters    | Type             | Doc             |
 |:-------|:-----------------|:----------------|
         | text | string | A raw string of characters. |
-
+        
 
 | Returns    | Type             | Doc             |
 |:-------|:-----------------|:----------------|

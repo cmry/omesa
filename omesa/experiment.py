@@ -24,7 +24,7 @@ class Experiment(object):
     dictionary. The full list of options for this is listed under attributes.
 
     Attributes
-    -----
+    ----------
     "project" : "project_name"
         The project name functions as a hook to for example call the best
         performing set of parameters out of a series of experiments on the same
