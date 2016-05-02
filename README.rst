@@ -48,7 +48,8 @@ Important Note
 ''''''''''''''
 
 This repository is currently in alpha development, so don't expect any stable
-functionality until this part is removed.
+functionality until this part is removed. The `dev` branch will usually have the
+latest (not always stable) version.
 
 Development Preview
 '''''''''''''''''''
