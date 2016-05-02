@@ -1,14 +1,9 @@
 """Classes to log and display pipeline information."""
 
-# pylint:       disable=E1103,W0512,R0903,C0103
-
-from collections import Counter, OrderedDict
-from operator import itemgetter
-import numpy as np
-from sklearn import metrics
+from collections import OrderedDict
 
 
-class Log(object):
+class Logger(object):
     """Provides feedback to the user and can store settings in a log file.
 
     Class holds a log string that can be formatted according to the used
@@ -87,30 +82,7 @@ class Log(object):
         """Save log."""
         with open(self.file_name, 'w') as f:
             o = ['head', 'sparse', 'svd', 'rep', 'grid', 'tfcv', 'f1sc', 'cr']
-            f.write(' '.join([v for v in OrderedDict(sorted(self.log.items(),
-                              key=lambda i: o.index(i[0]))).values()]))
-
-
-class Reporter(Log):
-    """Reports sklearn pipeline info."""
-
-    def basic(self, t, y):
-        """Report baseline, and label distribution."""
-        maj_class = Counter(y).most_common(1)[0][0]
-        baseline = [maj_class for _ in y]
-        dist = Counter(y).most_common(10)
-        self.post('rep', (
-            t, dist, round(metrics.accuracy_score(y, baseline), 3),
-            dist[1][0]))
-        return dist[1][0]
-
-    def grid(self, grid_scores, n_top=1):
-        """Post gridsearch report."""
-        top_scores = sorted(grid_scores, key=itemgetter(1),
-                            reverse=True)[:n_top]
-        for i, score in enumerate(top_scores):
-            self.loop('grid', (i + 1, score.mean_validation_score,
-                               np.std(score.cv_validation_scores),
-                               score.parameters))
-        self.dump('grid')
-        return top_scores[0].parameters
+            f.write(' '.join(
+                [v for v in OrderedDict(
+                    sorted(self.log.items(), key=lambda i: o.index(i[0]))
+                    ).values()]))

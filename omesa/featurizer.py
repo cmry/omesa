@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Text feature extraction module.
 
 This module contains several helper classes for extracting textual features
@@ -10,14 +8,13 @@ framework.
 """
 
 import re
+import json
 import pickle
 from collections import OrderedDict, Counter
-import numpy as np
+from sys import exit
+from urllib.parse import urlencode
 
-# Author:       Chris Emmery
-# Contributors: Mike Kestemont, Ben Verhoeven, Janneke van de Loo
-# License:      BSD 3-Clause
-# pylint:       disable=E1103,W0512,R0903,C0103
+import numpy as np
 
 
 class Featurizer(object):
@@ -68,40 +65,42 @@ class Featurizer(object):
 
     def __init__(self, features, preprocessor=False, parser=False):
         """Initialize the wrapper and set the provided features to a var."""
-        self.metaf, self.metafc = {}, 0
         self.helpers = features
         self.preprocessor = preprocessor
         self.parser = parser
+        self.head = []
 
-    def transform(self, stream):
+    def transform(self, instance):
         """Call all the helpers to extract features.
 
         Parameters
         ----------
-        stream : generator
-            Yields an instance with (label, raw, parse, meta).
-        func : function
-            Function object from etiher the fit or transform method.
+        instance : tuple
+            Containing at least (raw) and optionally (parse, meta).
 
         Returns
         -------
-        X : numpy array of shape [n_samples, n_features]
-            Training data returns when applying the transform function.
+        v : dict
+            Feature vector where key, value = feature, value.
+        label : str
+
         """
-        for label, raw, parse, meta in stream:
-            v = {}
-            text = self.preprocessor.clean(raw) if self.preprocessor else raw
-            if not parse and self.parser:
-                parse = self.parser.parse(raw if self.parser.raw else text)
-            for helper in self.helpers:
-                v.update(helper.transform(text, parse))
-            if meta:
-                for meta_inst in meta:
-                    if meta_inst not in self.metaf:
-                        self.metaf[label] = self.metafc
-                        self.metafc += 1
-                        v.update({self.metaf[meta_inst]: 1})
-            yield label, v
+        if isinstance(instance, str):
+            instance = tuple([instance])
+        raw, label, parse, meta = instance + (None,) * (4 - (len(instance)))
+
+        text = self.preprocessor.clean(raw) if self.preprocessor else raw
+        if not parse and self.parser:
+            parse = self.parser.parse(raw if self.parser.raw else text)
+
+        v = {}
+        for helper in self.helpers:
+            v.update(helper.transform(text, parse))
+        if meta:
+            for name, value in meta:
+                v.update({"meta_" + name: value})
+
+        return v, label
 
 
 class Ngrams(object):
@@ -142,10 +141,8 @@ class Ngrams(object):
 
     def __str__(self):
         """Report on feature settings."""
-        return '''
-        feature:   {0}
-        n_list:    {1}
-        '''.format(self.name, self.n_list)
+        return '''NGrams(level={0}, n_list={1})'''.format(self.level,
+                                                          self.n_list)
 
     @staticmethod
     def find_ngrams(input_list, n):
@@ -165,7 +162,7 @@ class Ngrams(object):
             needle = raw.split()
         elif self.level == 'token' or self.level == 'pos':
             # FIXME: parses are not handled well
-            needle = parse[self.row] if parse[0][0] else raw.split()
+            needle = parse[self.row] if parse else raw.split()
             if self.level == 'pos' and not parse:
                 raise EnvironmentError("There's no POS annotation.")
 
@@ -204,6 +201,68 @@ class FuncWords(object):
         tokens = [item[0] for item in parse if item[2].split('(')[0]
                   in self.functors]
         return Counter(tokens)
+
+
+class APISent(object):
+    """Sentiment features using API tools.
+
+    Interacts with web and therefore needs urllib3. Might be _very_ slow,
+    use with caution and prefrably store features.
+
+    Parameters
+    ----------
+    mode : string, optional, default 'deep'
+        Can be either 'deep' for Twitter-based neural sentiment (py2, boots
+        local server instance), or 'nltk' for the text-processing.com API.
+
+    Examples
+    --------
+    >>> sent = APISent()
+    >>> sent.transform("you're gonna have a bad time")
+    ... 0.030120761495050809
+    >>> sent = APISent(mode='nltk')
+    >>> sent.transform("you're gonna have a bad time")
+    ...
+
+    Notes
+    -----
+    Implemented by: Chris Emmery
+    Deep sentiment: https://github.com/xiaohan2012/twitter-sent-dnn
+    NLTK API: http://text-processing.com
+    """
+
+    def __init__(self, mode='deep'):
+        """Load poolmanager and set API location."""
+        from urllib3 import PoolManager
+        self.name = 'apisent'
+        self.mode = mode
+        self.pool = PoolManager()
+
+    def __str__(self):
+        """String representation for APISent."""
+        return '''
+        feature:    {0}
+        mode:       {1}
+        '''.format(self.name, self.mode)
+
+    def transform(self, raw, _):
+        """Return a dictionary of feature values."""
+        if self.mode == 'deep':
+            jsf = json.dumps({'text': raw})
+            header = {'content-type': 'application/json'}
+            request = "http://localhost:6667/api"
+            r = self.pool.request('POST', request, headers=header, body=jsf)
+            out = {'deepsent': float(r.data.decode('utf-8'))}
+        elif self.mode == 'nltk':
+            qf = urlencode({'text': raw})
+            request = "http://text-processing.com/api/sentiment/"
+            r = self.pool.request('POST', request, body=qf)
+            try:
+                out = json.loads(r.data.decode('utf-8'))["probability"]
+            except ValueError:
+                exit("SentAPI threw unexpected response, " +
+                     "probably reached rate limit.")
+        return out
 
 
 class DuSent(object):
@@ -285,7 +344,7 @@ class SimpleStats(object):
         - Emoticon frequencies.
 
     token : boolean, optional, default True
-        Token-based features to be extracted, can includes:
+        Token-based features to be extracted, includes:
 
         - Word lengths.
         - Number of all CAPITAL words.
@@ -308,8 +367,8 @@ class SimpleStats(object):
 
     Notes
     -----
-    Features by: Janneke van de Loo
     Implemented by: Chris Emmery
+    Features by: Janneke van de Loo
     """
 
     def __init__(self, text=True, token=True, sentence_length=True):
@@ -437,7 +496,9 @@ class Readability(object):
         self.url = re.compile(r"https?://[^\s]+")
         self.ref = re.compile(r"@[a-z0-9_./]+", flags=re.I)
 
-    def transform(self, _, __):
+    def transform(self, raw, _):
         """Add each metric to the feature vector."""
         # TODO: add stuff here
+        _ = self.name
+        _ = raw
         return NotImplementedError
