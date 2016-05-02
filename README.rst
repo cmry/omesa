@@ -2,7 +2,7 @@ Omesa
 =====
 
 .. image:: https://travis-ci.org/cmry/omesa.svg?branch=master
-    :target: https://travis-ci.org/cmry/Omesa
+    :target: https://travis-ci.org/cmry/omesa
     :alt: Travis-CI
 
 .. image:: https://readthedocs.org/projects/omesa/badge/?version=latest
