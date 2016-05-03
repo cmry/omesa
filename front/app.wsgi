@@ -78,7 +78,7 @@ def save_graph(tag, data):
 def test_train_plot(exp):
     tr_score = exp.res['train']['score'] if exp.res.get('train') else 0.0
     te_score = exp.res['test']['score'] if exp.res.get('test') else 0.0
-    if not exp.res['prop']:
+    if not exp.res.get('prop'):
         data = [
             go.Bar(
                 x=['train', 'test'],
