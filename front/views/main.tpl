@@ -32,10 +32,10 @@
       <section class="sidebar">
         <ul class="sidebar-menu">
           <li {{! 'class="active"' if page == 'Dashboard' else ''}}><a href="/"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-          <li {{! 'class="active"' if page == 'Experiment' else ''}}><a href="/run"><i class="fa fa-flask"></i> <span>Experiment</span></a></li>
+          <!--<li {{! 'class="active"' if page == 'Experiment' else ''}}><a href="/run"><i class="fa fa-flask"></i> <span>Experiment</span></a></li>-->
           <li {{! 'class="active"' if page == 'Results' else ''}}><a href="/exp"><i class="fa fa-line-chart"></i> <span>Results</span></a></li>
-          <li {{! 'class="active"' if page == 'Data' else ''}}><a href="/data"><i class="fa fa-database"></i> <span>Data</span></a></li>
-          <li {{! 'class="active"' if page == 'Documentation' else ''}}><a href="/docs"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+          <!--<li {{! 'class="active"' if page == 'Data' else ''}}><a href="/data"><i class="fa fa-database"></i> <span>Data</span></a></li>-->
+          <li {{! 'class="active"' if page == 'Documentation' else ''}}><a href="https://omesa.readthedocs.io/en/latest/example_web/"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
         </ul>
       </section>
     </aside>

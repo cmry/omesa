@@ -156,7 +156,7 @@ class LimeEval(object):
         for i, exp in enumerate(exps):
             if not loc:
                 loc = './static/plots/'
-            with open(loc + 'lime_' + str(i)+'.html', 'w') as f:
+            with open(loc + 'lime_' + str(i) + '.html', 'w') as f:
                 html_str = exp.as_html()
                 f.write(html_str)
                 f_names.append(f.name[1:])
@@ -190,8 +190,8 @@ class LimeEval(object):
 
     def tag_text(self, i, expl):
         """Highlight LIME top-word in text. Works with 'graphs' method."""
-        repl = [(word, ('__NEG__' if val < 0 else '__POS__') +
-                 word + '</span>') for word, val in expl]
+        repl = [(' ' + word + ' ', (' __NEG__' if val < 0 else ' __POS__') +
+                 word + '</span>  ') for word, val in expl]
         doc = str(self.docs[i]).replace('"', '')
         for y in repl:
             doc = doc.replace(*y)
