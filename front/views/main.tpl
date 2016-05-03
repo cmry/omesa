@@ -19,8 +19,8 @@
   <div class="wrapper">
     <header class="main-header">
       <a href="/" class="logo">
-          <span class="logo-mini"><object height="25mm" type="image/svg+xml" data="/static/omesa_plain_white.svg">_O_</object></span>
-          <span class="logo-lg"><object height="25mm" type="image/svg+xml" data="/static/omesa_plain_white.svg">_O_</object></span>
+          <span class="logo-mini"><object height="25mm" type="image/svg+xml" data="/static/icons/omesa_plain_white.svg">_O_</object></span>
+          <span class="logo-lg"><object height="25mm" type="image/svg+xml" data="/static/icons/omesa_plain_white.svg">_O_</object></span>
       </a>
       <nav class="navbar navbar-static-top">
         <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">

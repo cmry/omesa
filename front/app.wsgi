@@ -70,7 +70,7 @@ def save_graph(tag, data):
     """Quick binder to tag plot, dumps plotly data and layout."""
     layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
     fig = go.Figure(data=data, layout=layout)
-    fn = './static/{0}.html'.format(tag)
+    fn = './static/plots/{0}.html'.format(tag)
     py.plot(fig, filename=fn, auto_open=False, show_link=False)
     return fn[1:]
 
@@ -159,7 +159,7 @@ def lime_eval(exp, tab, labs):
 @bottle.route('/exp/<name>')
 def experiment(name):
     """Experiment page."""
-    exp = Pipeline(name=name, source='db')
+    exp = Pipeline(name=name, out='db')
     exp.load()
 
     tab = db.fetch(Table, {'name': name})
@@ -181,7 +181,7 @@ def experiment(name):
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
     return skeleton(page=name, layout='res',
                     hook=bottle.template('res', conf=conf,
-                                         plot="/static/basic-bar.html",
+                                         plot="/static/plots/basic-bar.html",
                                          lime=lime, heat=heats, rep=rep,
                                          labs=labs))
 
