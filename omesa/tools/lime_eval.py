@@ -200,14 +200,34 @@ class LimeEval(object):
         doc = doc.replace('__POS__', '<span style="color:#ff7f0e">')
         return doc
 
-    def graphs(self, exps):
+    # FIXME: abstract the expl, etc. locations to non-graph, able to yield them
+    def graphs(self, exps, comp=False):
         """Convert exps list to graph locations and annotated text."""
         order = []
         for i, exp in enumerate(exps):
-            expl = exp.as_list()
-            prb = exp.predict_proba
-            cln = exp.class_names
+            if not comp:
+                expl = exp.as_list()
+                prb = exp.predict_proba
+                cln = exp.class_names
+            else:
+                expl, prb, cln = exp['expl'], exp['prb'], exp['cln']
             order.append([self.prob_graph(i, prb, cln),
                           self.weight_graph(i, expl),
                           self.tag_text(i, expl)])
         return order
+
+    def lime_web(self, tab, graph=True):
+        if not tab.get('lime_data_comp'):
+            if isinstance(tab['lime_data_repr'], dict):
+                docs = self.load_omesa(reader_dict=tab['lime_data_repr'])
+            else:
+                docs = self.load_omesa(doc_iter=tab['lime_data_repr'])
+            exps = self.explain(docs)
+            comp = False
+            if not graph:
+                return exps
+        else:
+            exps = tab['lime_data_comp']
+            comp = True
+        return [x for x in self.graphs(exps, comp)] if exps else \
+            ["Model not probability-based and therefore can't do LIME."]

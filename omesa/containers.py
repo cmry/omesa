@@ -9,6 +9,8 @@ from types import GeneratorType
 from os import getcwd
 
 from .tools import serialize_sk as sr
+from .tools import lime_eval as le
+
 try:
     from .database import Database, Configuration, Vectorizer, \
                           Classifier, Results, Table
@@ -75,6 +77,14 @@ class Pipeline(object):
                 tab.update({n + '_data': tag})
                 tab.update({n + '_data_path': tag})
                 tab.update({n + '_data_repr': tag})
+
+        # FIXME: string error when running 20news.py
+        # if not self.cnf.get('lime_protect') and tab.get('lime_data'):
+        #     # FIXME: replace with multi-labelled case
+        #     enc_labs = self.vec.encoder.inverse_transform([0, 1])
+        #     limer = le.LimeEval(self.clf, self.vec,
+        #                         enc_labs).lime_web(tab, graph=False)
+        #     tab.update({'lime_data_comp': 'test'})
 
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),

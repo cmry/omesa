@@ -66,6 +66,8 @@ class Vectorizer(object):
         """Send the data through all applicable steps to vectorize."""
         p = Pool(processes=self.conf.get('n_jobs', None))
         D, y = zip(*p.map(self.featurizer.transform, data))
+        p.close()
+        p.join()
         func = 'transform' if not fit else 'fit_transform'
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter

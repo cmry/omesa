@@ -145,17 +145,6 @@ def unwind_conf(name, tab):
     return conf
 
 
-def lime_eval(exp, tab, labs):
-    lime = le.LimeEval(exp.clf, exp.vec, labs)
-    if isinstance(tab['lime_data_repr'], dict):
-        docs = lime.load_omesa(reader_dict=tab['lime_data_repr'])
-    else:
-        docs = lime.load_omesa(doc_iter=tab['lime_data_repr'])
-    exps = lime.explain(docs)
-    return [x for x in lime.graphs(exps)] if exps else \
-        ["Model does not support probability prediction and can't do LIME."]
-
-
 @bottle.route('/exp/<name>')
 def experiment(name):
     """Experiment page."""
@@ -167,7 +156,7 @@ def experiment(name):
     # TODO: replace labels with multi-class variant
     labs = exp.vec.encoder.inverse_transform([0, 1])
 
-    lime = lime_eval(exp, tab, labs)
+    lime = le.LimeEval(exp.clf, exp.vec, labs).lime_web(tab)
     test_train_plot(exp)
 
     # heatmap
