@@ -156,7 +156,11 @@ def experiment(name):
     # TODO: replace labels with multi-class variant
     labs = exp.vec.encoder.inverse_transform([0, 1])
 
-    lime = le.LimeEval(exp.clf, exp.vec, labs).lime_web(tab)
+    if tab.get('lime_data_comp'):
+        lev = le.LimeEval()
+    else:
+        lev = le.LimeEval(exp.clf, exp.vec, labs)
+    lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
     test_train_plot(exp)
 
     # heatmap
