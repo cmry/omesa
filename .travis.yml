@@ -19,5 +19,5 @@ install:
   - source activate test-environment
 
 script:
-  - nosetests --with-coverage --cover-package=omesa --logging-level=INFO
-  - python3 examples/20news.py
+  - cd examples
+  - python3 20news.py

@@ -6,11 +6,12 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import MaxAbsScaler
 from sklearn.svm import SVC
 
+# for as long as it's not yet pip installable
+import sys
+sys.path.append('../')
+# -----
 
 try:
-    # for as long as it's not yet pip installable
-    import sys, os
-    sys.path.append(os.path.realpath(__file__).replace(__file__, '') + '../')
     from omesa.experiment import Experiment
     from omesa.featurizer import Ngrams, Pipe
 except ImportError:
