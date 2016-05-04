@@ -19,5 +19,6 @@ install:
   - source activate test-environment
 
 script:
+  - python3 setup.py install
   - cd examples
   - python3 20news.py
