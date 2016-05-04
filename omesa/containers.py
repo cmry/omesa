@@ -9,7 +9,6 @@ from types import GeneratorType
 from os import getcwd
 
 from .tools import serialize_sk as sr
-from .tools import lime_eval as le
 
 try:
     from .database import Database, Configuration, Vectorizer, \
@@ -78,6 +77,7 @@ class Pipeline(object):
                 tab.update({n + '_data_repr': tag})
 
         if not self.cnf.get('lime_protect') and tab.get('lime_data'):
+            from .tools import lime_eval as le
             # FIXME: replace with multi-labelled case
             labs = self.vec.encoder.inverse_transform([0, 1])
             lime = le.LimeEval(self.clf, self.vec, labs)
