@@ -20,4 +20,4 @@ install:
 
 script:
   - nosetests --with-coverage --cover-package=omesa --logging-level=INFO
-  - ls -l
+  - python3 examples/20news.py
