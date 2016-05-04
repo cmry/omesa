@@ -119,7 +119,7 @@ class Optimizer(object):
             if score > highest_score:
                 highest_score = score
         print("\n\n Best scores: {0}".format(
-            {str(y).split('(')[2][7:]: round(x, 3)
+            {str(dict(y.steps)['clf'].__class__.__name__): round(x, 3)
              for x, y in score_sum.items()}))
         return highest_score, score_sum[highest_score]
 
@@ -136,11 +136,11 @@ class Optimizer(object):
             grid = {pipe.idf + '__' + k: v for pipe in pipes
                     for k, v in pipe.parameters.items()}
             grid.update({'clf__' + k: v for k, v in clf.parameters.items()})
-            print("\n", "Clf: ", str(clf))
+            print("\n", "Clf: ", str(clf.skobj))
             print("\n", "Grid: ", grid)
             grid = GridSearchCV(
-                pipeline.Pipeline([('clf', clf.skobj)] +
-                                  [(pipe.idf, pipe.skobj) for pipe in pipes]),
+                pipeline.Pipeline([(pipe.idf, pipe.skobj) for pipe in pipes] +
+                                  [('clf', clf.skobj)]),
                 scoring=self.met, param_grid=grid,
                 n_jobs=self.conf.get('n_jobs', -1))
 

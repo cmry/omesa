@@ -235,7 +235,7 @@ class Pipe(object):
         """Pipe initialization."""
         self.idf = idf
         self.skobj = skobj
-        self.parameters = parameters
+        self.parameters = parameters if parameters else {}
 
     def check(self, seed):
         """Check if correct params are set for objects."""

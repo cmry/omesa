@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import MaxAbsScaler
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 
 # for as long as it's not yet pip installable
 import sys
@@ -13,8 +13,10 @@ sys.path.append('../')
 
 try:
     from omesa.experiment import Experiment
-    from omesa.featurizer import Ngrams, Pipe
-except ImportError:
+    from omesa.featurizer import Ngrams
+    from omesa.containers import Pipe
+except ImportError as e:
+    print(e)
     exit("Could not load omesa. Please update the path in this file.")
 
 
@@ -39,12 +41,12 @@ Experiment({
     "train_data": loader('train'),
     "test_data": loader('test'),
     "lime_data": [dat[0] for dat in loader('test', emax=5)],
-    "proportions": 10,
+    # "proportions": 10,
     "features": [Ngrams(level='char', n_list=[3])],
     "pipeline": [
         Pipe('scaler', MaxAbsScaler()),
-        Pipe('clf', SVC(kernel='linear'),
-             params={'C': np.logspace(-2.0, 1.0, 5)}),
+        Pipe('clf', LinearSVC(),
+             parameters={'C': np.logspace(-2.0, 1.0, 1)}),
         Pipe('clf', MultinomialNB())
     ],
     "save": ("log", "model", "db")

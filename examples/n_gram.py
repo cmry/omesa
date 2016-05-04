@@ -14,7 +14,8 @@ try:
     from omesa.experiment import Experiment
     from omesa.featurizer import Ngrams
     from omesa.containers import CSV
-except ImportError:
+except ImportError as e:
+    print(e)
     exit("Could not load omesa. Please update the path in this file.")
 
 Experiment({
