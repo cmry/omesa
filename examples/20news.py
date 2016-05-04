@@ -1,21 +1,23 @@
 """20newsgroups experiment."""
 
+import sys
 import numpy as np
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import MaxAbsScaler
 from sklearn.svm import SVC
 
-# for as long as it's not yet pip installable
-import sys
-sys.path.append('../')
-# -----
+for path in ('../', './'):
+    try:
+        # for as long as it's not yet pip installable
+        sys.path.append(path)
+        from omesa.experiment import Experiment
+        from omesa.featurizer import Ngrams, Pipe
+    except ImportError as e:
+        print(e)
+        print("Could not load omesa. Please update the path in this file.")
 
-try:
-    from omesa.experiment import Experiment
-    from omesa.featurizer import Ngrams, Pipe
-except ImportError:
-    exit("Could not load omesa. Please update the path in this file.")
+assert Experiment
 
 
 def loader(subset, emax=None):
