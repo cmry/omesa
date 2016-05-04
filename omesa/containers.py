@@ -207,3 +207,45 @@ class CSV:
                 return tuple(row[i] for i in self.idx)
         else:
             return tuple(row[i] for i in self.idx)
+
+
+class Pipe(object):
+    """Pipe in pipeline wrapper.
+
+    Used to cleanly handle pipeline components that adhere to the scikit-learn
+    API, meaning they have a fit/transform method.
+
+    Parameters
+    ----------
+    idf : string
+        Name representation used in the pipeline. Only 'clf' should be used to
+        selection of multiple classifiers.
+
+    skobj : class
+        Classifier, normalizer, or decompostion class that adheres to the
+        scikit-learn API.
+
+    parameters : dict
+        With {'parameter name': values}. If an iterator or array-like object is
+        provided as parameter, these will by default be used as combinations to
+        apply grid search on.
+    """
+
+    def __init__(self, idf, skobj, parameters=False):
+        """Pipe initialization."""
+        self.idf = idf
+        self.skobj = skobj
+        self.parameters = parameters
+
+    def check(self, seed):
+        """Check if correct params are set for objects."""
+        try:
+            self.skobj.copy = False
+        except AttributeError:
+            pass
+
+        try:
+            self.skobj.probability = True
+            self.skobj.random_state = seed
+        except AttributeError:
+            pass

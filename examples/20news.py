@@ -13,13 +13,13 @@ sys.path.append('../')
 
 try:
     from omesa.experiment import Experiment
-    from omesa.featurizer import Ngrams
-    from omesa.containers import CSV
+    from omesa.featurizer import Ngrams, Pipe
 except ImportError:
     exit("Could not load omesa. Please update the path in this file.")
 
 
 def loader(subset, emax=None):
+    """Loader wrapper for 20news set."""
     categories = ['comp.graphics', 'sci.space']
     tset = fetch_20newsgroups(subset=subset, categories=categories,
                               shuffle=True, random_state=42)
@@ -41,10 +41,12 @@ Experiment({
     "lime_data": [dat[0] for dat in loader('test', emax=5)],
     "proportions": 10,
     "features": [Ngrams(level='char', n_list=[3])],
-    "normalizers": [MaxAbsScaler()],
-    "classifiers": [
-        # {'clf': SVC(kernel='linear'), 'C': np.logspace(-2.0, 1.0, 5)},
-        {'clf': MultinomialNB()}
+    "normalizers": [],
+    "pipeline": [
+        Pipe('scaler', MaxAbsScaler()),
+        Pipe('clf', SVC(kernel='linear'),
+             params={'C': np.logspace(-2.0, 1.0, 5)}),
+        Pipe('clf', MultinomialNB())
     ],
     "save": ("log", "model", "db")
 })

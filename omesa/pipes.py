@@ -59,8 +59,6 @@ class Vectorizer(object):
 
         self.hasher = DictVectorizer()
         self.encoder = LabelEncoder()
-        self.normalizers = conf.get('normalizers', normalizers)
-        self.decomposers = conf.get('decompositer', decomposers)
 
     def transform(self, data, fit=False):
         """Send the data through all applicable steps to vectorize."""
@@ -73,15 +71,6 @@ class Vectorizer(object):
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
         y = getattr(self.encoder, func)(y) if len(set(y)) != 1 else ''
-
-        # TODO: this could be moved to grid to also search over these settings
-        if self.normalizers:
-            for norm in self.normalizers:
-                norm.copy = False
-                X = getattr(norm, func)(X)
-        if self.decomposers:
-            for dcmp in self.decomposers:
-                X = getattr(dcmp, func)(X, copy=False)
 
         if len(y):
             return X, y
@@ -136,17 +125,24 @@ class Optimizer(object):
 
     def choose_classifier(self, X, y, seed):
         """Choose a classifier based on settings."""
-
-        for grid in deepcopy(self.conf['classifiers']):
-            clf = grid.pop('clf')
-            clf.probability = True
-            clf.random_state = seed
-            grid = {'clf__' + k: v for k, v in grid.items()}
+        clfs, pipes = [], []
+        for pipe in self.conf['pipeline']:
+            pipe.check(seed)
+            if pipe.idf == 'clf':
+                clfs.append(pipe)
+            else:
+                pipes.append(pipe)
+        for clf in clfs:
+            grid = {pipe.idf + '__' + k: v for pipe in pipes
+                    for k, v in pipe.parameters.items()}
+            grid.update({'clf__' + k: v for k, v in clf.parameters.items()})
             print("\n", "Clf: ", str(clf))
             print("\n", "Grid: ", grid)
-            grid = GridSearchCV(pipeline.Pipeline([('clf', clf)]),
-                                scoring=self.met, param_grid=grid,
-                                n_jobs=self.conf.get('n_jobs', -1))
+            grid = GridSearchCV(
+                pipeline.Pipeline([('clf', clf.skobj)] +
+                                  [(pipe.idf, pipe.skobj) for pipe in pipes]),
+                scoring=self.met, param_grid=grid,
+                n_jobs=self.conf.get('n_jobs', -1))
 
             print("\n Starting Grid Search...")
             grid.fit(X, y)
