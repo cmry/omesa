@@ -9,7 +9,6 @@ from types import GeneratorType
 from os import getcwd
 
 from .tools import serialize_sk as sr
-from .tools import lime_eval as le
 
 try:
     from .database import Database, Configuration, Vectorizer, \
@@ -47,10 +46,6 @@ class Pipeline(object):
 
         self.hook = self.vec.conf['name'] if not name else name
         self.storage = self.vec.conf['save'] if not out else out
-        try:
-            self.vec.conf = self.hook
-        except AttributeError:  # when loading
-            pass
 
         if 'db' in self.storage:
             self.db = Database()
@@ -69,22 +64,29 @@ class Pipeline(object):
 
         for n in ('train', 'test', 'lime'):
             try:
-                tab.update({n + '_data': self.cnf[n + '_data'].source,
-                            n + '_data_path': self.cnf[n + '_data'].path,
-                            n + '_data_repr': self.cnf[n + '_data'].__dict__})
+                tab.update({n + '_data': self.cnf[n + '_data'].source})
             except Exception as e:
                 tag = 'split' if n == 'test' else self.cnf[n + '_data']
-                tab.update({n + '_data': tag})
+            try:
+                tab.update({n + '_data_path': self.cnf[n + '_data'].path,
+                            n + '_data_repr': self.cnf[n + '_data'].__dict__})
+            except Exception as e:
+                if tag is not 'split':
+                    tag = '-'
                 tab.update({n + '_data_path': tag})
                 tab.update({n + '_data_repr': tag})
 
-        # FIXME: string error when running 20news.py
-        # if not self.cnf.get('lime_protect') and tab.get('lime_data'):
-        #     # FIXME: replace with multi-labelled case
-        #     enc_labs = self.vec.encoder.inverse_transform([0, 1])
-        #     limer = le.LimeEval(self.clf, self.vec,
-        #                         enc_labs).lime_web(tab, graph=False)
-        #     tab.update({'lime_data_comp': 'test'})
+        if not self.cnf.get('lime_protect') and tab.get('lime_data'):
+            from .tools import lime_eval as le
+            # FIXME: replace with multi-labelled case
+            labs = self.vec.encoder.inverse_transform([0, 1])
+            lime = le.LimeEval(self.clf, self.vec, labs)
+            exps = lime.load_omesa(tab['lime_data_repr'])
+            lime_list = []
+            for exp in exps:
+                expl, prb, cln = lime.unwind(exp)
+                lime_list.append({'expl': expl, 'prb': prb, 'cln': cln})
+            tab.update({'lime_data_comp': lime_list})
 
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),
@@ -98,6 +100,11 @@ class Pipeline(object):
         print(" Saving experiment...")
         tab = self._make_tab()
         fl = self.hook
+
+        try:  # purge double vec instance
+            self.vec.conf = self.hook
+        except AttributeError:  # when loading
+            pass
 
         if any([x in self.storage for x in ('json', 'pickle')]):
             top = {'name': self.hook, 'cnf': self.cnf, 'vec': self.vec,

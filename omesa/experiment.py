@@ -134,21 +134,20 @@ class Experiment(object):
         self.clf.fit(X, y)
         print(" done!")
 
+        av = 'binary' if len(set(y)) == 2 else 'micro'
         # if user wants to report more than best score, do another CV on train
         if conf.get('detailed_train', True):
             res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
             # TODO: print this to log ^
             self.res['train'] = {'y': y, 'res': res,
-                                 'score': metrics.f1_score(y, res,
-                                                           average='micro')}
+                                 'score': metrics.f1_score(y, res, average=av)}
 
         # report performance
         if not conf.get('test_data'):
             res = self.clf.predict(Xi)
             self.log.post('cr', (metrics.classification_report(yi, res),))
             self.res['test'] = {'y': yi, 'res': res,
-                                'score': metrics.f1_score(yi, res,
-                                                          average='micro')}
+                                'score': metrics.f1_score(yi, res, average=av)}
         else:
             print("\n Fetching test data...")
             Xi, yi = self.vec.transform(conf['test_data'])
@@ -160,8 +159,7 @@ class Experiment(object):
             yi = list(yi)
             self.log.post('cr', (metrics.classification_report(yi, res),))
             self.res['test'] = {'y': yi, 'res': res,
-                                'score': metrics.f1_score(yi, res,
-                                                          average='micro')}
+                                'score': metrics.f1_score(yi, res, average=av)}
 
         if conf.get('proportions'):
             self.res['prop'] = {}
@@ -169,22 +167,25 @@ class Experiment(object):
             pr = conf.get('proportions')
             for i in range(1, pr):
                 self.opt, prop = Optimizer(conf), (1 / pr) * (pr - i)
+                print(("\n\n # ---------- Training slice {0} ------------" +
+                      "\n").format(1 - prop))
                 Xp, _, yp, _ = train_test_split(X, y, test_size=prop,
                                                 stratify=y)
                 clff = self.opt.choose_classifier(Xp, yp, seed)
                 clff.fit(Xp, yp)
                 tres = cross_val_predict(clff, Xp, yp, cv=5, n_jobs=-1)
-                tscore = metrics.f1_score(yp, tres, average='micro')
-                score = metrics.f1_score(yi, clff.predict(Xi), average='micro')
-                print(" Testing proportion {0}: {1}...".format(1-prop, score))
+                tscore = metrics.f1_score(yp, tres, average=av)
+                score = metrics.f1_score(yi, clff.predict(Xi), average=av)
+                print("\n Result: {0}".format(score))
                 self.res['prop'].update(
-                    {1-prop: {'train': tscore, 'test': score}})
+                    {1 - prop: {'train': tscore, 'test': score}})
             self.opt = tmp_opt
 
+        print("\n # ------------------------------------------ \n")
         t2 = time()
-        dur = round(t2-t1, 1)
+        dur = round(t2 - t1, 1)
         self.res['dur'] = dur
         print("\n Experiment took {0} seconds".format(dur))
 
         self.save()
-        print("\n" + '-'*10, "\n")
+        print("\n" + '-' * 10, "\n")

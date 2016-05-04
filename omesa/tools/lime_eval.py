@@ -60,9 +60,10 @@ class LimeEval(object):
     Package from: https://github.com/marcotcr/lime.
     """
 
-    def __init__(self, cls_, vectorizer, class_names=None, docs=None):
+    def __init__(self, classifier=None, vectorizer=None, class_names=None,
+                 docs=None):
         """Start lime classifier, set label and empty doc placeholder."""
-        self.c = ScikitClassifier(cls_, vectorizer)
+        self.c = ScikitClassifier(classifier, vectorizer)
         self.names = class_names
         self.docs = [] if not docs else docs
 
@@ -90,7 +91,7 @@ class LimeEval(object):
             exps.append(exp)
         return exps
 
-    def load_omesa(self, reader_dict=None, doc_iter=None):
+    def load_omesa(self, lime_repr):
         """Special LIME loader for Omesa pipelines.
 
         Tries to find a path location to extract example documents from, and
@@ -101,10 +102,8 @@ class LimeEval(object):
 
         Parameters
         ----------
-        reader_dict : dict
-            The __dict__ representation from a file wrapper from
-            omesa.containers (for example) CSV. Will look for the original path
-            of the reader provided in configuration["lime_data"].
+        lime_repr : ...
+            ...
 
         Returns
         -------
@@ -112,20 +111,18 @@ class LimeEval(object):
             The top 5 (assuming it has a header) documents from a
             omesa.containers object.
         """
-        docs = []
-        if reader_dict:
-            reader = csv.reader(open(reader_dict['path']), quotechar='"')
-            ti, docs = reader_dict['idx'][0], []
+        if isinstance(lime_repr, dict):
+            reader = csv.reader(open(lime_repr['path']), quotechar='"')
+            ti = lime_repr['idx'][0]
             for i, row in enumerate(reader):
-                if reader_dict.get('header') and not i:
+                if lime_repr.get('header') and not i:
                     continue
-                docs.append(row[ti])
+                self.docs.append(row[ti])
                 if i == 5:
                     break
         else:
-            docs = doc_iter
-        self.docs = docs
-        return docs
+            self.docs = lime_repr
+        return self.explain(self.docs)
 
     @staticmethod
     def graph_to_file(exps, loc):
@@ -172,6 +169,7 @@ class LimeEval(object):
 
     def prob_graph(self, i, prob, cln):
         """Output LIME class probability graph. Works with 'graphs' method."""
+        # FIXME: colours are binary only
         data = [go.Bar(x=list(prob), y=cln,
                        marker=dict(color=['#1f77b4', '#ff7f0e']),
                        orientation='h')]
@@ -190,44 +188,42 @@ class LimeEval(object):
 
     def tag_text(self, i, expl):
         """Highlight LIME top-word in text. Works with 'graphs' method."""
-        repl = [(' ' + word + ' ', (' __NEG__' if val < 0 else ' __POS__') +
-                 word + '</span>  ') for word, val in expl]
+        # FIXME: replace special chars with space and replace on token
+        repl = [(word, ('LIMENEG' if val < 0 else 'LIMEPOS') +
+                 word + '</span>') for word, val in expl]
         doc = str(self.docs[i]).replace('"', '')
         for y in repl:
             doc = doc.replace(*y)
         # these are split up in tokens so that f.e. '1' doesn't screw it up
-        doc = doc.replace('__NEG__', '<span style="color:#1f77b4">')
-        doc = doc.replace('__POS__', '<span style="color:#ff7f0e">')
+        doc = doc.replace('LIMENEG', '<span style="color:#1f77b4">')
+        doc = doc.replace('LIMEPOS', '<span style="color:#ff7f0e">')
         return doc
 
-    # FIXME: abstract the expl, etc. locations to non-graph, able to yield them
+    def unwind(self, exp, comp=False):
+        """Unwind LIME experiment in its results."""
+        if not comp:
+            expl = exp.as_list()
+            prb = exp.predict_proba
+            cln = exp.class_names
+        else:
+            expl, prb, cln = exp['expl'], exp['prb'], exp['cln']
+        return expl, prb, cln
+
     def graphs(self, exps, comp=False):
         """Convert exps list to graph locations and annotated text."""
         order = []
         for i, exp in enumerate(exps):
-            if not comp:
-                expl = exp.as_list()
-                prb = exp.predict_proba
-                cln = exp.class_names
-            else:
-                expl, prb, cln = exp['expl'], exp['prb'], exp['cln']
+            expl, prb, cln = self.unwind(exp, comp)
             order.append([self.prob_graph(i, prb, cln),
                           self.weight_graph(i, expl),
                           self.tag_text(i, expl)])
         return order
 
-    def lime_web(self, tab, graph=True):
-        if not tab.get('lime_data_comp'):
-            if isinstance(tab['lime_data_repr'], dict):
-                docs = self.load_omesa(reader_dict=tab['lime_data_repr'])
-            else:
-                docs = self.load_omesa(doc_iter=tab['lime_data_repr'])
-            exps = self.explain(docs)
-            comp = False
-            if not graph:
-                return exps
+    def to_web(self, tab):
+        xps = tab.get('lime_data_comp')
+        if not xps:
+            xps = self.load_omesa(tab['lime_data_repr'])
         else:
-            exps = tab['lime_data_comp']
-            comp = True
-        return [x for x in self.graphs(exps, comp)] if exps else \
-            ["Model not probability-based and therefore can't do LIME."]
+            self.docs = tab.get('lime_data')
+        return [x for x in self.graphs(xps, comp=isinstance(xps[0], dict))] \
+            if xps else ["Model not probability-based."]
