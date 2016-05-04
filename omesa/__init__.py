@@ -35,3 +35,4 @@ __license__ = 'MIT'
 
 import omesa.experiment
 import omesa.processor
+import omesa.containers
