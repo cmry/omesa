@@ -60,8 +60,10 @@ class Logger(object):
                 "\n Tf-CV Result: {0}",
             'f1sc':
                 "\n F1 Result: {0}",
-            'cr':
-                "\n Performance on {0} set: \n\n{1}",
+            'cr_train':
+                "\n Performance on train set: \n\n{0}",
+            'cr_test':
+                "\n Performance on test set: \n\n{0}",
             'slice':
                 "\n\n # ---------- Grid slice {0} ------------\n"
         }
@@ -76,7 +78,7 @@ class Logger(object):
             self.dump(dtype)
 
     def report(self, tt, yi, res, av, metrics):
-        self.post('cr', (tt, metrics.classification_report(yi, res),))
+        self.post('cr_' + tt, (metrics.classification_report(yi, res), ))
         return {'y': yi, 'res': res,
                 'score': metrics.f1_score(yi, res, average=av)}
 
@@ -109,7 +111,8 @@ class Logger(object):
     def save(self):
         """Save log."""
         with open(self.file_name, 'w') as f:
-            o = ['head', 'sparse', 'svd', 'rep', 'grid', 'tfcv', 'f1sc', 'cr']
+            o = ['head', 'sparse', 'svd', 'rep', 'grid', 'tfcv', 'f1sc',
+                 'cr_train', 'cr_test', 'slice']
             f.write(' '.join(
                 [v for v in OrderedDict(
                     sorted(self.log.items(), key=lambda i: o.index(i[0]))

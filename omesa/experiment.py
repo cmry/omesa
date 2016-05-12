@@ -156,12 +156,11 @@ class Experiment(object):
             self.res['train'] = self.log.report('train', y, res, av, metrics)
 
         # report performance
-        if not conf.get('test_data'):
-            res = self.clf.predict(Xi)
-        else:
+        if conf.get('test_data'):
             Xi, yi = self.vec.transform(conf['test_data'])
-            self.log.data('sparse', 'test', Xi, dump=True)
-            res = self.clf.predict(Xi)
+
+        self.log.data('sparse', 'test', Xi, dump=True)
+        res = self.clf.predict(Xi)
         self.res['test'] = self.log.report('test', yi, res, av, metrics)
 
         if conf.get('proportions'):

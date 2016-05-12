@@ -110,6 +110,7 @@ class Pipeline(object):
             top = {'name': self.hook, 'cnf': self.cnf, 'vec': self.vec,
                    'clf': self.clf, 'res': self.res, 'tab': tab}
         if 'json' in self.storage:
+            # FIXME: JSON dumps is already done 
             serialized = sr.encode(top)
             json.dump(serialized, open(self.hook + '.json', 'w'))
         if 'pickle' in self.storage:
@@ -127,7 +128,8 @@ class Pipeline(object):
 
     def load(self):
         """Load experiment and classifier from source specified."""
-        if any([x in self.storage for x in ('man', 'json')]):
+        if 'json' in self.storage:
+            # FIXME: try to recursively solve imports if that works
             mod = sr.decode(json.load(open(self.hook + '.json')))
         if 'pickle' in self.storage:
             mod = pickle.load(open(self.hook + '.pickle', 'rb'))
