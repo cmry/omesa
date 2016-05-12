@@ -97,8 +97,10 @@ class Optimizer(object):
 
     def __init__(self, conf=None, classifiers=None, scoring='f1'):
         """Initialize optimizer with classifier dict and scoring, or conf."""
+        # FIXME: this doesn't work anymore
         std_clf = [{'clf': LinearSVC(class_weight='balanced'),
                     'C': np.logspace(-3, 2, 6)}]
+
         if not classifiers:
             classifiers = std_clf
         if not conf.get('classifiers'):
@@ -110,34 +112,41 @@ class Optimizer(object):
 
     def best_model(self):
         """Choose best parameters of trained classifiers."""
-        score_sum = {}
-        highest_score = 0
+        score_sum, highest_score = {}, 0
         for scores, estim in self.scores.values():
             best = sorted(scores, key=itemgetter(1), reverse=True)[0]
             score = best.mean_validation_score
             score_sum[score] = estim
             if score > highest_score:
                 highest_score = score
-        print("\n\n Best scores: {0}".format(
+
+        print("\n #--------- Grid Results -----------")
+        print("\n Best scores: {0}".format(
             {str(dict(y.steps)['clf'].__class__.__name__): round(x, 3)
              for x, y in score_sum.items()}))
+
         return highest_score, score_sum[highest_score]
 
     def choose_classifier(self, X, y, seed):
         """Choose a classifier based on settings."""
         clfs, pipes = [], []
+
         for pipe in self.conf['pipeline']:
             pipe.check(seed)
             if pipe.idf == 'clf':
                 clfs.append(pipe)
             else:
                 pipes.append(pipe)
-        for clf in clfs:
+
+        for i, clf in enumerate(clfs):
             grid = {pipe.idf + '__' + k: v for pipe in pipes
                     for k, v in pipe.parameters.items()}
             grid.update({'clf__' + k: v for k, v in clf.parameters.items()})
+
+            print("\n #-------- Classifier {0} ----------".format(i + 1))
             print("\n", "Clf: ", str(clf.skobj))
             print("\n", "Grid: ", grid)
+
             grid = GridSearchCV(
                 pipeline.Pipeline([(pipe.idf, pipe.skobj) for pipe in pipes] +
                                   [('clf', clf.skobj)]),

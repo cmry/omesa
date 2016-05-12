@@ -37,24 +37,51 @@ class Logger(object):
         """Set log dict. Empty buffer."""
         self.file_name = file_name + '.log'
         self.log = {
-            'head':   "\n---- Omesa ---- \n\n Config: \n" +
-                      "\t {0} \n\tname: {1} \n\tseed: {2} " +
-                      "\n\t \n",
-            # 'read':   "\n Reading from {0}... Acquired {1} from data.\n ",
-            'sparse': "\n Sparse {0} shape: {1}",
-            'svd':    "\n Fitting SVD with {0} components...",
-            'rep':    "\n\n---- {0} Results ---- \n" +
-                      "\n Distribution: {1}" +
-                      "\n Accuracy @ baseline: \t {2}" +
-                      "\n Reporting on label {3}",
-            'grid':   "\n Model with rank: {0} " +
-                      "\n Mean validation score: {1:.3f} (std: {2:.3f}) " +
-                      "\n Parameters: {3} \n",
-            'tfcv':   "\n Tf-CV Result: {0}",
-            'f1sc':   "\n F1 Result: {0}",
-            'cr':     "\n Performance on test set: \n\n{0}"
+            'head':
+                "\n---- Omesa ---- \n\n Config: \n" +
+                "\t {0} \n\tname: {1} \n\tseed: {2} " +
+                "\n\t \n",
+            # 'read':
+            #    "\n Reading from {0}... Acquired {1} from data.\n ",
+            'sparse':
+                "\n Sparse {0} shape: {1}",
+            'svd':
+                "\n Fitting SVD with {0} components...",
+            'rep':
+                "\n\n---- {0} Results ---- \n" +
+                "\n Distribution: {1}" +
+                "\n Accuracy @ baseline: \t {2}" +
+                "\n Reporting on label {3}",
+            'grid':
+                "\n Model with rank: {0} " +
+                "\n Mean validation score: {1:.3f} (std: {2:.3f}) " +
+                "\n Parameters: {3} \n",
+            'tfcv':
+                "\n Tf-CV Result: {0}",
+            'f1sc':
+                "\n F1 Result: {0}",
+            'cr':
+                "\n Performance on {0} set: \n\n{1}",
+            'slice':
+                "\n\n # ---------- Grid slice {0} ------------\n"
         }
         self.buffer = []
+
+    def head(self, features, name, seed):
+        self.post('head', ('\n'.join([str(c) for c in features]), name, seed))
+
+    def data(self, dtype, dset, data, dump=False):
+        self.loop(dtype, (dset, data.shape))
+        if dump:
+            self.dump(dtype)
+
+    def report(self, tt, yi, res, av, metrics):
+        self.post('cr', (tt, metrics.classification_report(yi, res),))
+        return {'y': yi, 'res': res,
+                'score': metrics.f1_score(yi, res, average=av)}
+
+    def slice(self, slicenr):
+        self.post('slice', slicenr)
 
     @staticmethod
     def echo(*args):

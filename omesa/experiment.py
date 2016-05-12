@@ -109,6 +109,23 @@ class Experiment(object):
             if 'model' in self.conf['save']:
                 Pipeline(self).save()
 
+    def _run_proportions(self, sets, av, seed, pr=None):
+        X, Xi, y, yi = sets
+        pr = self.conf.get('proportions', pr)
+        self.res['prop'], tmp, conf = {}, self.opt, self.conf
+        for i in range(1, pr):
+            self.opt, prop = Optimizer(conf), (1 / pr) * (pr - i)
+            self.log.slice(1 - prop)
+            Xp, _, yp, _ = train_test_split(X, y, test_size=prop, stratify=y)
+            clff = self.opt.choose_classifier(Xp, yp, seed).fit(Xp, yp)
+            tres = cross_val_predict(clff, Xp, yp, cv=5, n_jobs=-1)
+            tscore = metrics.f1_score(yp, tres, average=av)
+            score = metrics.f1_score(yi, clff.predict(Xi), average=av)
+            print("\n Result: {0}".format(score))
+            self.res['prop'].update(
+                {1 - prop: {'train': tscore, 'test': score}})
+        self.opt = tmp
+
     def run(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
         t1 = time()
@@ -116,13 +133,10 @@ class Experiment(object):
         np.random.RandomState(seed)
 
         # report features
-        self.log.post('head', ('\n'.join([str(c) for c in conf['features']]),
-                               conf['name'], seed))
+        self.log.head(conf['features'], conf['name'], seed)
 
         # stream data to sparse features
         X, y = self.vec.transform(conf['train_data'], fit=True)
-        self.log.loop('sparse', ('train', X.shape))
-
         # split off test data
         if not conf.get('test_data'):
             X, Xi, y, yi = train_test_split(
@@ -135,51 +149,23 @@ class Experiment(object):
         print(" done!")
 
         av = 'binary' if len(set(y)) == 2 else 'micro'
+        self.log.data('sparse', 'train', X)
         # if user wants to report more than best score, do another CV on train
         if conf.get('detailed_train', True):
             res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
-            # TODO: print this to log ^
-            self.res['train'] = {'y': y, 'res': res,
-                                 'score': metrics.f1_score(y, res, average=av)}
+            self.res['train'] = self.log.report('train', y, res, av, metrics)
 
         # report performance
         if not conf.get('test_data'):
             res = self.clf.predict(Xi)
-            self.log.post('cr', (metrics.classification_report(yi, res),))
-            self.res['test'] = {'y': yi, 'res': res,
-                                'score': metrics.f1_score(yi, res, average=av)}
         else:
-            print("\n Fetching test data...")
             Xi, yi = self.vec.transform(conf['test_data'])
-            self.log.loop('sparse', ('test', Xi.shape))
-            self.log.dump('sparse')
-            print(" done!")
-
+            self.log.data('sparse', 'test', Xi, dump=True)
             res = self.clf.predict(Xi)
-            yi = list(yi)
-            self.log.post('cr', (metrics.classification_report(yi, res),))
-            self.res['test'] = {'y': yi, 'res': res,
-                                'score': metrics.f1_score(yi, res, average=av)}
+        self.res['test'] = self.log.report('test', yi, res, av, metrics)
 
         if conf.get('proportions'):
-            self.res['prop'] = {}
-            tmp_opt = self.opt
-            pr = conf.get('proportions')
-            for i in range(1, pr):
-                self.opt, prop = Optimizer(conf), (1 / pr) * (pr - i)
-                print(("\n\n # ---------- Training slice {0} ------------" +
-                      "\n").format(1 - prop))
-                Xp, _, yp, _ = train_test_split(X, y, test_size=prop,
-                                                stratify=y)
-                clff = self.opt.choose_classifier(Xp, yp, seed)
-                clff.fit(Xp, yp)
-                tres = cross_val_predict(clff, Xp, yp, cv=5, n_jobs=-1)
-                tscore = metrics.f1_score(yp, tres, average=av)
-                score = metrics.f1_score(yi, clff.predict(Xi), average=av)
-                print("\n Result: {0}".format(score))
-                self.res['prop'].update(
-                    {1 - prop: {'train': tscore, 'test': score}})
-            self.opt = tmp_opt
+            self._run_proportions((X, Xi, y, yi), av, seed)
 
         print("\n # ------------------------------------------ \n")
         t2 = time()
