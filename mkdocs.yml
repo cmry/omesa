@@ -15,6 +15,7 @@ pages:
 - [example_simple.md, Examples, End-To-End]
 - [example_df.md, Examples, Data-To-Features]
 - [example_web.md, Examples, Web App]
+- [example_modu.md, Examples, Deployment]
 - [containers.md, Backend, Containers]
 - [logger.md, Backend, Logger]
 - [pipes.md, Backend, Pipes]

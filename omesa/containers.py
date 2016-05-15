@@ -110,9 +110,7 @@ class Pipeline(object):
             top = {'name': self.hook, 'cnf': self.cnf, 'vec': self.vec,
                    'clf': self.clf, 'res': self.res, 'tab': tab}
         if 'json' in self.storage:
-            # FIXME: JSON dumps is already done 
-            serialized = sr.encode(top)
-            json.dump(serialized, open(self.hook + '.json', 'w'))
+            sr.encode(top, open(self.hook + '.json', 'w'))
         if 'pickle' in self.storage:
             for t in ('train', 'test', 'lime'):
                 c = top['conf']['{0}_data'].format(t)
@@ -122,7 +120,7 @@ class Pipeline(object):
             top = {Configuration: self.cnf, Vectorizer: self.vec,
                    Classifier: self.clf, Results: self.res, Table: tab}
             for doc, bind in top.items():
-                js = json.loads(sr.encode(bind))
+                js = json.loads(sr.encodes(bind))
                 js['name'] = self.hook
                 self.db.save(doc(js))
 
@@ -130,7 +128,7 @@ class Pipeline(object):
         """Load experiment and classifier from source specified."""
         if 'json' in self.storage:
             # FIXME: try to recursively solve imports if that works
-            mod = sr.decode(json.load(open(self.hook + '.json')))
+            mod = sr.decode(open(self.hook + '.json'))
         if 'pickle' in self.storage:
             mod = pickle.load(open(self.hook + '.pickle', 'rb'))
         if 'db' in self.storage:

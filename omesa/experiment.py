@@ -23,81 +23,76 @@ class Experiment(object):
     classifier performance. For this, the class uses a configuration
     dictionary. The full list of options for this is listed under attributes.
 
-    Attributes
+    Paremeters
     ----------
-    "project" : "project_name"
+    project : string
         The project name functions as a hook to for example call the best
         performing set of parameters out of a series of experiments on the same
         data.
 
-    "name" : "experiment_name"
+    name : string
         Same as the above. This will function as a hook to save your model,
         features and Omesa config under one name.
 
-    "train_data" : [CSV("/somedir/train.csv", label=1, text=2),
-                   CSV("/somedir/train2.csv", label=3, text=5]
+    train_data : list of, or single iterator
+        Example: [CSV("/somedir/train.csv", label=1, text=2),
+                  CSV("/somedir/train2.csv", label=3, text=5]
         The data on which the experiment will train. If the location of a .csv
         is provided, it will open these up and create an iterator for you.
         Alternatively, you can provide your own iterators or iterable
         structures providing instances of the data. If only training data is
         provided, the experiment will evaluate in a tenfold setting by default.
 
-    "test_data" : [CSV("/somedir/test.csv", label=1, text=2)]
+    test_data : list of, or single iterator
+        Example: [CSV("/somedir/test.csv", label=1, text=2)]
         This works similar to the train_data. However, when a test set is
         provided, the performance of the model will be measured on this test
         data only. Omesa will dump a classification report for you.
 
-    "test_proportion" : 0.3
+    test_proportion : float
+        Example: 0.3
         As opposed to a test FILE, one can also provide a test proportion,
         after which a certain amount of instances will be held out from the
         training data to test on.
 
-    "features" : [Ngrams()]
+    features : list of featurizer classes
+        Example: [Ngrams()]
         These can be features imported from omesa.featurizer or can be any
         class you create your self. As long as it adheres to a fit / transform
         structure and returns a feature dictionary per instance as can be
         provided to, for example, the sklearn FeatureHasher.
 
-    "backbone" : Spacy()
+    backbone : class from backbone
+        Example: Spacy()
         The backbone is used as an all-round NLP toolkit for tagging, parsing
         and in general annotating the text that is provided to the experiment.
         If you wish to utilize features that need for example tokens, lemmas or
         POS tags, they can be parsed during loading. Please be advised that
         it's more convenient to do this yourself beforehand.
 
-    "classifier" : GaussianNB()
+    classifier : class with sklearn API
+        Example: GaussianNB()
         Used to switch the classifier used in the experiment. By default, an
         SVM with low parameter settings is used if you do NOT want to use grid
         search. In any other case, you can provide other sklearn classifiers
         that can be set to output probabilities.
 
-    "save" : ("log", model", "db", "man", "json", "pickle")
+    save : tuple of strings
+        Example: ("log", model", "db", "man", "json", "pickle")
         Save the output of the log, or dump the entire model with its
         classification method and pipeline wrapper for new data instances.
-
-
-    Parameters
-    ----------
-    conf :
-        Dictionary where key is a setting parameter and value the value. The
-        options are pretty broad so they are explained in the class docstring.
-
-    cold : boolean, optional, default False
-        If true, will not immediately run the experiment after calling the
-        class. Generally we assume that one immediately wants to run on call.
     """
 
-    def __init__(self, conf, cold=False):
+    def __init__(self, **kwargs):
         """Set all relevant classes, run experiment (currently)."""
-        self.conf = conf
-        self.log = Logger(conf['name'])
-        self.vec = Vectorizer(conf)
-        self.opt = Optimizer(conf)
+        self.conf = kwargs
+        self.log = Logger(self.conf['name'])
+        self.vec = Vectorizer(self.conf)
+        self.opt = Optimizer(self.conf)
         self.clf = None
         self.clf_unfit = None
         self.res = {}
-        if not cold:
-            self.run(conf)
+        self.run(self.conf)
 
     def save(self):
         """Save desired Experiment data."""

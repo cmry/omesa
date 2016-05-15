@@ -127,8 +127,22 @@ def restore(dct):
         return class_init
     return dct
 
-def encode(data):
+
+def encodes(data):
+    """Python object to string."""
     return json.dumps(serialize(data))
 
-def decode(s):
+
+def encode(data, fp):
+    """Python object to file."""
+    return json.dump(serialize(data), fp)
+
+
+def decodes(s):
+    """String to python object."""
     return json.loads(s, object_hook=restore)
+
+
+def decode(fp):
+    """File to python object."""
+    return json.load(fp, object_hook=restore)

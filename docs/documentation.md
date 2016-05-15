@@ -23,3 +23,4 @@
 - [Simple](example_simple.md)
 - [Data-to-Features](example_df.md)
 - [Web Integration](example_web.md)
+- [Deployment](example_modu.md)
