@@ -58,10 +58,9 @@ To save your model, you can do:
 
 ``` python
 from omesa.containers import Pipeline
+
 pl = Pipeline(name='my_experiment', source='json')
-pl.vec = vec
-pl.clf = clf
-pl.save()
+pl.save(vectorizer=vec, classifier=clf)
 ```
 
 In a demo, this could be loaded in again by using:

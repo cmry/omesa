@@ -136,7 +136,6 @@ class Pipeline(object):
                    'cnf': Configuration}
             for k, doc in mod.items():
                 mod[k] = self.db.get_component(doc, self.hook)
-            print(mod)
         self.clf = mod['clf']
         self.vec = mod['vec']
         if 'db' in self.storage:

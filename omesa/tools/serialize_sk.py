@@ -34,12 +34,23 @@ class Dummy:
     def __init__(self):
         pass
 
+
+def mod_load(mod, name):
+    """Module loader."""
+    try:
+        getattr(sys.modules[mod], name)
+    except KeyError:
+        exec("from " + mod + " import " + name)
+    return getattr(sys.modules[mod], name)
+
+
 def isnamedtuple(obj):
     """Heuristic check if an object is a namedtuple."""
     return isinstance(obj, tuple) \
            and hasattr(obj, "_fields") \
            and hasattr(obj, "_asdict") \
            and callable(obj._asdict)
+
 
 def serialize(data):
     if data is None or isinstance(data, (bool, int, float, str)):
@@ -119,7 +130,7 @@ def restore(dct):
         return []
     if "py/class" in dct:
         obj = dct["py/class"]
-        cls_ = getattr(sys.modules[obj['mod']], obj['name'])
+        cls_ = mod_load(obj['mod'], obj['name'])
         class_init = Dummy()
         class_init.__class__ = cls_
         for k, v in restore(obj['attr']).items():
@@ -146,4 +157,4 @@ def decode(fp):
         return json.loads(fp, object_hook=restore)
     except (TypeError, ValueError):
         pass
-    return restore(fp)
+    return json.loads(json.dumps(fp), object_hook=restore)
