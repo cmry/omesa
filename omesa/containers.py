@@ -143,11 +143,26 @@ class Pipeline(object):
         self.res = mod['res']
 
     def classify(self, data):
-        """Given a data point, return a (label, probability) tuple."""
+        """Given instance(s) return list with (label, probabilities).
+
+        Parameters
+        ----------
+        data : value or list
+            Can be one or multiple data instances (strings for example).
+
+        Returns
+        -------
+        self.clf.predict : list
+            List with one or more tuples with (label, array of probabilities).
+        """
+        if isinstance(data, str):
+            data = [data]
         X = self.vec.transform(data)
-        # X = X.todense().reshape((1, -1))
-        # FIXME: some clfs like LinearSVC have no predict proba
-        return self.clf.predict(X), self.clf.predict_proba(X)
+        try:
+            return [(x, y) for x, y in
+                    zip(self.clf.predict(X), self.clf.predict_proba(X))]
+        except AttributeError:
+            return self.clf.predict(X)
 
 
 class CSV:

@@ -28,9 +28,9 @@ def loader(subset, emax=None):
 
     for text, label in zip(tset.data, tset.target):
         if emax is None:
-            yield text, label
+            yield text, categories[label]
         elif emax:
-            yield text, label
+            yield text, categories[label]
             emax -= 1
         elif emax is 0:
             break
