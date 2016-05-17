@@ -24,17 +24,17 @@ class Pipeline(object):
     ----------
     exp : class, optional, default None
         Instance of Experimen with fitted pipes. If not supplied, name and
-        source should be set.
+        store should be set.
 
     name : str, optional, default None
         Name that the pipeline should be saved/loaded under/from.
 
-    out : tuple, optional, default None
+    store : tuple, optional, default None
         Tuple with storage options, can be "json" (json serialization),
         or "db" (for database storage, requires blitzdb).
     """
 
-    def __init__(self, exp=None, name=None, out=None):
+    def __init__(self, exp=None, name=None, store=None):
         """Set the pipeline for transformation and clf for classification."""
         if not exp:
             assert name
@@ -45,7 +45,7 @@ class Pipeline(object):
         self.res = exp.res if exp else None
 
         self.hook = self.vec.conf['name'] if not name else name
-        self.storage = self.vec.conf['save'] if not out else out
+        self.storage = self.vec.conf['save'] if not store else store
 
         if 'db' in self.storage:
             self.db = Database()
@@ -120,7 +120,7 @@ class Pipeline(object):
             top = {Configuration: self.cnf, Vectorizer: self.vec,
                    Classifier: self.clf, Results: self.res, Table: tab}
             for doc, bind in top.items():
-                js = json.loads(sr.encodes(bind))
+                js = json.loads(sr.encode(bind))
                 js['name'] = self.hook
                 self.db.save(doc(js))
 
@@ -135,8 +135,8 @@ class Pipeline(object):
             mod = {'clf': Classifier, 'vec': Vectorizer, 'res': Results,
                    'cnf': Configuration}
             for k, doc in mod.items():
-                mod[k] = sr.decode(json.dumps(dict(
-                    self.db.fetch(doc, {'name': self.hook}))))
+                mod[k] = self.db.get_component(doc, self.hook)
+            print(mod)
         self.clf = mod['clf']
         self.vec = mod['vec']
         if 'db' in self.storage:

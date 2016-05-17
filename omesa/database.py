@@ -2,6 +2,7 @@
 
 from blitzdb import Document
 from blitzdb import FileBackend
+from .tools import serialize_sk as sr
 
 
 class Configuration(Document):
@@ -51,6 +52,13 @@ class Database(object):
         """Filter and return first entry."""
         try:
             return self.db.filter(doc, q)[0]
+        except IndexError:
+            print("File does not exist.")
+
+    def get_component(self, doc, name):
+        # FIXME: see if returning non-decoded is relevant for anything
+        try:
+            return sr.decode(dict(self.db.filter(doc, {'name': name})[0]))
         except IndexError:
             print("File does not exist.")
 

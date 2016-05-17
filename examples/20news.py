@@ -41,7 +41,7 @@ Experiment(
     train_data=loader('train'),
     test_data=loader('test'),
     lime_data=[dat[0] for dat in loader('test', emax=5)],
-    proportions=10,
+    #proportions=10,
     features=[Ngrams(level='char', n_list=[3])],
     pipeline=[
         Pipe('scaler', MaxAbsScaler()),

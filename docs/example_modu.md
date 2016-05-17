@@ -11,7 +11,7 @@ modularity, and drop-in deployment play an important role.
 The primary advantage of storing models with Omesa, apart from the front-end
 functionality in the [web app]('example_web.md') is that the pipeline is stored
 in a general format. This has a few advantages over common methods to store
-python models, such as [pickle](https://docs.python.org/3/library/pickle.html).
+python models, such as [`pickle`](https://docs.python.org/3/library/pickle.html).
 Pickle is incredibly convenient, but can be easy to corrupt, is not very
 transparent, and has [compatibility issues](https://bugs.python.org/issue6137).
 By using JSON, Omesa makes sure that every model is both version and language
@@ -97,7 +97,7 @@ The fitted feature hasher and its vocab:
 }
 ```
 
-And for example a small overview of experiment meta data:
+And for example a small overview of experiment meta-data:
 
 ``` json
 "tab": {
@@ -118,13 +118,16 @@ And for example a small overview of experiment meta data:
 ```
 
 No need to load the experiment in python and unpickle to understand its
-configuration, and no worries about incompatibilities between 2.x and 3.x.
+configuration, and no worries about incompatibilities between `2.x` and `3.x`.
 Even when using another programming language, the individual data can still
 be used to for example fit a feature hasher, or configure a classifier. Of
 course, the flat text representation can be decoded using Omesa, returning it
 to its original python objects ready for use. This allows for modularity when
-constructing pipelines, effective database calls and able to load an entire
+constructing pipelines, effective database calls the ablility to load an entire
 pipeline for deployment, which will be discussed in the following sections.
+
+> More information about JSON storage for sklearn-like pipelines used in Omesa
+> can be found in [this blog series](https://cmry.github.io/notes/serialize).
 
 ### Modularity
 
@@ -145,4 +148,34 @@ vec.transform("some raw text")
 
 Even though the experiment might have some classifier package as dependencies,
 as the deserialization step happens *after* selection we don't need to worry
-about this and can load the vectorizer in isolation.
+about this and can load the vectorizer in isolation. Even better, using the
+database to store models (`save=('model', 'db')`) allows for partial *retrieval*
+of the modules so that the full file does need to be in memory. Like so:
+
+```python
+from omesa.database import Database, Vectorizer
+from omesa.tools import serialize_sk as sr
+
+db = Database()
+vec = db.get_component(Vectorizer, 'omesa_exp')
+
+vec.transform("some raw text")
+```
+
+### Deployment
+
+For full installment, however, there is no need to muck around with loading
+single components from the database. One can just simply import a full pipeline
+for classification like so:
+
+``` python
+from omesa.containers import Pipeline
+
+pl = Pipeline(name='omesa_exp', store='db')
+pl.load()
+
+pl.classify("some raw text")
+
+# output -----
+
+```

@@ -128,21 +128,22 @@ def restore(dct):
     return dct
 
 
-def encodes(data):
-    """Python object to string."""
-    return json.dumps(serialize(data))
-
-
-def encode(data, fp):
-    """Python object to file."""
-    return json.dump(serialize(data), fp)
-
-
-def decodes(s):
-    """String to python object."""
-    return json.loads(s, object_hook=restore)
+def encode(data, fp=False):
+    """Python object to file or string."""
+    if fp:
+        return json.dump(serialize(data), fp)
+    else:
+        return json.dumps(serialize(data))
 
 
 def decode(fp):
-    """File to python object."""
-    return json.load(fp, object_hook=restore)
+    """File, String, or Dict to python object."""
+    try:
+        return json.load(fp, object_hook=restore)
+    except (AttributeError, ValueError):
+        pass
+    try:
+        return json.loads(fp, object_hook=restore)
+    except (TypeError, ValueError):
+        pass
+    return restore(fp)
