@@ -2,6 +2,7 @@
 
 from blitzdb import Document
 from blitzdb import FileBackend
+from os.path import expanduser
 from .tools import serialize_sk as sr
 
 
@@ -41,7 +42,7 @@ class Database(object):
     def __init__(self):
         """Load backend."""
         # TODO: I'm sure the path here can be done neater
-        self.db = FileBackend(__file__.split('/database.py')[0] + "/db")
+        self.db = FileBackend(expanduser("~/.omesa/db"))
 
     def save(self, doc):
         """Save document do db."""
