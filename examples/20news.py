@@ -44,8 +44,8 @@ Experiment(
     # proportions=10,
     features=[Ngrams(level='char', n_list=[3])],
     pipeline=[
-        # Pipe('scaler', MaxAbsScaler()),
-        # Pipe('clf', LinearSVC(), parameters={'C': np.logspace(-2.0, 1.0, 5)}),
+        Pipe('scaler', MaxAbsScaler()),
+        Pipe('clf', LinearSVC(), parameters={'C': np.logspace(-2.0, 1.0, 50)}),
         Pipe('clf', MultinomialNB())
     ],
     save=("model", "db")

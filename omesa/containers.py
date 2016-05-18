@@ -142,13 +142,16 @@ class Pipeline(object):
             self.vec.conf = mod['cnf']
         self.res = mod['res']
 
-    def classify(self, data):
+    def classify(self, data, best_only=False):
         """Given instance(s) return list with (label, probabilities).
 
         Parameters
         ----------
         data : value or list
             Can be one or multiple data instances (strings for example).
+
+        best_only : bool, optional, default False
+            If set to True, returns probabilties for highest only.
 
         Returns
         -------
@@ -159,10 +162,18 @@ class Pipeline(object):
             data = [data]
         X = self.vec.transform(data)
         try:
-            return [(x, y) for x, y in
-                    zip(self.clf.predict(X), self.clf.predict_proba(X))]
-        except AttributeError:
-            return self.clf.predict(X)
+            prob_d = [{self.vec.encoder.inverse_transform(i): p
+                       for i, p in enumerate(pl)}
+                      for pl in self.clf.predict_proba(X)]
+            if best_only:
+                def best(doc):
+                    return max(doc, key=doc.get)
+                return [(best(doc), doc[best(doc)]) for doc in prob_d]
+            return prob_d
+        except AttributeError as e:
+            # print(e)
+            pass
+        return self.vec.encoder.inverse_transform(self.clf.predict(X))
 
 
 class CSV:
