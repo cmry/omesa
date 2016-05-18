@@ -16,7 +16,7 @@ before_install:
 
 install:
   - conda create -q -n test-environment python=3.4 numpy scipy scikit-learn nose dateutil
-  - pip3 install blitzdb
+  - conda install blitzdb
   - source activate test-environment
 
 script:
