@@ -40,13 +40,12 @@ Experiment(
     name="20_news",
     train_data=loader('train'),
     test_data=loader('test'),
-    lime_data=[dat[0] for dat in loader('test', emax=5)],
-    #proportions=10,
+    # lime_data=[dat[0] for dat in loader('test', emax=5)],
+    # proportions=10,
     features=[Ngrams(level='char', n_list=[3])],
     pipeline=[
-        Pipe('scaler', MaxAbsScaler()),
-        Pipe('clf', LinearSVC(),
-             parameters={'C': np.logspace(-2.0, 1.0, 1)}),
+        # Pipe('scaler', MaxAbsScaler()),
+        # Pipe('clf', LinearSVC(), parameters={'C': np.logspace(-2.0, 1.0, 5)}),
         Pipe('clf', MultinomialNB())
     ],
     save=("model", "db")

@@ -110,7 +110,7 @@ class Experiment(object):
         self.res['prop'], tmp, conf = {}, self.opt, self.conf
         for i in range(1, pr):
             self.opt, prop = Optimizer(conf), (1 / pr) * (pr - i)
-            self.log.slice(1 - prop)
+            self.log.slice((1 - prop, ))
             Xp, _, yp, _ = train_test_split(X, y, test_size=prop, stratify=y)
             clff = self.opt.choose_classifier(Xp, yp, seed).fit(Xp, yp)
             tres = cross_val_predict(clff, Xp, yp, cv=5, n_jobs=-1)

@@ -11,7 +11,7 @@ sys.path.append('../')
 import bottle
 from omesa.containers import Pipeline
 from omesa.database import Database, Table, Results
-from sklearn import *
+from sklearn import metrics
 import plotly.offline as py
 import plotly.graph_objs as go
 import omesa.tools.lime_eval as le
@@ -148,7 +148,7 @@ def unwind_conf(name, tab):
 @bottle.route('/exp/<name>')
 def experiment(name):
     """Experiment page."""
-    exp = Pipeline(name=name, out='db')
+    exp = Pipeline(name=name, store='db')
     exp.load()
 
     tab = db.fetch(Table, {'name': name})

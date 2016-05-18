@@ -14,6 +14,7 @@ try:
     from .database import Database, Configuration, Vectorizer, \
                           Classifier, Results, Table
 except ImportError as e:
+    print(e)
     print("Database could not be loaded, functionality disabled.")
 
 
@@ -66,20 +67,19 @@ class Pipeline(object):
             try:
                 tab.update({n + '_data': self.cnf[n + '_data'].source})
             except Exception as e:
-                tag = 'split' if n == 'test' else self.cnf[n + '_data']
+                tag = 'split' if n == 'test' else self.cnf.get(n + '_data', [])
             try:
-                tab.update({n + '_data_path': self.cnf[n + '_data'].path,
+                tab.update({n + '_data': self.cnf[n + '_data'].source,
+                            n + '_data_path': self.cnf[n + '_data'].path,
                             n + '_data_repr': self.cnf[n + '_data'].__dict__})
             except Exception as e:
-                if tag is not 'split':
-                    tag = '-'
+                tab.update({n + '_data': tag})
                 tab.update({n + '_data_path': tag})
                 tab.update({n + '_data_repr': tag})
 
         if not self.cnf.get('lime_protect') and tab.get('lime_data'):
             from .tools import lime_eval as le
-            # FIXME: replace with multi-labelled case
-            labs = self.vec.encoder.inverse_transform([0, 1])
+            labs = self.vec.encoder.classes_
             lime = le.LimeEval(self.clf, self.vec, labs)
             exps = lime.load_omesa(tab['lime_data_repr'])
             lime_list = []
