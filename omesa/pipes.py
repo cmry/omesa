@@ -1,7 +1,6 @@
 """Vectorizer and optimization.
 """
 
-from copy import deepcopy
 from operator import itemgetter
 from multiprocessing import Pool
 

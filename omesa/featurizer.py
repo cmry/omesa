@@ -6,11 +6,12 @@ It also includes a wrapper class to cleverly hanlde this within the Omesa
 framework.
 """
 
+# -*- coding: utf-8 -*-
+
 import re
 import json
 import pickle
 from collections import OrderedDict, Counter
-from sys import exit
 from urllib.parse import urlencode
 
 import numpy as np
@@ -496,6 +497,5 @@ class Readability(object):
     def transform(self, raw, _):
         """Add each metric to the feature vector."""
         # TODO: add stuff here
-        _ = self.name
-        _ = raw
+        raw = raw + _
         return NotImplementedError

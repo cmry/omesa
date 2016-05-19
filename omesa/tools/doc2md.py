@@ -4,7 +4,6 @@ from sys import argv
 
 # Author:       Chris Emmery
 # License:      MIT
-# pylint:       disable=W0142
 
 ERR = '''
 - """ used for non-docstring strings.

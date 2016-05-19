@@ -4,7 +4,6 @@
 # License:      GPLv3
 
 from time import time
-from copy import deepcopy
 
 import numpy as np
 from sklearn import metrics
