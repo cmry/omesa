@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Text feature extraction module.
 
 This module contains several helper classes for extracting textual features
@@ -5,8 +7,6 @@ used in Text Mining applications, partly based on instances parsed with parse.
 It also includes a wrapper class to cleverly hanlde this within the Omesa
 framework.
 """
-
-# -*- coding: utf-8 -*-
 
 import re
 import json

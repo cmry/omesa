@@ -28,11 +28,13 @@ for this, the following configuration is used:
 >>> Experiment(conf)
 """
 
-__author__ = 'Chris Emmery'
-__contrb__ = ('Akos Kadar', 'Mike Kestemont', 'Florian Kunneman',
-              'Janneke van de Loo', 'Ben Verhoeven')
-__license__ = 'MIT'
+# pylint:        disable=W0611,C0413
 
 import omesa.experiment
 import omesa.processor
 import omesa.containers
+
+__author__ = 'Chris Emmery'
+__contrb__ = ('Akos Kadar', 'Mike Kestemont', 'Florian Kunneman',
+              'Janneke van de Loo', 'Ben Verhoeven')
+__license__ = 'MIT'

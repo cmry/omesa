@@ -75,9 +75,9 @@ class Pipeline(object):
                             n + '_data_path': self.cnf[n + '_data'].path,
                             n + '_data_repr': self.cnf[n + '_data'].__dict__})
             except (AttributeError, KeyError, TypeError):
-                tab.update({n + '_data': tag})
-                tab.update({n + '_data_path': tag})
-                tab.update({n + '_data_repr': tag})
+                tab.update({n + '_data': tag,
+                            n + '_data_path': tag,
+                            n + '_data_repr': tag})
 
         if not self.cnf.get('lime_protect') and tab.get('lime_data'):
             from .tools import lime_eval as le

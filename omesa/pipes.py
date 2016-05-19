@@ -46,8 +46,7 @@ class Vectorizer(object):
         TruncatedSVD class from sklearn.
     """
 
-    def __init__(self, conf=None, featurizer=None, normalizers=None,
-                 decomposers=None):
+    def __init__(self, conf=None, featurizer=None):
         """Start pipeline modules."""
         if conf:
             self.conf = conf
