@@ -45,10 +45,10 @@ class Database(object):
 
     def _query(self, f, q):
         try:
-            out = f(q)
+            out = f(*q)
         except KeyError:
             self.db = FileBackend(expanduser("~/.omesa/db"))
-            out = f(q)
+            out = f(*q)
         return out
 
     def save(self, doc):
