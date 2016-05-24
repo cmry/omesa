@@ -170,25 +170,30 @@ class CSV:
 
     Parameters
     ----------
-    text : integer
-        Index integer of the .csv where the text is located.
+    text : integer or string
+        Index integer of the .csv where the text is located. If string is
+        provided instead, will look for its index in the header.
 
-    label : integer
-        Index integer of the .csv where the label is located.
+    label : integer or string
+        Index integer of the .csv where the label is located. If string is
+        provided instead, will look for its index in the header.
 
     parse : integer, optional, default None
-        Index integer of the .csv where the annotations are provided. Currently
+        Index integer of the .csv where the annotations are provided. If string
+        is provided instead, will look for its index in the header. Currently
         it assumes that these are per instance a list of, for every word,
         (token, lemma, POS). Frog and spaCy are implemented to provide these
         for you.
 
-    features : list of integers, optional, default None
-        If you have columns in your .csv othat should serve as features
+    features : list of integers or strings, optional, default None
+        If you have columns in your .csv that should serve as features
         (meta-data) for example, you can add a multitude of their indices in
-        this setting.
+        this setting in integer format. If string is provided instead, will
+        look for its index in the header.
 
-    header : boolean, optional, default False
-        If the file has a header, you can skip it by setting this to true.
+    no_header : boolean, optional, default False
+        If the file has no header, and integer values are provided as column
+        indices, set to True if it has to be included.
 
     selection : dict, optional, default None
         A dict of {label: integer amount} pairs. With this, you can somewhat
@@ -198,7 +203,7 @@ class CSV:
     """
 
     def __init__(self, csv_dir, data, label, parse=None, features=None,
-                 header=False, selection=None):
+                 no_header=False, selection=None):
         """Set configuration and label handler."""
         csv.field_size_limit(sys.maxsize)
         self.source = csv_dir
@@ -207,13 +212,17 @@ class CSV:
         self.file = csv.reader(open(csv_dir, 'r'))
         self.header = header
 
-        if header:
-            self.file.__next__()
+        if not no_header or isinstance(data, str):
+            head = self.file.__next__()
+
         if isinstance(features, (int, type(None))):
             features = [features]
 
         self.idx = list(filter(None.__ne__, [data, label, parse] + features))
         self.selection = {} if not selection else selection
+
+        if isinstance(data, str):
+            self.idx = [head.index(ind) for ind in self.idx]
 
     def __iter__(self):
         """Standard iter method."""
