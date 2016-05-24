@@ -48,6 +48,7 @@ class Database(object):
             out = f(*q)
         except KeyError:
             self.db = FileBackend(expanduser("~/.omesa/db"))
+            f = self.db.filter
             out = f(*q)
         return out
 
