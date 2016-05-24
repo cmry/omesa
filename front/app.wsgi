@@ -82,7 +82,7 @@ def save_graph(tag, data):
         os.makedirs(os.path.expanduser("~/.omesa/plot"))
     fn = os.path.expanduser("~/.omesa/plot") + '/{0}.html'.format(tag)
     py.plot(fig, filename=fn, auto_open=False, show_link=False)
-    return fn[1:]
+    return server_plot('/plot/{0}.html'.format(tag))
 
 
 def test_train_plot(exp):
@@ -171,7 +171,7 @@ def experiment(name):
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
-    test_train_plot(exp)
+    basic = test_train_plot(exp)
 
     # heatmap
     scores = sr.decode(json.dumps(dict(db.fetch(Results, {'name': name}))))
@@ -184,7 +184,7 @@ def experiment(name):
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
     return skeleton(page=name, layout='res',
                     hook=bottle.template('res', conf=conf,
-                                         plot="/static/plots/basic-bar.html",
+                                         plot=basic,
                                          lime=lime, heat=heats, rep=rep,
                                          labs=labs))
 
