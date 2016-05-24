@@ -78,6 +78,8 @@ def save_graph(tag, data):
     """Quick binder to tag plot, dumps plotly data and layout."""
     layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
     fig = go.Figure(data=data, layout=layout)
+    if not os.path.exists(os.path.expanduser("~/.omesa/plot")):
+        os.makedirs(os.path.expanduser("~/.omesa/plot"))
     fn = os.path.expanduser("~/.omesa/plot") + '/{0}.html'.format(tag)
     py.plot(fig, filename=fn, auto_open=False, show_link=False)
     return fn[1:]
