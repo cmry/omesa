@@ -10,7 +10,7 @@ from sklearn import metrics
 from sklearn.cross_validation import cross_val_predict
 from sklearn.cross_validation import train_test_split
 
-from .logger import Logger
+from .logger import _Logger as Logger
 from .pipes import Vectorizer, Optimizer
 from .containers import Pipeline
 
@@ -22,7 +22,7 @@ class Experiment(object):
     classifier performance. For this, the class uses a configuration
     dictionary. The full list of options for this is listed under attributes.
 
-    Paremeters
+    Parameters
     ----------
     project : string
         The project name functions as a hook to for example call the best
@@ -91,7 +91,7 @@ class Experiment(object):
         self.clf = None
         self.clf_unfit = None
         self.res = {}
-        self.run(self.conf)
+        self._run(self.conf)
 
     def save(self):
         """Save desired Experiment data."""
@@ -104,6 +104,7 @@ class Experiment(object):
                 Pipeline(self).save()
 
     def _run_proportions(self, sets, av, seed, pr=None):
+        """Repeats run and proportionally increases the amount of data."""
         X, Xi, y, yi = sets
         pr = self.conf.get('proportions', pr)
         self.res['prop'], tmp, conf = {}, self.opt, self.conf
@@ -120,7 +121,7 @@ class Experiment(object):
                 {1 - prop: {'train': tscore, 'test': score}})
         self.opt = tmp
 
-    def run(self, conf):
+    def _run(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
         t1 = time()
         seed = 42

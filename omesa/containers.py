@@ -167,10 +167,7 @@ class Pipeline(object):
                        for i, p in enumerate(pl)}
                       for pl in self.clf.predict_proba(X)]
             if best_only:
-                def best(doc):
-                    """Return max value from dictionary."""
-                    return max(doc, key=doc.get)
-                return [(best(doc), doc[best(doc)]) for doc in prob_d]
+                return sorted(prob_d.items(), key=lambda x: x[1])[-1]
             return prob_d
         except AttributeError:
             pass
