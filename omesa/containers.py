@@ -219,7 +219,7 @@ class CSV(object):
         self.path = getcwd() + ("/" if not csv_dir.startswith('/') else '') + \
             csv_dir
         self.file = csv.reader(open(csv_dir, 'r'))
-        self.header = header
+        self.no_header = no_header
 
         if not no_header or isinstance(data, str):
             head = self.file.__next__()
