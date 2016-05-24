@@ -192,7 +192,7 @@ def experiment(name):
 def main():
     """Main call to app."""
     bottle.debug(True)
-    bottle.run(app=bottle.app(), host='localhost', port=6666,
+    bottle.run(app=bottle.app(), host='0.0.0.0', port=6666,
                quiet=False, reloader=True)
 
 if __name__ == '__main__':
