@@ -76,27 +76,18 @@ def overview():
 
 
 def save_graph(tag, data):
-    """Quick binder to tag plot, dumps plotly data and layout."""
-    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
+    """Quick binder to dump plotly data and layout."""
+    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=0))
     fig = go.Figure(data=data, layout=layout)
-    tdir = "/tmp/plot"
-    if not os.path.exists(tdir):
-        os.makedirs(tdir)
-    fn = tdir + '/{0}.html'.format(tag)
-    py.plot(fig, filename=fn, auto_open=False, show_link=False)
-    return fn
+    return py.plot(fig, output_type='div', auto_open=False, show_link=False,
+                   include_plotlyjs=False)
 
 
 def test_train_plot(exp):
     tr_score = exp.res['train']['score'] if exp.res.get('train') else 0.0
     te_score = exp.res['test']['score'] if exp.res.get('test') else 0.0
     if not exp.res.get('prop'):
-        data = [
-            go.Bar(
-                x=['train', 'test'],
-                y=[tr_score, te_score]
-            )
-        ]
+        data = [go.Bar(x=['train', 'test'], y=[tr_score, te_score])]
     else:
         props, train, test = [], [], []
         d = OrderedDict(sorted(exp.res['prop'].items(), key=lambda t: t[0]))
@@ -128,9 +119,8 @@ def confusion_matrix(t, y_true, y_pred):
 
 def get_scores(labs, y_true, y_pred):
     # classification report
-    p, r, f1, s = metrics.precision_recall_fscore_support(y_true, y_pred,
-                                                          average=None,
-                                                          labels=labs)
+    p, r, f1, s = metrics.precision_recall_fscore_support(
+        y_true, y_pred, average=None, labels=labs)
     try:
         acc = metrics.accuracy_score(y_true, y_pred)
         auc = metrics.roc_auc_score(y_true, y_pred, average=None)

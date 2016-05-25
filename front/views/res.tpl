@@ -52,20 +52,22 @@
                         <h3 class="box-title">LIME Evaluation {{i}}</h3>
                       </div>
                       <div class="box-body">
-                        <div class="chart">
                         %for i, fl in enumerate(graphs):
                         %if i != 2:
                           <div class="col-xs-6">
-                            <iframe width="100%" height="250px" src="{{fl}}" scrolling="no" frameborder="0"></iframe>
+                            <div class="chart" style="height:200px">
+                              {{!fl}}
+                            </div>
                           </div>
                         %else:
                         </div>
-                        <div>
-                            {{!fl}}
+                        <div class="box-body">
+                            <pre>
+{{!fl}}
+                            </pre>
                         </div>
                         %end
                         %end
-                      </div>
                     </div>
                     %end
                   </div>
@@ -76,8 +78,8 @@
                         <h3 class="box-title">Performance</h3>
                       </div>
                       <div class="box-body">
-                        <div class="chart">
-                          <iframe width="100%" height="400px" src="{{plot}}" scrolling="no" frameborder="0"></iframe>
+                        <div class="chart" style="height:200px;">
+                          {{!plot}}
                         </div>
                       </div>
                     </div>
@@ -86,14 +88,14 @@
                         <h3 class="box-title">Confusion Matrix</h3>
                       </div>
                       <div class="box-body">
-                        <div class="chart">
-                          %for t, url in heat:
-                          <div class="col-xs-6">
-                            <h5>{{t}}</h5>
-                            <iframe width="100%" height="200px" src="{{url}}" scrolling="no" frameborder="0"></iframe>
+                        %for t, url in heat:
+                        <div class="col-xs-6">
+                          <h5>{{t}}</h5>
+                          <div class="chart" style="height:200px;">
+                            {{!url}}
                           </div>
-                          %end
                         </div>
+                        %end
                       </div>
                     </div>
                   </div>

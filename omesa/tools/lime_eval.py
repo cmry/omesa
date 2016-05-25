@@ -160,12 +160,11 @@ class LimeEval(object):
         return f_names
 
     @staticmethod
-    def save_graph(i, tag, data, layout):
-        """Quick binder to tag experiment i, dumps plotly data and layout."""
+    def save_graph(data, layout):
+        """Quick binder to dump plotly data and layout."""
         fig = go.Figure(data=data, layout=layout)
-        fn = '/tmp/plot/lime-{0}-{1}.html'.format(tag, i)
-        py.plot(fig, filename=fn, auto_open=False, show_link=False)
-        return fn
+        return py.plot(fig, output_type='div', auto_open=False,
+                       show_link=False, include_plotlyjs=False)
 
     def prob_graph(self, i, prob, cln):
         """Output LIME class probability graph. Works with 'graphs' method."""
@@ -173,8 +172,8 @@ class LimeEval(object):
         data = [go.Bar(x=list(prob), y=cln,
                        marker=dict(color=['#1f77b4', '#ff7f0e']),
                        orientation='h')]
-        layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
-        return self.save_graph(i, 'prob', data, layout)
+        layout = go.Layout(margin=go.Margin(l=100, r=0, b=0, t=0, pad=0))
+        return self.save_graph(data, layout)
 
     def weight_graph(self, i, expl):
         """Output LIME weight graph. Works with 'graphs' method."""
@@ -183,8 +182,8 @@ class LimeEval(object):
                        marker=dict(color=['#1f77b4' if val < 0 else '#ff7f0e'
                                           for word, val in expl]),
                        orientation='h')]
-        layout = go.Layout(margin=go.Margin(l=100, r=20, b=30, t=30, pad=4))
-        return self.save_graph(i, 'data', data, layout)
+        layout = go.Layout(margin=go.Margin(l=50, r=0, b=0, t=0, pad=0))
+        return self.save_graph(data, layout)
 
     def tag_text(self, i, expl):
         """Highlight LIME top-word in text. Works with 'graphs' method."""
