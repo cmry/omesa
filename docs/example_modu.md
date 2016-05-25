@@ -128,45 +128,9 @@ pipeline for deployment, which will be discussed in the following sections.
 > More information about JSON storage for sklearn-like pipelines used in Omesa
 > can be found in [this blog series](https://cmry.github.io/notes/serialize).
 
-### Modularity
-
-As we have seen, rather than having to load an entire pipeline
-including dependencies and unwind its parts as one would have to do with pickle,
-a particular part of the pipeline can be decoded. A standard loading procedure
-would look something like:
-
-```python
-import json
-from omesa.tools import serialize_sk as sr
-
-mod = json.load(open('omesa_exp.json'))
-vec = sr.decode(mod['vec'])
-
-vec.transform("some raw text")
-```
-
-Even though the experiment might have some classifier package as dependencies,
-as the deserialization step happens *after* selection we do not need to worry
-about this and can load the vectorizer in isolation. Even better, using the
-database to store models (`save=('model', 'db')`) allows for partial *retrieval*
-of the modules so that the full file does need to be in memory. Like so:
-
-```python
-from omesa.database import Database, Vectorizer
-from omesa.tools import serialize_sk as sr
-
-db = Database()
-vec = db.get_component(Vectorizer, 'omesa_exp')
-
-vec.transform(["some raw text", "some other raw text"])
-```
-
-This currently allows for splitting the `Vectorizer` and `Classifier` database
-classes to be splitted amongst different processes.
-
 ### Drop-in Deployment
 
-For full installment, however, there is no need to muck around with loading
+For a full I/O installment, there is no need to muck around with loading
 single components from the database. One can just simply import a full pipeline
 for classification like so:
 
@@ -185,8 +149,8 @@ pl.classify(["some raw text", "some other raw text"])
 ```
 
 Granted, this output is not the most convenient one, where usually you are only
-interested in the highest probability label and the name of that label. This is made
-a bit easier with:
+interested in the highest probability label and the name of that label. This is
+made a bit easier with:
 
 ``` python
 pl.classify(["some raw text", "some other raw text"], best_only=True)
@@ -196,3 +160,75 @@ pl.classify(["some raw text", "some other raw text"], best_only=True)
 [('a', 0.70),
  ('a', 0.51)]
 ```
+
+Despite the fact that this might suffice for simple demos, actual (distributed)
+high-load applications might require only using the vectorizer at times, or
+just applying the classifier to a batch of vectors. It might also be the case
+that several classifiers have been trained on (partly) the same vector
+representation, just with a different target. In that case, loading the full
+pipeline multiple times for shared tasks generates unneccesary overhead, and
+modularity should be preferred.
+
+### Modularity
+
+As we've seen, rather than having to load an entire pipeline
+including dependencies and unwind its parts as one would have to do with
+pickle, Omesa allows a particular part of the pipeline to be decoded. A
+standard loading procedure would look something like:
+
+```python
+import json
+from omesa.tools import serialize_sk as sr
+
+mod = json.load(open('omesa_exp.json'))
+vec = sr.decode(mod['vec'])
+
+vec.transform("some raw text")
+```
+
+Even though the experiment might have some classifier package as dependencies,
+as the deserialization step happens *after* selection we also do not need to
+worry about these being installed on each machine, and can load the vectorizer
+in isolation. Even better, using the database to store models
+(`save=('model', 'db')`) allows for partial *retrieval* of the modules so that
+the full file does need to be in memory. Like so:
+
+```python
+from omesa.database import Database, Vectorizer
+
+db = Database()
+vec = db.get_component(Vectorizer, 'omesa_exp')
+
+vec.transform("some raw text")
+```
+
+This currently allows for splitting the `Vectorizer` and `Classifier` database
+classes to be divided amongst different processes, as is illustrated below.
+
+#### Proc 1
+
+```python
+from omesa.database import Database, Vectorizer
+
+db = Database()
+vec = db.get_component(Vectorizer, 'omesa_exp')
+
+X = vec.transform(["some raw text", "some other raw text"])
+communicate_to_proc2(X)
+```
+
+##### Proc 2
+
+``` python
+from omesa.database import Database, Classifier
+
+db = Database()
+clf = db.get_component(Classifier, 'omesa_exp')
+
+X = receive_from_proc1()
+
+prob_d = [{i: p for i, p in enumerate(pl)} for pl in clf.predict_proba(X)]
+predictions = sorted(prob_d.items(), key=lambda x: x[1])[-1]
+```
+
+This wil result in a list of tuples with (predicted label, probability).
