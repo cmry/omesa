@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 os.chdir(os.path.dirname(__file__))
 sys.path.append(os.path.dirname(__file__))
+sys.path.append("/tmp")
 sys.path.append('../')
 
 import bottle
@@ -25,11 +26,11 @@ def server_static(filename):
     return bottle.static_file(filename, root='static')
 
 
-@bottle.route('/plot/<filename:path>')
+@bottle.route('/tmp/<filename:path>')
 def server_plot(filename):
     """Static file includes."""
     return bottle.static_file(filename,
-                              root=os.path.expanduser("~/.omesa/plot"))
+                              root="/tmp")
 
 
 @bottle.get('/favicon.ico')
@@ -78,11 +79,12 @@ def save_graph(tag, data):
     """Quick binder to tag plot, dumps plotly data and layout."""
     layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
     fig = go.Figure(data=data, layout=layout)
-    if not os.path.exists(os.path.expanduser("~/.omesa/plot")):
-        os.makedirs(os.path.expanduser("~/.omesa/plot"))
-    fn = os.path.expanduser("~/.omesa/plot") + '/{0}.html'.format(tag)
+    tdir = "/tmp/plot"
+    if not os.path.exists(tdir):
+        os.makedirs(tdir)
+    fn = tdir + '/{0}.html'.format(tag)
     py.plot(fig, filename=fn, auto_open=False, show_link=False)
-    return server_plot('/plot/{0}.html'.format(tag))
+    return fn
 
 
 def test_train_plot(exp):

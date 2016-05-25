@@ -152,7 +152,7 @@ class LimeEval(object):
         f_names = []
         for i, exp in enumerate(exps):
             if not loc:
-                loc = './static/plots/'
+                loc = '/tmp/plot/'
             with open(loc + 'lime_' + str(i) + '.html', 'w') as f:
                 html_str = exp.as_html()
                 f.write(html_str)
@@ -163,9 +163,9 @@ class LimeEval(object):
     def save_graph(i, tag, data, layout):
         """Quick binder to tag experiment i, dumps plotly data and layout."""
         fig = go.Figure(data=data, layout=layout)
-        fn = './static/plots/lime-{0}-{1}.html'.format(tag, i)
+        fn = '/tmp/plot/lime-{0}-{1}.html'.format(tag, i)
         py.plot(fig, filename=fn, auto_open=False, show_link=False)
-        return fn[1:]
+        return fn
 
     def prob_graph(self, i, prob, cln):
         """Output LIME class probability graph. Works with 'graphs' method."""
