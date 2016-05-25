@@ -149,8 +149,8 @@ pl.classify(["some raw text", "some other raw text"])
 ```
 
 Granted, this output is not the most convenient one, where usually you are only
-interested in the highest probability label and the name of that label. This is made
-a bit easier with:
+interested in the highest probability label and the name of that label. This is
+made a bit easier with:
 
 ``` python
 pl.classify(["some raw text", "some other raw text"], best_only=True)
@@ -195,13 +195,40 @@ the full file does need to be in memory. Like so:
 
 ```python
 from omesa.database import Database, Vectorizer
-from omesa.tools import serialize_sk as sr
 
 db = Database()
 vec = db.get_component(Vectorizer, 'omesa_exp')
 
-vec.transform(["some raw text", "some other raw text"])
+vec.transform("some raw text")
 ```
 
 This currently allows for splitting the `Vectorizer` and `Classifier` database
-classes to be splitted amongst different processes.
+classes to be divided amongst different processes, as is illustrated below.
+
+#### Proc 1
+
+```python
+from omesa.database import Database, Vectorizer
+
+db = Database()
+vec = db.get_component(Vectorizer, 'omesa_exp')
+
+X = vec.transform(["some raw text", "some other raw text"])
+communicate_to_proc2(X)
+```
+
+##### Proc 2
+
+``` python
+from omesa.database import Database, Classifier
+
+db = Database()
+clf = db.get_component(Classifier, 'omesa_exp')
+
+X = receive_from_proc1()
+
+prob_d = [{i: p for i, p in enumerate(pl)} for pl in clf.predict_proba(X)]
+predictions = sorted(prob_d.items(), key=lambda x: x[1])[-1]
+```
+
+This wil result in a list of tuples with (predicted label, probability).
