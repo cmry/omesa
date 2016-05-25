@@ -1,6 +1,8 @@
 """Data handling containers.
 """
 
+# pylint:       disable=W0234
+
 import csv
 import json
 import pickle
@@ -66,16 +68,16 @@ class Pipeline(object):
         for n in ('train', 'test', 'lime'):
             try:
                 tab.update({n + '_data': self.cnf[n + '_data'].source})
-            except Exception as e:
+            except (AttributeError, KeyError, TypeError):
                 tag = 'split' if n == 'test' else self.cnf.get(n + '_data', [])
             try:
                 tab.update({n + '_data': self.cnf[n + '_data'].source,
                             n + '_data_path': self.cnf[n + '_data'].path,
                             n + '_data_repr': self.cnf[n + '_data'].__dict__})
-            except Exception as e:
-                tab.update({n + '_data': tag})
-                tab.update({n + '_data_path': tag})
-                tab.update({n + '_data_repr': tag})
+            except (AttributeError, KeyError, TypeError):
+                tab.update({n + '_data': tag,
+                            n + '_data_path': tag,
+                            n + '_data_repr': tag})
 
         if not self.cnf.get('lime_protect') and tab.get('lime_data'):
             from .tools import lime_eval as le
@@ -91,8 +93,7 @@ class Pipeline(object):
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),
                     'test_score': self.res['test']['score'],
-                    'dur': self.res['dur'],
-                    })
+                    'dur': self.res['dur']})
         return tab
 
     def save(self):
@@ -142,13 +143,16 @@ class Pipeline(object):
             self.vec.conf = mod['cnf']
         self.res = mod['res']
 
-    def classify(self, data):
+    def classify(self, data, best_only=False):
         """Given instance(s) return list with (label, probabilities).
 
         Parameters
         ----------
         data : value or list
             Can be one or multiple data instances (strings for example).
+
+        best_only : bool, optional, default False
+            If set to True, returns probabilties for highest only.
 
         Returns
         -------
@@ -159,13 +163,18 @@ class Pipeline(object):
             data = [data]
         X = self.vec.transform(data)
         try:
-            return [(x, y) for x, y in
-                    zip(self.clf.predict(X), self.clf.predict_proba(X))]
+            prob_d = [{self.vec.encoder.inverse_transform(i): p
+                       for i, p in enumerate(pl)}
+                      for pl in self.clf.predict_proba(X)]
+            if best_only:
+                return sorted(prob_d.items(), key=lambda x: x[1])[-1]
+            return prob_d
         except AttributeError:
-            return self.clf.predict(X)
+            pass
+        return self.vec.encoder.inverse_transform(self.clf.predict(X))
 
 
-class CSV:
+class CSV(object):
     """Quick and dirty csv loader.
 
     Parameters
@@ -210,7 +219,7 @@ class CSV:
         self.path = getcwd() + ("/" if not csv_dir.startswith('/') else '') + \
             csv_dir
         self.file = csv.reader(open(csv_dir, 'r'))
-        self.header = header
+        self.no_header = no_header
 
         if not no_header or isinstance(data, str):
             head = self.file.__next__()

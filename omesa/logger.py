@@ -4,7 +4,7 @@
 from collections import OrderedDict
 
 
-class Logger(object):
+class _Logger(object):
     """Provides feedback to the user and can store settings in a log file.
 
     Class holds a log string that can be formatted according to the used

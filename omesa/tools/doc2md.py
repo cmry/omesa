@@ -4,7 +4,6 @@ from sys import argv
 
 # Author:       Chris Emmery
 # License:      MIT
-# pylint:       disable=W0142
 
 ERR = '''
 - """ used for non-docstring strings.
@@ -12,8 +11,7 @@ ERR = '''
 '''
 
 
-class Doc2Markdown:
-
+class Doc2Markdown(object):
     """Documentation to Markdown."""
 
     def __init__(self, file_in, file_out):
@@ -80,7 +78,7 @@ class Doc2Markdown:
             try:
                 if 'class ' in lines[0] or 'def ' in lines[0]:
                     det = True
-            except IndexError as e:
+            except IndexError:
                 exit("Malformed code. \n\nSome common errors: {0}".format(ERR))
             line = lines.pop(0)
             if det:

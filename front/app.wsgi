@@ -1,6 +1,7 @@
 """Main stuff."""
 
-import os, sys
+import os
+import sys
 import json
 from collections import OrderedDict
 
@@ -22,6 +23,13 @@ import omesa.tools.serialize_sk as sr
 def server_static(filename):
     """Static file includes."""
     return bottle.static_file(filename, root='static')
+
+
+@bottle.route('/plot/<filename:path>')
+def server_plot(filename):
+    """Static file includes."""
+    return bottle.static_file(filename,
+                              root=os.path.expanduser("~/.omesa/plot"))
 
 
 @bottle.get('/favicon.ico')
@@ -70,9 +78,11 @@ def save_graph(tag, data):
     """Quick binder to tag plot, dumps plotly data and layout."""
     layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=4))
     fig = go.Figure(data=data, layout=layout)
-    fn = './static/plots/{0}.html'.format(tag)
+    if not os.path.exists(os.path.expanduser("~/.omesa/plot")):
+        os.makedirs(os.path.expanduser("~/.omesa/plot"))
+    fn = os.path.expanduser("~/.omesa/plot") + '/{0}.html'.format(tag)
     py.plot(fig, filename=fn, auto_open=False, show_link=False)
-    return fn[1:]
+    return server_plot('/plot/{0}.html'.format(tag))
 
 
 def test_train_plot(exp):
@@ -161,7 +171,7 @@ def experiment(name):
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
-    test_train_plot(exp)
+    basic = test_train_plot(exp)
 
     # heatmap
     scores = sr.decode(json.dumps(dict(db.fetch(Results, {'name': name}))))
@@ -174,7 +184,7 @@ def experiment(name):
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
     return skeleton(page=name, layout='res',
                     hook=bottle.template('res', conf=conf,
-                                         plot="/static/plots/basic-bar.html",
+                                         plot=basic,
                                          lime=lime, heat=heats, rep=rep,
                                          labs=labs))
 
@@ -182,7 +192,7 @@ def experiment(name):
 def main():
     """Main call to app."""
     bottle.debug(True)
-    bottle.run(app=bottle.app(), host='localhost', port=6666,
+    bottle.run(app=bottle.app(), host='0.0.0.0', port=6666,
                quiet=False, reloader=True)
 
 if __name__ == '__main__':

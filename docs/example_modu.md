@@ -89,7 +89,6 @@ The fitted feature hasher and its vocab:
         "char-'_ _G": 6702,
         "char-D_ _ ": 21627,
         "char-C_A_n": 21191,
-        "char-d_}_,": 35553,
         ...
       }
     }
@@ -129,7 +128,7 @@ pipeline for deployment, which will be discussed in the following sections.
 > More information about JSON storage for sklearn-like pipelines used in Omesa
 > can be found in [this blog series](https://cmry.github.io/notes/serialize).
 
-### Deployment
+### Drop-in Deployment
 
 For a full I/O installment, there is no need to muck around with loading
 single components from the database. One can just simply import a full pipeline
@@ -141,10 +140,25 @@ from omesa.containers import Pipeline
 pl = Pipeline(name='omesa_exp', store='db')
 pl.load()
 
-pl.classify(["some raw text"], best_only=True)
+pl.classify(["some raw text", "some other raw text"])
 
 # output -----
-[(1, 0.912273)]
+
+[{'a': 0.70, 'b': 0.30},
+ {'a': 0.51, 'b': 0.49}]
+```
+
+Granted, this output is not the most convenient one, where usually you are only
+interested in the highest probability label and the name of that label. This is made
+a bit easier with:
+
+``` python
+pl.classify(["some raw text", "some other raw text"], best_only=True)
+
+# output -----
+
+[('a', 0.70),
+ ('a', 0.51)]
 ```
 
 Despite the fact that this might suffice for simple demos, actual (distributed)
@@ -154,7 +168,6 @@ that several classifiers have been trained on (partly) the same vector
 representation, just with a different target. In that case, loading the full
 pipeline multiple times for shared tasks generates unneccesary overhead, and
 modularity should be preferred.
-
 
 ### Modularity
 
@@ -174,9 +187,9 @@ vec.transform("some raw text")
 ```
 
 Even though the experiment might have some classifier package as dependencies,
-as the deserialization step happens *after* selection we also don't need to worry
-about these being installed on each machine, and can load the vectorizer in
-isolation. Even better, using the database to store models
+as the deserialization step happens *after* selection we also do not need to
+worry about these being installed on each machine, and can load the vectorizer
+in isolation. Even better, using the database to store models
 (`save=('model', 'db')`) allows for partial *retrieval* of the modules so that
 the full file does need to be in memory. Like so:
 
@@ -187,5 +200,8 @@ from omesa.tools import serialize_sk as sr
 db = Database()
 vec = db.get_component(Vectorizer, 'omesa_exp')
 
-vec.transform("some raw text")
+vec.transform(["some raw text", "some other raw text"])
 ```
+
+This currently allows for splitting the `Vectorizer` and `Classifier` database
+classes to be splitted amongst different processes.

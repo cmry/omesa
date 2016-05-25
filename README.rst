@@ -58,10 +58,10 @@ preview below:
 
 .. image:: http://chris.emmery.nl/dump/omesa.png
     :alt: Front
-    
+
 .. image:: http://chris.emmery.nl/dump/omesa_prop.png
     :alt: Front Prop
-    
+
 If you want to take a peek, install all above dependencies, do the following:
 
 .. code-block:: shell
@@ -116,17 +116,17 @@ other articles. To run the experiment, the following configuration is used:
     from omesa.containers import CSV
     from sklearn.naive_bayes import MultinomialNB
 
-    Experiment({
-        "project": "unit_tests",
-        "name": "gram_experiment",
-        "train_data": CSV("n_gram.csv", data=1, label=0, header=True),
-        "lime_data": CSV("n_gram.csv", data=1, label=0, header=True),
-        "features": [Ngrams(level='char', n_list=[3])],
-        "classifiers": [
+    Experiment(
+        project="unit_tests",
+        name="gram_experiment",
+        train_data=CSV("n_gram.csv", data="gram", label="label"),
+        lime_data=CSV("n_gram.csv", data="gram", label="label"),
+        features=[Ngrams(level='char', n_list=[3])],
+        classifiers=[
             {'clf': MultinomialNB()}
         ],
         "save": ("log")
-    })
+    )
 
 This will cross validate performance on the ``.csv``, selecting text
 and label columns and indicating a header is present in the ``.csv`` document.
@@ -137,7 +137,8 @@ Output
 ''''''
 
 The log file will be printed during run time, as well as stored in the
-script's directory. The output of the current experiment is as follows:
+script's directory. A sample from the output of the current experiment is as
+follows:
 
 .. code-block:: shell
 
