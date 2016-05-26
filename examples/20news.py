@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import MaxAbsScaler
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 
 # for as long as it's not yet pip installable
 import sys
@@ -40,12 +40,11 @@ Experiment(
     name="20_news",
     train_data=loader('train'),
     test_data=loader('test'),
-    # lime_data=[dat[0] for dat in loader('test', emax=5)],
+    lime_data=[dat[0] for dat in loader('test', emax=5)],
     # proportions=10,
     features=[Ngrams(level='char', n_list=[3])],
     pipeline=[
         Pipe('scaler', MaxAbsScaler()),
-        Pipe('clf', LinearSVC(), parameters={'C': np.logspace(-2.0, 1.0, 50)}),
         Pipe('clf', MultinomialNB())
     ],
     save=("model", "db")

@@ -18,6 +18,8 @@ install:
   - conda create -q -n test-environment python=3.4 numpy scipy scikit-learn nose dateutil
   - source activate test-environment
   - pip install blitzdb
+  - pip install lime
+  - pip install plotly
 
 script:
   - python3 setup.py install
