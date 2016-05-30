@@ -131,7 +131,8 @@ class Experiment(object):
         self.log.head(conf['features'], conf['name'], seed)
 
         # stream data to sparse features
-        X, y = self.vec.transform(conf['train_data'], fit=True)
+
+        X, y = self.vec.fit_transform(conf['train_data'])
         # split off test data
         if not conf.get('test_data'):
             X, Xi, y, yi = train_test_split(

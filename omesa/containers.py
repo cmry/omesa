@@ -53,6 +53,42 @@ class Pipeline(object):
         if 'db' in self.storage:
             self.db = Database()
 
+    def _convert_data(self, tab, n):
+        """Split data entries and leave empty if not present."""
+        try:
+            tab.update({n + '_data': self.cnf[n + '_data'].source})
+        except (AttributeError, KeyError, TypeError):
+            tag = 'split' if n == 'test' else self.cnf.get(n + '_data', [])
+        try:
+            tab.update({n + '_data': self.cnf[n + '_data'].source,
+                        n + '_data_path': self.cnf[n + '_data'].path,
+                        n + '_data_repr': self.cnf[n + '_data'].__dict__})
+        except (AttributeError, KeyError, TypeError):
+            tab.update({n + '_data': tag,
+                        n + '_data_path': tag,
+                        n + '_data_repr': tag})
+        return tab
+
+    def _lime_to_gen(self):
+        """If not a generator, converts assuming that index 0 is text."""
+        if isinstance(self.cnf['lime_data'], GeneratorType):
+            pass
+        else:
+            self.cnf['lime_data'] = [x[0] for x in self.cnf['lime_data']]
+
+    def _calc_lime(self, tab):
+        """Calculate lime information based on converted data entries."""
+        from .tools import lime_eval as le
+        labs = self.vec.encoder.classes_
+        lime = le.LimeEval(self.clf, self.vec, labs)
+        exps = lime.load_omesa(tab['lime_data_repr'])
+        lime_list = []
+        for exp in exps:
+            expl, prb, cln = lime.unwind(exp)
+            lime_list.append({'expl': expl, 'prb': prb, 'cln': cln})
+        tab.update({'lime_data_comp': lime_list})
+        return tab
+
     def _make_tab(self):
         """Tabular level experiment representation.
 
@@ -66,29 +102,13 @@ class Pipeline(object):
                'clf_full': str(self.clf.__dict__['steps'][0][1])}
 
         for n in ('train', 'test', 'lime'):
-            try:
-                tab.update({n + '_data': self.cnf[n + '_data'].source})
-            except (AttributeError, KeyError, TypeError):
-                tag = 'split' if n == 'test' else self.cnf.get(n + '_data', [])
-            try:
-                tab.update({n + '_data': self.cnf[n + '_data'].source,
-                            n + '_data_path': self.cnf[n + '_data'].path,
-                            n + '_data_repr': self.cnf[n + '_data'].__dict__})
-            except (AttributeError, KeyError, TypeError):
-                tab.update({n + '_data': tag,
-                            n + '_data_path': tag,
-                            n + '_data_repr': tag})
-
-        if not self.cnf.get('lime_protect') and tab.get('lime_data'):
-            from .tools import lime_eval as le
-            labs = self.vec.encoder.classes_
-            lime = le.LimeEval(self.clf, self.vec, labs)
-            exps = lime.load_omesa(tab['lime_data_repr'])
-            lime_list = []
-            for exp in exps:
-                expl, prb, cln = lime.unwind(exp)
-                lime_list.append({'expl': expl, 'prb': prb, 'cln': cln})
-            tab.update({'lime_data_comp': lime_list})
+            if n == 'lime' and self.cnf.get('lime_data'):
+                self._lime_to_gen()
+                tab = self._convert_data(tab, n)
+                if not self.cnf.get('lime_protect'):
+                    tab = self._calc_lime(tab)
+            else:
+                tab = self._convert_data(tab, n)
 
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),

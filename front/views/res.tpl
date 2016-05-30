@@ -55,9 +55,7 @@
                         %for i, fl in enumerate(graphs):
                         %if i != 2:
                           <div class="col-xs-6">
-                            <div class="chart" style="height:200px">
-                              {{!fl}}
-                            </div>
+                            {{!fl.replace('style="height: 100%; width: 100%;"', 'style="height: 200px; width: 100%;"')}}
                           </div>
                         %else:
                         </div>
@@ -78,9 +76,7 @@
                         <h3 class="box-title">Performance</h3>
                       </div>
                       <div class="box-body">
-                        <div class="chart" style="height:200px;">
-                          {{!plot}}
-                        </div>
+                        {{!plot.replace('style="height: 100%; width: 100%;"', 'style="height: 400px; width: 100%;"')}}
                       </div>
                     </div>
                     <div class="box box-standard">
@@ -91,9 +87,7 @@
                         %for t, url in heat:
                         <div class="col-xs-6">
                           <h5>{{t}}</h5>
-                          <div class="chart" style="height:200px;">
-                            {{!url}}
-                          </div>
+                            {{!url.replace('style="height: 100%; width: 100%;"', 'style="height: 200px; width: 100%;"')}}
                         </div>
                         %end
                       </div>

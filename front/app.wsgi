@@ -11,6 +11,7 @@ sys.path.append("/tmp")
 sys.path.append('../')
 
 import bottle
+import colorlover as cl
 from omesa.containers import Pipeline
 from omesa.database import Database, Table, Results
 from sklearn import metrics
@@ -77,17 +78,18 @@ def overview():
 
 def save_graph(tag, data):
     """Quick binder to dump plotly data and layout."""
-    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=0))
+    layout = go.Layout(margin=go.Margin(l=40, r=40, b=40, t=40, pad=0))
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', auto_open=False, show_link=False,
                    include_plotlyjs=False)
 
 
-def test_train_plot(exp):
+def test_train_plot(exp, colors):
     tr_score = exp.res['train']['score'] if exp.res.get('train') else 0.0
     te_score = exp.res['test']['score'] if exp.res.get('test') else 0.0
     if not exp.res.get('prop'):
-        data = [go.Bar(x=['train', 'test'], y=[tr_score, te_score])]
+        data = [go.Bar(x=['train', 'test'], y=[tr_score, te_score],
+                       marker=dict(color=colors))]
     else:
         props, train, test = [], [], []
         d = OrderedDict(sorted(exp.res['prop'].items(), key=lambda t: t[0]))
@@ -100,12 +102,14 @@ def test_train_plot(exp):
             y=train + [tr_score],
             mode='lines+markers',
             name='train'
+            marker=dict(color=colors[:1])
         )
         test_trace = go.Scatter(
             x=props + [1.0],
             y=test + [te_score],
             mode='lines+markers',
             name='test'
+            marker=dict(color=colors[-1:])
         )
         data = [train_trace, test_trace]
     return save_graph('basic-bar', data)
@@ -155,15 +159,14 @@ def experiment(name):
 
     tab = db.fetch(Table, {'name': name})
     conf = unwind_conf(name, tab)
-    # TODO: replace labels with multi-class variant
-    labs = exp.vec.encoder.inverse_transform([0, 1])
+    labs = exp.vec.encoder.classes_
 
     if tab.get('lime_data_comp'):
         lev = le.LimeEval()
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
-    basic = test_train_plot(exp)
+    basic = test_train_plot(exp, cl.scales['3']['qual']['Pastel1'])
 
     # heatmap
     scores = sr.decode(json.dumps(dict(db.fetch(Results, {'name': name}))))
@@ -174,11 +177,10 @@ def experiment(name):
         heats.append((t, confusion_matrix(t, y_true, y_pred)))
         scr, acc, auc = get_scores(labs, y_true, y_pred)
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
-    return skeleton(page=name, layout='res',
-                    hook=bottle.template('res', conf=conf,
-                                         plot=basic,
-                                         lime=lime, heat=heats, rep=rep,
-                                         labs=labs))
+    return skeleton(
+        page=name, layout='res', hook=bottle.template(
+            'res', conf=conf, plot=basic, lime=lime, heat=heats, rep=rep,
+            labs=labs))
 
 
 def main():

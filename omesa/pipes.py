@@ -3,6 +3,7 @@
 
 from operator import itemgetter
 from multiprocessing import Pool
+from itertools import chain
 
 import numpy as np
 from sklearn import pipeline
@@ -58,13 +59,23 @@ class Vectorizer(object):
         self.hasher = DictVectorizer()
         self.encoder = LabelEncoder()
 
-    def transform(self, data, fit=False):
+    def fit_transform(self, data):
+        """Adhere to sklearn API."""
+        return self._vectorize(data, func='fit_transform')
+
+    def transform(self, data):
+        """Adhere to sklearn API."""
+        return self._vectorize(data, func='transform')
+
+    def _vectorize(self, data, func):
         """Send the data through all applicable steps to vectorize."""
+        if isinstance(data, list):
+            data = chain.from_iterable(data)
+
         p = Pool(processes=self.conf.get('n_jobs', None))
         D, y = zip(*p.map(self.featurizer.transform, data))
         p.close()
         p.join()
-        func = 'transform' if not fit else 'fit_transform'
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
