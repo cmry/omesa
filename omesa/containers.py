@@ -103,7 +103,7 @@ class Pipeline(object):
 
         for n in ('train', 'test', 'lime'):
             if n == 'lime' and self.cnf.get('lime_data'):
-                self._lime_to_gen()
+                # self._lime_to_gen()
                 tab = self._convert_data(tab, n)
                 if not self.cnf.get('lime_protect'):
                     tab = self._calc_lime(tab)

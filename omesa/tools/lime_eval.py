@@ -1,6 +1,8 @@
 """LIME evaluation from Ribeiro, Singh, and Guestrin (2016)."""
 
 import csv
+from types import GeneratorType
+
 import plotly.offline as py
 import plotly.graph_objs as go
 from lime.lime_text import ScikitClassifier, LimeTextExplainer
@@ -61,12 +63,12 @@ class LimeEval(object):
     """
 
     def __init__(self, classifier=None, vectorizer=None, class_names=None,
-                 docs=None, top_labels=None):
+                 docs=None):
         """Start lime classifier, set label and empty doc placeholder."""
         self.c = ScikitClassifier(classifier, vectorizer)
         self.names = class_names
         self.docs = [] if not docs else docs
-        self.multi = top_labels
+        self.multi = True if len(class_names) > 2 else False
 
     def explain(self, docs):
         """Generate LIME Explanations for list of docs.
@@ -122,8 +124,11 @@ class LimeEval(object):
                 self.docs.append(row[ti])
                 if i == 5:
                     break
-        else:
+        elif isinstance(lime_repr, GeneratorType):
             self.docs = lime_repr
+        else:
+            print(lime_repr)
+            self.docs = [x[0] for x in lime_repr]
         return self.explain(self.docs)
 
     @staticmethod
