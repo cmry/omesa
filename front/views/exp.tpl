@@ -23,7 +23,7 @@
                                         <tr>
                                             <td>{{exp['project']}}
                                             <td><a href="./exp/{{exp['name']}}">{{exp['name']}}</a></td>
-                                            <td>{{exp['train_data']}}</td>
+                                            <td>{{', '.join([k['train_data'] for k in exp['train_data']])}}</td>
                                             <td>{{exp['test_data']}}</td>
                                             <td>{{exp['features']}}</td>
                                             <td>{{exp['clf']}}</td>

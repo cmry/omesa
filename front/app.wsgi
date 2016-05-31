@@ -70,7 +70,7 @@ def overview():
     res, out = db.getall(Table), {}
     rows = ['project', 'name', 'train_data', 'test_data', 'features',
             'clf', 'dur', 'test_score']
-    out.update({str(xp['pk']): {k: xp[k] for k in rows} for xp in res})
+    out.update({str(xp['name']): {k: xp[k] for k in rows} for xp in res})
     res = None
     return skeleton(page='Experimental Results', layout='exp',
                     hook=bottle.template('exp', data=out))
@@ -101,14 +101,14 @@ def test_train_plot(exp, colors):
             x=props + [1.0],
             y=train + [tr_score],
             mode='lines+markers',
-            name='train'
+            name='train',
             marker=dict(color=colors[:1])
         )
         test_trace = go.Scatter(
             x=props + [1.0],
             y=test + [te_score],
             mode='lines+markers',
-            name='test'
+            name='test',
             marker=dict(color=colors[-1:])
         )
         data = [train_trace, test_trace]
@@ -147,7 +147,12 @@ def unwind_conf(name, tab):
             ('clf_full', 'classifier'),
             ('dur', 'duration'),
             ('test_score', 'score on test')]
-    conf = [(n, tab[k]) for k, n in rows]
+    conf = []
+    for k, n in rows:
+        if tab.get(k) and not isinstance(tab[k], list):
+            conf.append((n, tab[k]))
+        elif tab.get(k[:-5]) and isinstance(tab[k[:-5]][0], dict):
+            conf.append((n, '<br> '.join([x[k] for x in tab[k[:-5]]])))
     return conf
 
 
@@ -162,10 +167,11 @@ def experiment(name):
     labs = exp.vec.encoder.classes_
 
     if tab.get('lime_data_comp'):
-        lev = le.LimeEval()
+        lev = le.LimeEval(class_names=labs)
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
+    lime = ''
     basic = test_train_plot(exp, cl.scales['3']['qual']['Pastel1'])
 
     # heatmap

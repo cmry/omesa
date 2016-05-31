@@ -7,8 +7,9 @@ import csv
 import json
 import pickle
 import sys
-from types import GeneratorType
+
 from os import getcwd
+from types import GeneratorType
 
 from .tools import serialize_sk as sr
 
@@ -20,14 +21,22 @@ except ImportError as e:
     print("Database could not be loaded, functionality disabled.")
 
 
+def _chain(data):
+    """Chain containers."""
+    for container in data:
+        for entry in container:
+            yield entry
+
+
+
 class Pipeline(object):
     """Shell for experiment pipeline storing and handling.
 
     Parameters
     ----------
     exp : class, optional, default None
-        Instance of Experimen with fitted pipes. If not supplied, name and
-        store should be set.
+        Instance of Experiment with fitted components. If not supplied, name
+        and store should be set.
 
     name : str, optional, default None
         Name that the pipeline should be saved/loaded under/from.
@@ -53,28 +62,34 @@ class Pipeline(object):
         if 'db' in self.storage:
             self.db = Database()
 
-    def _convert_data(self, tab, n):
+    def _convert_data(self, top_tab, n):
         """Split data entries and leave empty if not present."""
-        try:
-            tab.update({n + '_data': self.cnf[n + '_data'].source})
-        except (AttributeError, KeyError, TypeError):
-            tag = 'split' if n == 'test' else self.cnf.get(n + '_data', [])
-        try:
-            tab.update({n + '_data': self.cnf[n + '_data'].source,
-                        n + '_data_path': self.cnf[n + '_data'].path,
-                        n + '_data_repr': self.cnf[n + '_data'].__dict__})
-        except (AttributeError, KeyError, TypeError):
-            tab.update({n + '_data': tag,
-                        n + '_data_path': tag,
-                        n + '_data_repr': tag})
-        return tab
-
-    def _lime_to_gen(self):
-        """If not a generator, converts assuming that index 0 is text."""
-        if isinstance(self.cnf['lime_data'], GeneratorType):
-            pass
+        if not self.cnf.get(n + '_data') or \
+            isinstance(self.cnf[n + '_data'], list) and \
+                isinstance(self.cnf[n + '_data'][0], str):
+            for ext in ('_data', '_data_path', '_data_repr'):
+                top_tab[n + '{0}'.format(ext)] = 'split' \
+                    if n == 'test' else str([])
+            return top_tab
+        elif hasattr(self.cnf[n + '_data'], 'source') and n != 'lime':
+            top_tab[n + '_data'] = [self.cnf[n + '_data']]
+            self.cnf[n + '_data'] = [self.cnf[n + '_data']]
         else:
-            self.cnf['lime_data'] = [x[0] for x in self.cnf['lime_data']]
+            top_tab[n + '_data'] = list(self.cnf[n + '_data'])
+
+        if n != 'lime':
+            for i in range(len(top_tab[n + '_data'])):
+                top_tab[n + '_data'][i] = \
+                    {n + '_data': self.cnf[n + '_data'][i].source,
+                     n + '_data_path': self.cnf[n + '_data'][i].path,
+                     n + '_data_repr': self.cnf[n + '_data'][i].__dict__}
+        else:
+            top_tab.update(
+                {n + '_data': self.cnf[n + '_data'].source,
+                 n + '_data_path': self.cnf[n + '_data'].path,
+                 n + '_data_repr': self.cnf[n + '_data'].__dict__})
+
+        return top_tab
 
     def _calc_lime(self, tab):
         """Calculate lime information based on converted data entries."""
@@ -102,13 +117,9 @@ class Pipeline(object):
                'clf_full': str(self.clf.__dict__['steps'][0][1])}
 
         for n in ('train', 'test', 'lime'):
-            if n == 'lime' and self.cnf.get('lime_data'):
-                # self._lime_to_gen()
-                tab = self._convert_data(tab, n)
-                if not self.cnf.get('lime_protect'):
-                    tab = self._calc_lime(tab)
-            else:
-                tab = self._convert_data(tab, n)
+            tab = self._convert_data(tab, n)
+            if n == 'lime' and not self.cnf.get('lime_protect'):
+                tab = self._calc_lime(tab)
 
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),

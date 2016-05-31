@@ -6,12 +6,13 @@
 from time import time
 
 import numpy as np
+
 from sklearn import metrics
 from sklearn.cross_validation import cross_val_predict
 from sklearn.cross_validation import train_test_split
 
 from .logger import _Logger as Logger
-from .pipes import Vectorizer, Optimizer
+from .components import Vectorizer, Optimizer
 from .containers import Pipeline
 
 

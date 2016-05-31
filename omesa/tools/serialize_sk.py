@@ -99,10 +99,12 @@ def _serialize(data):
     # --- custom ---
     if isinstance(data, GeneratorType):
         return {'py/generator': str(data)}
-    if not isinstance(data, type):  # not numpy type
+    if not isinstance(data, type) and hasattr(data, '__module__'):
         return {'py/class': {'name': data.__class__.__name__,
                              'mod': data.__module__,
                              'attr': _serialize(data.__dict__)}}
+    if '_csv.reader' in str(type(data)):
+        return ''
     raise TypeError("Type %s not data-serializable" % type(data))
 
 

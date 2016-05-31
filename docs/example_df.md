@@ -31,7 +31,7 @@ data = CSV('/dir/to/data/data.csv', data=1, label=0, header=True)
 Now we can `transform` our data to `X, y`:
 
 ``` python
-from omesa.pipes import Vectorizer
+from omesa.components import Vectorizer
 
 vec = Vectorizer(features)
 X, y = vec.transform(data)

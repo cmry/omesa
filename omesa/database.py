@@ -9,31 +9,36 @@ from .tools import serialize_sk as sr
 class Configuration(Document):
     """Blitzdb configuration placeholder."""
 
-    pass
+    class Meta(Document.Meta):
+        primary_key = 'name'
 
 
 class Vectorizer(Document):
     """Blitzdb vectorizer placeholder."""
 
-    pass
+    class Meta(Document.Meta):
+        primary_key = 'name'
 
 
 class Classifier(Document):
     """Blitzdb classifier placeholder."""
 
-    pass
+    class Meta(Document.Meta):
+        primary_key = 'name'
 
 
 class Results(Document):
     """Blitzdb results placeholder."""
 
-    pass
+    class Meta(Document.Meta):
+        primary_key = 'name'
 
 
 class Table(Document):
     """Blitzdb table placeholder."""
 
-    pass
+    class Meta(Document.Meta):
+        primary_key = 'name'
 
 
 class Database(object):

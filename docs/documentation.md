@@ -15,7 +15,7 @@
 - [Experiment](experiment.md)
 - [Featurizer](featurizer.md)
 - [Logger](logger.md)
-- [Pipes](pipes.md)
+- [Components](components.md)
 - [Processor](processor.md)
 
 ## Examples

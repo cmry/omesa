@@ -1,10 +1,10 @@
 """LIME evaluation from Ribeiro, Singh, and Guestrin (2016)."""
 
 import csv
-from types import GeneratorType
 
 import plotly.offline as py
 import plotly.graph_objs as go
+
 from lime.lime_text import ScikitClassifier, LimeTextExplainer
 
 
@@ -25,7 +25,7 @@ class LimeEval(object):
         Scikit-learn classifier.
 
     vectorizer: class
-        Can be either a Scikit-learn classifier or omesa.pipes.vectorizer.
+        Can be either a Scikit-learn classifier or omesa.components.vectorizer.
 
     Attributes
     ----------
@@ -68,7 +68,7 @@ class LimeEval(object):
         self.c = ScikitClassifier(classifier, vectorizer)
         self.names = class_names
         self.docs = [] if not docs else docs
-        self.multi = True if len(class_names) > 2 else False
+        self.multi = 3 if len(class_names) > 2 else None
 
     def explain(self, docs):
         """Generate LIME Explanations for list of docs.
@@ -119,16 +119,16 @@ class LimeEval(object):
             reader = csv.reader(open(lime_repr['path']), quotechar='"')
             ti = lime_repr['idx'][0]
             for i, row in enumerate(reader):
-                if lime_repr.get('header') and not i:
-                    continue
-                self.docs.append(row[ti])
+                if lime_repr.get('no_header') and not i:
+                    self.docs.append(row[ti])
+                elif i:
+                    self.docs.append(row[ti])
+                else:
+                    pass
                 if i == 5:
                     break
-        elif isinstance(lime_repr, GeneratorType):
-            self.docs = lime_repr
         else:
-            print(lime_repr)
-            self.docs = [x[0] for x in lime_repr]
+            self.docs = lime_repr
         return self.explain(self.docs)
 
     @staticmethod
