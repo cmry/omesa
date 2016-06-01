@@ -149,10 +149,7 @@ def unwind_conf(name, tab):
             ('test_score', 'score on test')]
     conf = []
     for k, n in rows:
-        if tab.get(k) and not isinstance(tab[k], list):
-            conf.append((n, tab[k]))
-        elif tab.get(k[:-5]) and isinstance(tab[k[:-5]][0], dict):
-            conf.append((n, '<br> '.join([x[k] for x in tab[k[:-5]]])))
+        conf.append((n, tab[k]))
     return conf
 
 
@@ -171,7 +168,6 @@ def experiment(name):
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
-    lime = ''
     basic = test_train_plot(exp, cl.scales['3']['qual']['Pastel1'])
 
     # heatmap

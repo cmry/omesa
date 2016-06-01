@@ -62,34 +62,30 @@ class Pipeline(object):
         if 'db' in self.storage:
             self.db = Database()
 
-    def _convert_data(self, top_tab, n):
+    def _convert_data(self, tab, n):
         """Split data entries and leave empty if not present."""
-        if not self.cnf.get(n + '_data') or \
-            isinstance(self.cnf[n + '_data'], list) and \
-                isinstance(self.cnf[n + '_data'][0], str):
-            for ext in ('_data', '_data_path', '_data_repr'):
-                top_tab[n + '{0}'.format(ext)] = 'split' \
-                    if n == 'test' else str([])
-            return top_tab
-        elif hasattr(self.cnf[n + '_data'], 'source') and n != 'lime':
-            top_tab[n + '_data'] = [self.cnf[n + '_data']]
-            self.cnf[n + '_data'] = [self.cnf[n + '_data']]
-        else:
-            top_tab[n + '_data'] = list(self.cnf[n + '_data'])
+        did = n + '_data'
+        row = self.cnf.get(did)
 
-        if n != 'lime':
-            for i in range(len(top_tab[n + '_data'])):
-                top_tab[n + '_data'][i] = \
-                    {n + '_data': self.cnf[n + '_data'][i].source,
-                     n + '_data_path': self.cnf[n + '_data'][i].path,
-                     n + '_data_repr': self.cnf[n + '_data'][i].__dict__}
+        if not row:
+            val = [[]] * 3
+            val[0] = ['split'] if n == 'test' else ['-']
+        elif isinstance(row, GeneratorType):
+            val = [[]] * 3
+            val[0] = ['loader'] if n != 'lime' else row
+        elif isinstance(row, list) and isinstance(row[0], str):
+            val = [[]] * 3
+            val[0] = [x for x in row]
+        elif isinstance(row, list) and hasattr(row[0], 'source'):
+            val = ([x.source for x in row], [x.path for x in row],
+                   [x.__dict__ for x in row])
+        elif n != 'lime':
+            val = ([row.source], [row.path], [row.__dict__])
         else:
-            top_tab.update(
-                {n + '_data': self.cnf[n + '_data'].source,
-                 n + '_data_path': self.cnf[n + '_data'].path,
-                 n + '_data_repr': self.cnf[n + '_data'].__dict__})
+            val = ([x[0] for x in row], row.path, row.__dict__)
 
-        return top_tab
+        tab.update({did: val[0], did + '_path': val[1], did + '_repr': val[2]})
+        return tab
 
     def _calc_lime(self, tab):
         """Calculate lime information based on converted data entries."""
