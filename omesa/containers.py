@@ -7,8 +7,9 @@ import csv
 import json
 import pickle
 import sys
-from types import GeneratorType
+
 from os import getcwd
+from types import GeneratorType
 
 from .tools import serialize_sk as sr
 
@@ -20,14 +21,22 @@ except ImportError as e:
     print("Database could not be loaded, functionality disabled.")
 
 
+def _chain(data):
+    """Chain containers."""
+    for container in data:
+        for entry in container:
+            yield entry
+
+
+
 class Pipeline(object):
     """Shell for experiment pipeline storing and handling.
 
     Parameters
     ----------
     exp : class, optional, default None
-        Instance of Experimen with fitted pipes. If not supplied, name and
-        store should be set.
+        Instance of Experiment with fitted components. If not supplied, name
+        and store should be set.
 
     name : str, optional, default None
         Name that the pipeline should be saved/loaded under/from.
@@ -53,6 +62,46 @@ class Pipeline(object):
         if 'db' in self.storage:
             self.db = Database()
 
+    def _convert_data(self, tab, n):
+        """Split data entries and leave empty if not present."""
+        did = n + '_data'
+        row = self.cnf.get(did)
+
+        if not row:
+            val = [[]] * 3
+            val[0] = ['split'] if n == 'test' else ['-']
+        elif isinstance(row, GeneratorType):
+            val = [[]] * 3
+            val[0] = ['loader'] if n != 'lime' else row
+        elif isinstance(row, list) and isinstance(row[0], str):
+            val = [[]] * 3
+            val[2] = [x for x in row]
+            val[0] = val[2]  # FIXME: wtf
+        elif isinstance(row, list) and hasattr(row[0], 'source'):
+            val = ([x.source for x in row], [x.path for x in row],
+                   [x.__dict__ for x in row])
+        elif n != 'lime':
+            val = ([row.source], [row.path], [row.__dict__])
+        else:
+            # FIXME: weird that we store it in data her and repr if no csv
+            val = ([x[0] for x in row], row.path, row.__dict__)
+
+        tab.update({did: val[0], did + '_path': val[1], did + '_repr': val[2]})
+        return tab
+
+    def _calc_lime(self, tab):
+        """Calculate lime information based on converted data entries."""
+        from .tools import lime_eval as le
+        labs = self.vec.encoder.classes_
+        lime = le.LimeEval(self.clf, self.vec, labs)
+        exps = lime.load_omesa(tab['lime_data_repr'])
+        lime_list = []
+        for exp in exps:
+            expl, prb, cln = lime.unwind(exp)
+            lime_list.append({'expl': expl, 'prb': prb, 'cln': cln})
+        tab.update({'lime_data_comp': lime_list})
+        return tab
+
     def _make_tab(self):
         """Tabular level experiment representation.
 
@@ -66,29 +115,9 @@ class Pipeline(object):
                'clf_full': str(self.clf.__dict__['steps'][0][1])}
 
         for n in ('train', 'test', 'lime'):
-            try:
-                tab.update({n + '_data': self.cnf[n + '_data'].source})
-            except (AttributeError, KeyError, TypeError):
-                tag = 'split' if n == 'test' else self.cnf.get(n + '_data', [])
-            try:
-                tab.update({n + '_data': self.cnf[n + '_data'].source,
-                            n + '_data_path': self.cnf[n + '_data'].path,
-                            n + '_data_repr': self.cnf[n + '_data'].__dict__})
-            except (AttributeError, KeyError, TypeError):
-                tab.update({n + '_data': tag,
-                            n + '_data_path': tag,
-                            n + '_data_repr': tag})
-
-        if not self.cnf.get('lime_protect') and tab.get('lime_data'):
-            from .tools import lime_eval as le
-            labs = self.vec.encoder.classes_
-            lime = le.LimeEval(self.clf, self.vec, labs)
-            exps = lime.load_omesa(tab['lime_data_repr'])
-            lime_list = []
-            for exp in exps:
-                expl, prb, cln = lime.unwind(exp)
-                lime_list.append({'expl': expl, 'prb': prb, 'cln': cln})
-            tab.update({'lime_data_comp': lime_list})
+            tab = self._convert_data(tab, n)
+            if n == 'lime' and not self.cnf.get('lime_protect'):
+                tab = self._calc_lime(tab)
 
         tab.update({'features': ','.join([x.__str__() for x in
                                           self.vec.featurizer.helpers]),

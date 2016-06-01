@@ -23,8 +23,8 @@
                                         <tr>
                                             <td>{{exp['project']}}
                                             <td><a href="./exp/{{exp['name']}}">{{exp['name']}}</a></td>
-                                            <td>{{exp['train_data']}}</td>
-                                            <td>{{exp['test_data']}}</td>
+                                            <td>{{', '.join(exp['train_data'])}}</td>
+                                            <td>{{', '.join(exp['test_data'])}}</td>
                                             <td>{{exp['features']}}</td>
                                             <td>{{exp['clf']}}</td>
                                             <td>{{exp['dur']}}</td>

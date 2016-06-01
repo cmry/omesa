@@ -1,8 +1,10 @@
 """LIME evaluation from Ribeiro, Singh, and Guestrin (2016)."""
 
 import csv
+
 import plotly.offline as py
 import plotly.graph_objs as go
+
 from lime.lime_text import ScikitClassifier, LimeTextExplainer
 
 
@@ -23,7 +25,7 @@ class LimeEval(object):
         Scikit-learn classifier.
 
     vectorizer: class
-        Can be either a Scikit-learn classifier or omesa.pipes.vectorizer.
+        Can be either a Scikit-learn classifier or omesa.components.vectorizer.
 
     Attributes
     ----------
@@ -66,6 +68,7 @@ class LimeEval(object):
         self.c = ScikitClassifier(classifier, vectorizer)
         self.names = class_names
         self.docs = [] if not docs else docs
+        self.multi = 3 if len(class_names) > 2 else None
 
     def explain(self, docs):
         """Generate LIME Explanations for list of docs.
@@ -86,8 +89,9 @@ class LimeEval(object):
         """
         explainer = LimeTextExplainer(class_names=self.names)
         exps = []
-        for doc in docs:
-            exp = explainer.explain_instance(doc, self.c.predict_proba)
+        for doc in docs:  # NOTE: this might have messed up in a generator
+            exp = explainer.explain_instance(doc, self.c.predict_proba,
+                                             top_labels=self.multi)
             exps.append(exp)
         return exps
 
@@ -98,7 +102,7 @@ class LimeEval(object):
         use the indices set in the omesa.containers object. This requires a
         __dict__ representation of the reader class to have self.path (full
         system path of a file), and self.idx (list of integers with
-        [text_index, label_index, etc.]). Advisable to only be used icm Omesa.
+        [text_index, label_index, etc.]). Advisable to only be used icw Omesa.
 
         Parameters
         ----------
@@ -115,9 +119,10 @@ class LimeEval(object):
             reader = csv.reader(open(lime_repr['path']), quotechar='"')
             ti = lime_repr['idx'][0]
             for i, row in enumerate(reader):
-                if lime_repr.get('header') and not i:
-                    continue
-                self.docs.append(row[ti])
+                if lime_repr.get('no_header') and not i:
+                    self.docs.append(row[ti])
+                elif i:
+                    self.docs.append(row[ti])
                 if i == 5:
                     break
         else:
@@ -166,36 +171,41 @@ class LimeEval(object):
         return py.plot(fig, output_type='div', auto_open=False,
                        show_link=False, include_plotlyjs=False)
 
-    def prob_graph(self, i, prob, cln):
+    def prob_graph(self, i, prob, cln, cols):
         """Output LIME class probability graph. Works with 'graphs' method."""
-        # FIXME: colours are binary only
         data = [go.Bar(x=list(prob), y=cln,
-                       marker=dict(color=['#1f77b4', '#ff7f0e']),
+                       marker=dict(color=cols),
                        orientation='h')]
         layout = go.Layout(margin=go.Margin(l=100, r=0, b=0, t=0, pad=0))
         return self.save_graph(data, layout)
 
-    def weight_graph(self, i, expl):
+    def weight_graph(self, i, expl, cols):
         """Output LIME weight graph. Works with 'graphs' method."""
+        # FIXME: colours are binary only
         data = [go.Bar(x=[float(val) for word, val in expl],
                        y=[word for word, val in expl],
-                       marker=dict(color=['#1f77b4' if val < 0 else '#ff7f0e'
+                       marker=dict(color=[cols[0] if val < 0 else cols[1]
                                           for word, val in expl]),
                        orientation='h')]
+<<<<<<< HEAD
+        layout = go.Layout(margin=go.Margin(l=100, r=0, b=0, t=0, pad=0))
         layout = go.Layout(margin=go.Margin(l=50, r=0, b=0, t=0, pad=0))
+>>>>>>> master
         return self.save_graph(data, layout)
 
-    def tag_text(self, i, expl):
+    def tag_text(self, i, expl, cols):
         """Highlight LIME top-word in text. Works with 'graphs' method."""
         # FIXME: replace special chars with space and replace on token
-        repl = [(word, ('LIMENEG' if val < 0 else 'LIMEPOS') +
-                 word + '</span>') for word, val in expl]
+        repl = [(word, ('__LIMENEG__' if val < 0 else '__LIMEPOS__') +
+                 word + '</span></b>') for word, val in expl]
         doc = str(self.docs[i]).replace('"', '')
         for y in repl:
             doc = doc.replace(*y)
         # these are split up in tokens so that f.e. '1' doesn't screw it up
-        doc = doc.replace('LIMENEG', '<span style="color:#1f77b4">')
-        doc = doc.replace('LIMEPOS', '<span style="color:#ff7f0e">')
+        doc = doc.replace(
+            '__LIMENEG__', '<b><span style="color:{0}">'.format(cols[0]))
+        doc = doc.replace(
+            '__LIMEPOS__', '<b><span style="color:{0}">'.format(cols[1]))
         return doc
 
     def unwind(self, exp, comp=False):
@@ -210,12 +220,18 @@ class LimeEval(object):
 
     def graphs(self, exps, comp=False):
         """Convert exps list to graph locations and annotated text."""
+        import colorlover as cl
         order = []
         for i, exp in enumerate(exps):
             expl, prb, cln = self.unwind(exp, comp)
-            order.append([self.prob_graph(i, prb, cln),
-                          self.weight_graph(i, expl),
-                          self.tag_text(i, expl)])
+            try:
+                ncol = cl.scales[str(len(cln))]['qual']['Set2']
+            except KeyError:
+                ncol = cl.scales[str(len(cln) + 1)]['qual']['Set2']
+            cols = cl.to_rgb(ncol)
+            order.append([self.prob_graph(i, prb, cln, cols),
+                          self.weight_graph(i, expl, cols),
+                          self.tag_text(i, expl, cols)])
         return order
 
     def to_web(self, tab):

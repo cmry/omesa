@@ -5,13 +5,15 @@ from operator import itemgetter
 from multiprocessing import Pool
 
 import numpy as np
+
 from sklearn import pipeline
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.grid_search import GridSearchCV
-from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 
 from .featurizer import Featurizer
+from .containers import Pipe, _chain
 
 
 class Vectorizer(object):
@@ -58,13 +60,15 @@ class Vectorizer(object):
         self.hasher = DictVectorizer()
         self.encoder = LabelEncoder()
 
-    def transform(self, data, fit=False):
+    def _vectorize(self, data, func):
         """Send the data through all applicable steps to vectorize."""
+        if isinstance(data, list) and hasattr(data[0], 'source'):
+            data = _chain(data)
+
         p = Pool(processes=self.conf.get('n_jobs', None))
         D, y = zip(*p.map(self.featurizer.transform, data))
         p.close()
         p.join()
-        func = 'transform' if not fit else 'fit_transform'
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
@@ -74,6 +78,14 @@ class Vectorizer(object):
             return X, y
         else:
             return X
+
+    def fit_transform(self, data):
+        """Adhere to sklearn API."""
+        return self._vectorize(data, func='fit_transform')
+
+    def transform(self, data):
+        """Adhere to sklearn API."""
+        return self._vectorize(data, func='transform')
 
 
 class Optimizer(object):
@@ -93,11 +105,10 @@ class Optimizer(object):
         Configuration dictionary used by the Experiment class wrapper.
     """
 
-    def __init__(self, conf=None, classifiers=None, scoring='f1'):
+    def __init__(self, conf=None, classifiers=None, scoring='f1_micro'):
         """Initialize optimizer with classifier dict and scoring, or conf."""
-        # FIXME: this doesn't work anymore
-        std_clf = [{'clf': LinearSVC(class_weight='balanced'),
-                    'C': np.logspace(-3, 2, 6)}]
+        std_clf = [Pipe('clf', SVC(kernel='linear'),
+                        parameters={'C': np.logspace(-2.0, 1.0, 10)})]
 
         if not classifiers:
             classifiers = std_clf

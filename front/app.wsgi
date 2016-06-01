@@ -11,6 +11,7 @@ sys.path.append("/tmp")
 sys.path.append('../')
 
 import bottle
+import colorlover as cl
 from omesa.containers import Pipeline
 from omesa.database import Database, Table, Results
 from sklearn import metrics
@@ -69,7 +70,7 @@ def overview():
     res, out = db.getall(Table), {}
     rows = ['project', 'name', 'train_data', 'test_data', 'features',
             'clf', 'dur', 'test_score']
-    out.update({str(xp['pk']): {k: xp[k] for k in rows} for xp in res})
+    out.update({str(xp['name']): {k: xp[k] for k in rows} for xp in res})
     res = None
     return skeleton(page='Experimental Results', layout='exp',
                     hook=bottle.template('exp', data=out))
@@ -77,17 +78,18 @@ def overview():
 
 def save_graph(tag, data):
     """Quick binder to dump plotly data and layout."""
-    layout = go.Layout(margin=go.Margin(l=30, r=30, b=30, t=30, pad=0))
+    layout = go.Layout(margin=go.Margin(l=40, r=40, b=40, t=40, pad=0))
     fig = go.Figure(data=data, layout=layout)
     return py.plot(fig, output_type='div', auto_open=False, show_link=False,
                    include_plotlyjs=False)
 
 
-def test_train_plot(exp):
+def test_train_plot(exp, colors):
     tr_score = exp.res['train']['score'] if exp.res.get('train') else 0.0
     te_score = exp.res['test']['score'] if exp.res.get('test') else 0.0
     if not exp.res.get('prop'):
-        data = [go.Bar(x=['train', 'test'], y=[tr_score, te_score])]
+        data = [go.Bar(x=['train', 'test'], y=[tr_score, te_score],
+                       marker=dict(color=colors))]
     else:
         props, train, test = [], [], []
         d = OrderedDict(sorted(exp.res['prop'].items(), key=lambda t: t[0]))
@@ -99,21 +101,24 @@ def test_train_plot(exp):
             x=props + [1.0],
             y=train + [tr_score],
             mode='lines+markers',
-            name='train'
+            name='train',
+            marker=dict(color=colors[:1])
         )
         test_trace = go.Scatter(
             x=props + [1.0],
             y=test + [te_score],
             mode='lines+markers',
-            name='test'
+            name='test',
+            marker=dict(color=colors[-1:])
         )
         data = [train_trace, test_trace]
     return save_graph('basic-bar', data)
 
 
-def confusion_matrix(t, y_true, y_pred):
+def confusion_matrix(t, y_true, y_pred, cols):
+    cols = [[0, cols[0]], [1, cols[1]]]
     data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred),
-                       colorscale=[[0, '#1f77b4'], [1, '#ff7f0e']])]
+                       colorscale=cols)]
     return save_graph('heat-' + t, data)
 
 
@@ -143,7 +148,9 @@ def unwind_conf(name, tab):
             ('clf_full', 'classifier'),
             ('dur', 'duration'),
             ('test_score', 'score on test')]
-    conf = [(n, tab[k]) for k, n in rows]
+    conf = []
+    for k, n in rows:
+        conf.append((n, tab[k]))
     return conf
 
 
@@ -155,15 +162,18 @@ def experiment(name):
 
     tab = db.fetch(Table, {'name': name})
     conf = unwind_conf(name, tab)
-    # TODO: replace labels with multi-class variant
-    labs = exp.vec.encoder.inverse_transform([0, 1])
+    labs = exp.vec.encoder.classes_
 
     if tab.get('lime_data_comp'):
-        lev = le.LimeEval()
+        lev = le.LimeEval(class_names=labs)
+        print("COMP")
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
+        print("NO COMP")
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
-    basic = test_train_plot(exp)
+    # FIXME: also apply these to LIME
+    cols = cl.scales['3']['qual']['Set2']
+    basic = test_train_plot(exp, cols)
 
     # heatmap
     scores = sr.decode(json.dumps(dict(db.fetch(Results, {'name': name}))))
@@ -171,14 +181,13 @@ def experiment(name):
     for t in ('train', 'test'):
         y_true = exp.vec.encoder.inverse_transform(scores[t]['y'])
         y_pred = exp.vec.encoder.inverse_transform(scores[t]['res'])
-        heats.append((t, confusion_matrix(t, y_true, y_pred)))
+        heats.append((t, confusion_matrix(t, y_true, y_pred, cols)))
         scr, acc, auc = get_scores(labs, y_true, y_pred)
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
-    return skeleton(page=name, layout='res',
-                    hook=bottle.template('res', conf=conf,
-                                         plot=basic,
-                                         lime=lime, heat=heats, rep=rep,
-                                         labs=labs))
+    return skeleton(
+        page=name, layout='res', hook=bottle.template(
+            'res', conf=conf, plot=basic, lime=lime, heat=heats, rep=rep,
+            labs=labs))
 
 
 def main():

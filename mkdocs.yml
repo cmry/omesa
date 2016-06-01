@@ -18,5 +18,5 @@ pages:
 - [example_modu.md, Examples, Deployment]
 - [containers.md, Backend, Containers]
 - [logger.md, Backend, Logger]
-- [pipes.md, Backend, Pipes]
+- [components.md, Backend, Components]
 - [processor.md, Backend, Taggers]

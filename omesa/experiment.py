@@ -6,12 +6,13 @@
 from time import time
 
 import numpy as np
+
 from sklearn import metrics
 from sklearn.cross_validation import cross_val_predict
 from sklearn.cross_validation import train_test_split
 
 from .logger import _Logger as Logger
-from .pipes import Vectorizer, Optimizer
+from .components import Vectorizer, Optimizer
 from .containers import Pipeline
 
 
@@ -131,7 +132,8 @@ class Experiment(object):
         self.log.head(conf['features'], conf['name'], seed)
 
         # stream data to sparse features
-        X, y = self.vec.transform(conf['train_data'], fit=True)
+
+        X, y = self.vec.fit_transform(conf['train_data'])
         # split off test data
         if not conf.get('test_data'):
             X, Xi, y, yi = train_test_split(
@@ -144,11 +146,13 @@ class Experiment(object):
         print(" done!")
 
         av = 'binary' if len(set(y)) == 2 else 'micro'
+        labs = self.vec.encoder.classes_
         self.log.data('sparse', 'train', X)
         # if user wants to report more than best score, do another CV on train
         if conf.get('detailed_train', True):
             res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
-            self.res['train'] = self.log.report('train', y, res, av, metrics)
+            self.res['train'] = self.log.report('train', y, res, av, metrics,
+                                                labs)
 
         # report performance
         if conf.get('test_data'):
@@ -156,7 +160,7 @@ class Experiment(object):
 
         self.log.data('sparse', 'test', Xi, dump=True)
         res = self.clf.predict(Xi)
-        self.res['test'] = self.log.report('test', yi, res, av, metrics)
+        self.res['test'] = self.log.report('test', yi, res, av, metrics, labs)
 
         if conf.get('proportions'):
             self._run_proportions((X, Xi, y, yi), av, seed)
