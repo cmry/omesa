@@ -187,7 +187,10 @@ class LimeEval(object):
                        marker=dict(color=[cols[0] if val < 0 else cols[1]
                                           for word, val in expl]),
                        orientation='h')]
+<<<<<<< HEAD
         layout = go.Layout(margin=go.Margin(l=100, r=0, b=0, t=0, pad=0))
+        layout = go.Layout(margin=go.Margin(l=50, r=0, b=0, t=0, pad=0))
+>>>>>>> master
         return self.save_graph(data, layout)
 
     def tag_text(self, i, expl, cols):
