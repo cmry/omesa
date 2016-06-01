@@ -115,9 +115,10 @@ def test_train_plot(exp, colors):
     return save_graph('basic-bar', data)
 
 
-def confusion_matrix(t, y_true, y_pred):
+def confusion_matrix(t, y_true, y_pred, cols):
+    cols = [[0, cols[0]], [1, cols[1]]]
     data = [go.Heatmap(z=metrics.confusion_matrix(y_true, y_pred),
-                       colorscale=[[0, '#1f77b4'], [1, '#ff7f0e']])]
+                       colorscale=cols)]
     return save_graph('heat-' + t, data)
 
 
@@ -165,10 +166,14 @@ def experiment(name):
 
     if tab.get('lime_data_comp'):
         lev = le.LimeEval(class_names=labs)
+        print("COMP")
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
+        print("NO COMP")
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
-    basic = test_train_plot(exp, cl.scales['3']['qual']['Pastel1'])
+    # FIXME: also apply these to LIME
+    cols = cl.scales['3']['qual']['Set2']
+    basic = test_train_plot(exp, cols)
 
     # heatmap
     scores = sr.decode(json.dumps(dict(db.fetch(Results, {'name': name}))))
@@ -176,7 +181,7 @@ def experiment(name):
     for t in ('train', 'test'):
         y_true = exp.vec.encoder.inverse_transform(scores[t]['y'])
         y_pred = exp.vec.encoder.inverse_transform(scores[t]['res'])
-        heats.append((t, confusion_matrix(t, y_true, y_pred)))
+        heats.append((t, confusion_matrix(t, y_true, y_pred, cols)))
         scr, acc, auc = get_scores(labs, y_true, y_pred)
         rep.append([t, scr, ('acc', acc), ('auc', auc)])
     return skeleton(

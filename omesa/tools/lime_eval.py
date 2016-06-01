@@ -123,8 +123,6 @@ class LimeEval(object):
                     self.docs.append(row[ti])
                 elif i:
                     self.docs.append(row[ti])
-                else:
-                    pass
                 if i == 5:
                     break
         else:
@@ -196,15 +194,15 @@ class LimeEval(object):
         """Highlight LIME top-word in text. Works with 'graphs' method."""
         # FIXME: replace special chars with space and replace on token
         repl = [(word, ('__LIMENEG__' if val < 0 else '__LIMEPOS__') +
-                 word + '</span>') for word, val in expl]
+                 word + '</span></b>') for word, val in expl]
         doc = str(self.docs[i]).replace('"', '')
         for y in repl:
             doc = doc.replace(*y)
         # these are split up in tokens so that f.e. '1' doesn't screw it up
         doc = doc.replace(
-            '__LIMENEG__', '<span style="color:{0}">'.format(cols[0]))
+            '__LIMENEG__', '<b><span style="color:{0}">'.format(cols[0]))
         doc = doc.replace(
-            '__LIMEPOS__', '<span style="color:{0}">'.format(cols[-1:]))
+            '__LIMEPOS__', '<b><span style="color:{0}">'.format(cols[1]))
         return doc
 
     def unwind(self, exp, comp=False):
@@ -224,9 +222,9 @@ class LimeEval(object):
         for i, exp in enumerate(exps):
             expl, prb, cln = self.unwind(exp, comp)
             try:
-                ncol = cl.scales[str(len(cln))]['qual']['Pastel1']
+                ncol = cl.scales[str(len(cln))]['qual']['Set2']
             except KeyError:
-                ncol = cl.scales[str(len(cln)+1)]['qual']['Pastel1']
+                ncol = cl.scales[str(len(cln) + 1)]['qual']['Set2']
             cols = cl.to_rgb(ncol)
             order.append([self.prob_graph(i, prb, cln, cols),
                           self.weight_graph(i, expl, cols),

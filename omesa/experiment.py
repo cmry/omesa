@@ -146,11 +146,13 @@ class Experiment(object):
         print(" done!")
 
         av = 'binary' if len(set(y)) == 2 else 'micro'
+        labs = self.vec.encoder.classes_
         self.log.data('sparse', 'train', X)
         # if user wants to report more than best score, do another CV on train
         if conf.get('detailed_train', True):
             res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
-            self.res['train'] = self.log.report('train', y, res, av, metrics)
+            self.res['train'] = self.log.report('train', y, res, av, metrics,
+                                                labs)
 
         # report performance
         if conf.get('test_data'):
@@ -158,7 +160,7 @@ class Experiment(object):
 
         self.log.data('sparse', 'test', Xi, dump=True)
         res = self.clf.predict(Xi)
-        self.res['test'] = self.log.report('test', yi, res, av, metrics)
+        self.res['test'] = self.log.report('test', yi, res, av, metrics, labs)
 
         if conf.get('proportions'):
             self._run_proportions((X, Xi, y, yi), av, seed)

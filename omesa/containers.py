@@ -75,13 +75,15 @@ class Pipeline(object):
             val[0] = ['loader'] if n != 'lime' else row
         elif isinstance(row, list) and isinstance(row[0], str):
             val = [[]] * 3
-            val[0] = [x for x in row]
+            val[2] = [x for x in row]
+            val[0] = val[2]  # FIXME: wtf
         elif isinstance(row, list) and hasattr(row[0], 'source'):
             val = ([x.source for x in row], [x.path for x in row],
                    [x.__dict__ for x in row])
         elif n != 'lime':
             val = ([row.source], [row.path], [row.__dict__])
         else:
+            # FIXME: weird that we store it in data her and repr if no csv
             val = ([x[0] for x in row], row.path, row.__dict__)
 
         tab.update({did: val[0], did + '_path': val[1], did + '_repr': val[2]})

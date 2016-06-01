@@ -9,7 +9,7 @@
                           %for entry in conf:
                           </tr>
                             <th>{{entry[0]}}</th>
-                            <td>{{!entry[1]}}</td>
+                            <td>{{!', '.join(entry[1]) if isinstance(entry[1], list) else entry[1]}}</td>
                           </tr>
                           %end
                         </table>

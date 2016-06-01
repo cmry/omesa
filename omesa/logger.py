@@ -77,8 +77,9 @@ class _Logger(object):
         if dump:
             self.dump(dtype)
 
-    def report(self, tt, yi, res, av, metrics):
-        self.post('cr_' + tt, (metrics.classification_report(yi, res), ))
+    def report(self, tt, yi, res, av, metrics, labs=None):
+        self.post('cr_' + tt, (
+            metrics.classification_report(yi, res, target_names=labs), ))
         return {'y': yi, 'res': res,
                 'score': metrics.f1_score(yi, res, average=av)}
 
