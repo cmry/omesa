@@ -25,4 +25,5 @@ script:
   - python3 setup.py install
   - cd examples
   - python3 20news.py
+  - python3 n_gram.py
   - python3 deployment.py
