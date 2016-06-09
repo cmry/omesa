@@ -65,7 +65,7 @@ class Vectorizer(object):
         if isinstance(data, list) and hasattr(data[0], 'source'):
             data = _chain(data)
 
-        p = Pool(processes=self.conf.get('n_jobs', None))
+        p = Pool(processes=None)
         D, y = zip(*p.map(self.featurizer.transform, data))
         p.close()
         p.join()

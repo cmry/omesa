@@ -9,6 +9,7 @@ framework.
 """
 
 import re
+import sys
 import json
 import pickle
 from collections import OrderedDict, Counter
@@ -172,6 +173,25 @@ class Ngrams(object):
         return c
 
 
+class WordEmbeddings(object):
+
+    def __init__(self, lang='nl', mdir=None):
+        """Load the embeddings in the proper language."""
+        sys.path.append('/home/emmery/git/reach')
+        from reach import Spreach
+        if lang == 'nl':
+            mdir = __file__.split('featurizer.py')[0] + 'datasets/' if not \
+                   mdir else mdir
+            self.r = Spreach(mdir + "sparse-cow.txt")
+        else:
+            raise NotImplementedError
+
+    def transform(self, raw, parse=None):
+        """Convert sentences to tokens to vectors."""
+        # FIXME: reach does an extra split if just a string is provided
+        return self.r.transform(raw.split())
+
+
 class FuncWords(object):
     """Extract function word frequencies.
 
@@ -188,12 +208,12 @@ class FuncWords(object):
         """Set parameters for function word extraction."""
         self.name = 'func_words'
 
-        if lang == 'en':
-            raise NotImplementedError
-        elif lang == 'nl':
+        if lang == 'nl':
             self.functors = {
                 'VNW': 'pronouns', 'LID': 'determiners', 'VZ': 'prepositions',
                 'BW': 'adverbs', 'TW': 'quantifiers', 'VG': 'conjunction'}
+        else:
+            raise NotImplementedError
 
     def transform(self, _, parse):
         """Extract frequencies for fitted function word possibilites."""
