@@ -20,6 +20,7 @@ install:
   - pip install blitzdb
   - pip install lime
   - pip install plotly
+  - pip install reach
 
 script:
   - python3 setup.py install
