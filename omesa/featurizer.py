@@ -174,17 +174,35 @@ class Ngrams(object):
 
 
 class WordEmbeddings(object):
+    """WordEmbeddings container interacting with reach.
+
+    Loads sparse word embeddings from pre-existing word embedding files. These
+    can be either found under `datasets` in Omesa, or created using for
+    example gensim, and https://github.com/mfaruqui/sparse-coding.
+
+    Parameters
+    ----------
+    lang : str, optional, default 'nl'
+        Language, currently only Dutch (nl) is provided in Omesa.
+
+    mdir : str, optional, default None
+        If you want to load a custom embedding file, state path.
+
+    Attributes
+    ----------
+    r : class
+        Spreach class initialization. More info can be found in README of
+        https://github.com/stephantul/reach.
+    """
 
     def __init__(self, lang='nl', mdir=None):
         """Load the embeddings in the proper language."""
-        sys.path.append('/home/emmery/git/reach')
         from reach import Spreach
+        if not mdir:
+            mdir = __file__.split('featurizer.py')[0] + 'datasets/'
         if lang == 'nl':
-            mdir = __file__.split('featurizer.py')[0] + 'datasets/' if not \
-                   mdir else mdir
-            self.r = Spreach(mdir + "sparse-cow.txt")
-        else:
-            raise NotImplementedError
+            mdir += 'sparse-cow.txt'
+        self.r = Spreach(mdir)
 
     def transform(self, raw, parse=None):
         """Convert sentences to tokens to vectors."""
