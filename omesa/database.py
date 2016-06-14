@@ -76,6 +76,7 @@ class Database(object):
             return sr.decode(dict(self._query(
                 self.db.filter, (doc, {'name': name}))[0]))
         except IndexError:
+            print(str(doc), {'name': name})
             print("File does not exist.")
 
     def getall(self, doc):
