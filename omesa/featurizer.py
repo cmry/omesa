@@ -199,7 +199,7 @@ class WordEmbeddings(object):
         """Load the embeddings in the proper language."""
         from reach import Spreach
         if not mdir:
-            mdir = os.path.abspath(os.path.dirname(__file__)) + 'datasets/'
+            mdir = os.path.abspath(os.path.dirname(__file__)) + '/datasets/'
         if lang == 'nl':
             mdir += 'sparse-cow.txt'
         self.r = Spreach(mdir)
