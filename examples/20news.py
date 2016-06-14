@@ -57,7 +57,7 @@ Experiment(
     test_data=loader('test'),
     lime_data=[dat[0] for dat in loader('test', emax=5)],
     # proportions=10,
-    features=[WordEmbeddings(lang='en')],
+    features=[WordEmbeddings(lang='nl')],
     pipeline=[
         Pipe('scaler', MaxAbsScaler()),
         Pipe('clf', MultinomialNB())
