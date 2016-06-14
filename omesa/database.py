@@ -67,6 +67,7 @@ class Database(object):
         try:
             return self._query(self.db.filter, (doc, q))[0]
         except IndexError:
+            print(str(doc), str(q))
             print("File does not exist.")
 
     def get_component(self, doc, name):
