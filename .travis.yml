@@ -24,7 +24,7 @@ install:
   - pip install omesa
 
 script:
-  - pip3 install -e .
+  - pip install -e .
   - cd examples
   - python3 20news.py
   - python3 n_gram.py
