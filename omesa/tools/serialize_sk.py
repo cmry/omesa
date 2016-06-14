@@ -32,9 +32,12 @@ SOFTWARE.
 
 from collections import namedtuple, OrderedDict
 from types import GeneratorType
+from multiprocessing import Pool
 import json
 import sys
 import numpy as np
+
+POOL = False
 
 
 class Dummy(object):
@@ -143,6 +146,22 @@ def _restore(dct):
             setattr(class_init, k, v)
         return class_init
     return dct
+
+
+def pool(func, data):
+    """Multi-thread serialization."""
+    global POOL
+    if not POOL:
+        POOL = True
+        p = Pool(processes=None)
+        out = p.map(func, data)
+        p.close()
+        p.join()
+        del p
+        POOL = False
+    else:
+        out = data
+    return out
 
 
 def encode(data, fp=False):

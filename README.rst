@@ -34,7 +34,7 @@ automated, optimized, and well recorded. To this end it features:
 
 Read the documentation at readthedocs_.
 
-.. image:: http://chris.emmery.nl/dump/shed.png
+.. image:: http://www.cmry.nl/dump/shed.png
     :alt: Pipeline
 
 Important Note
@@ -56,10 +56,10 @@ model performance. Some extra dependencies are introduced, such as ``bottle``,
 ``blitzdb``, ``plotly`` and lime_. Currently only the 'Results' section works,
 preview below:
 
-.. image:: http://chris.emmery.nl/dump/omesa.png
+.. image:: http://www.cmry.nl/dump/omesa.png
     :alt: Front
 
-.. image:: http://chris.emmery.nl/dump/omesa_prop.png
+.. image:: http://www.cmry.nl/dump/omesa_prop.png
     :alt: Front Prop
 
 If you want to take a peek, install all above dependencies, do the following:
