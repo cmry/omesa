@@ -13,7 +13,7 @@ sys.path.append('../')
 
 try:
     from omesa.experiment import Experiment
-    from omesa.featurizer import Ngrams #, WordEmbeddings
+    from omesa.featurizer import Ngrams, WordEmbeddings
     from omesa.containers import Pipe
 except ImportError as e:
     print(e)
@@ -43,6 +43,21 @@ Experiment(
     lime_data=[dat[0] for dat in loader('test', emax=5)],
     # proportions=10,
     features=[Ngrams(level='char', n_list=[3])],
+    pipeline=[
+        Pipe('scaler', MaxAbsScaler()),
+        Pipe('clf', MultinomialNB())
+    ],
+    save=("model", "db")
+)
+
+Experiment(
+    project="unit_tests",
+    name="20_news_emb",
+    train_data=loader('train'),
+    test_data=loader('test'),
+    lime_data=[dat[0] for dat in loader('test', emax=5)],
+    # proportions=10,
+    features=[WordEmbeddings(lang='nl')],
     pipeline=[
         Pipe('scaler', MaxAbsScaler()),
         Pipe('clf', MultinomialNB())
