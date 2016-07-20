@@ -81,6 +81,11 @@ class Experiment(object):
         Example: ("log", model", "db", "man", "json", "pickle")
         Save the output of the log, or dump the entire model with its
         classification method and pipeline wrapper for new data instances.
+
+    n_jobs: int, optional, default 1
+        Controls the amount of jobs cross_validation is run in. Switch this to
+        any other number if the classifier used does not support multi-
+        threading.
     """
 
     def __init__(self, **kwargs):
@@ -125,7 +130,7 @@ class Experiment(object):
     def _run(self, conf):
         """Split data, fit, transfrom features, tf*idf, svd, report."""
         t1 = time()
-        seed = 42
+        seed, nj = 42, conf.get('n_jobs', 1)
         np.random.RandomState(seed)
 
         # report features
@@ -150,7 +155,7 @@ class Experiment(object):
         self.log.data('sparse', 'train', X)
         # if user wants to report more than best score, do another CV on train
         if conf.get('detailed_train', True):
-            res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=-1)
+            res = cross_val_predict(self.clf, X, y, cv=5, n_jobs=nj)
             self.res['train'] = self.log.report('train', y, res, av, metrics,
                                                 labs)
 

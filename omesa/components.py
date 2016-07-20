@@ -65,10 +65,11 @@ class Vectorizer(object):
         if isinstance(data, list) and hasattr(data[0], 'source'):
             data = _chain(data)
 
-        p = Pool(processes=self.conf.get('n_jobs', None))
+        p = Pool(processes=None)
         D, y = zip(*p.map(self.featurizer.transform, data))
         p.close()
         p.join()
+        del p
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
@@ -160,7 +161,7 @@ class Optimizer(object):
                 pipeline.Pipeline([(pipe.idf, pipe.skobj) for pipe in pipes] +
                                   [('clf', clf.skobj)]),
                 scoring=self.met, param_grid=grid,
-                n_jobs=self.conf.get('n_jobs', -1))
+                n_jobs=-1 if not hasattr(pipe.skobj, 'n_jobs') else 1)
 
             print("\n Starting Grid Search...")
             grid.fit(X, y)
