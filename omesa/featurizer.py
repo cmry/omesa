@@ -9,6 +9,7 @@ framework.
 """
 
 import re
+import os
 import json
 import pickle
 from collections import OrderedDict, Counter
@@ -172,6 +173,43 @@ class Ngrams(object):
         return c
 
 
+class WordEmbeddings(object):
+    """WordEmbeddings container interacting with reach.
+
+    Loads sparse word embeddings from pre-existing word embedding files. These
+    can be either found under `datasets` in Omesa, or created using for
+    example gensim, and https://github.com/mfaruqui/sparse-coding.
+
+    Parameters
+    ----------
+    lang : str, optional, default 'nl'
+        Language, currently only Dutch (nl) is provided in Omesa.
+
+    mdir : str, optional, default None
+        If you want to load a custom embedding file, state path.
+
+    Attributes
+    ----------
+    r : class
+        Spreach class initialization. More info can be found in README of
+        https://github.com/stephantul/reach.
+    """
+
+    def __init__(self, lang='nl', mdir=None):
+        """Load the embeddings in the proper language."""
+        from reach import Spreach
+        if not mdir:
+            mdir = os.path.abspath(os.path.dirname(__file__)) + '/datasets/'
+        if lang == 'nl':
+            mdir += 'sparse-cow.txt'
+        self.r = Spreach(mdir)
+
+    def transform(self, raw, parse=None):
+        """Convert sentences to tokens to vectors."""
+        # FIXME: reach does an extra split if just a string is provided
+        return self.r.transform(raw.split())
+
+
 class FuncWords(object):
     """Extract function word frequencies.
 
@@ -188,12 +226,12 @@ class FuncWords(object):
         """Set parameters for function word extraction."""
         self.name = 'func_words'
 
-        if lang == 'en':
-            raise NotImplementedError
-        elif lang == 'nl':
+        if lang == 'nl':
             self.functors = {
                 'VNW': 'pronouns', 'LID': 'determiners', 'VZ': 'prepositions',
                 'BW': 'adverbs', 'TW': 'quantifiers', 'VG': 'conjunction'}
+        else:
+            raise NotImplementedError
 
     def transform(self, _, parse):
         """Extract frequencies for fitted function word possibilites."""

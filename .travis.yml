@@ -20,9 +20,11 @@ install:
   - pip install blitzdb
   - pip install lime
   - pip install plotly
+  - pip install reach
+  - pip install omesa
 
 script:
-  - python3 setup.py install
+  - pip install -e .
   - cd examples
   - python3 20news.py
   - python3 n_gram.py

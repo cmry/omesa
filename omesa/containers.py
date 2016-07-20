@@ -83,7 +83,7 @@ class Pipeline(object):
         elif n != 'lime':
             val = ([row.source], [row.path], [row.__dict__])
         else:
-            # FIXME: weird that we store it in data her and repr if no csv
+            # FIXME: weird that we store it in data here and repr if no csv
             val = ([x[0] for x in row], row.path, row.__dict__)
 
         tab.update({did: val[0], did + '_path': val[1], did + '_repr': val[2]})
