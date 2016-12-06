@@ -1,16 +1,21 @@
 """Vectorizer and optimization.
 """
 
-from operator import itemgetter
+# pylint:       disable=E1135,E1101
+
 from multiprocessing import Pool
+from operator import itemgetter
+from time import time
 
 import numpy as np
 
 from sklearn import pipeline
+from sklearn import metrics
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.grid_search import GridSearchCV
-from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import train_test_split
 
 from .featurizer import Featurizer
 from .containers import Pipe, _chain
@@ -27,36 +32,16 @@ class Vectorizer(object):
 
     Parameters
     ----------
-    conf : dict
-        Configuration dictionary passed to the experiment class.
+    features : list of Featurizer classes.
 
-    Attributes
-    ----------
-    conf : dict
-        Configuration dictionary passed to the experiment class.
+    preprocessor: Preprocessor class.
 
-    featurizer : class
-        Environment class (might be replace by Featurizer) from Omesa.
-
-    hasher : class
-        DictVectorizer class from sklearn.
-
-    normalizers : class
-        TfidfTransformer class from sklearn.
-
-    decomposers : class
-        TruncatedSVD class from sklearn.
+    parser: Parser class.
     """
 
-    def __init__(self, conf=None, featurizer=None):
+    def __init__(self, features, preprocessor=None, parser=None):
         """Start pipeline modules."""
-        if conf:
-            self.conf = conf
-        if not featurizer:
-            self.featurizer = Featurizer(conf['features'],
-                                         conf.get('preprocessor'),
-                                         conf.get('parser'))
-
+        self.featurizer = Featurizer(features, preprocessor, parser)
         self.hasher = DictVectorizer()
         self.encoder = LabelEncoder()
 
@@ -89,43 +74,67 @@ class Vectorizer(object):
         return self._vectorize(data, func='transform')
 
 
-class Optimizer(object):
-    """Current placeholder for grid methods. Should be fleshed out.
+class Evaluator(object):
 
-    Parameters
-    ----------
-    classifiers : dict, optional, default None
-        Dictionary where the key is a initiated model class, and the values
-        are a dictionary with parameter settings in a (string-array) format,
-        same as used in the scikit-learn pipeline. So for example, we provide:
-        {LinearSVC(class_weight='balanced'): {'C': np.logspace(-3, 2, 6)}}.
-        Note that pipeline requires some namespace (like clf__C), but the class
-        handles that already.
+    def __init__(self, **kwargs):
+        """Set all relevant settings, run experiment.
 
-    conf : dict, optinal, default None
-        Configuration dictionary used by the Experiment class wrapper.
-    """
+        Parameters
+        ----------
+        test_data : list of, or single iterator
+            Example: [CSV("/somedir/test.csv", label=1, text=2)]
+            This works similar to the train_data. However, when a test set is
+            provided, the performance of the model will also be measured on this
+            test data. Omesa will dump a classification report for you.
 
-    def __init__(self, conf=None, classifiers=None, scoring='f1_micro'):
-        """Initialize optimizer with classifier dict and scoring, or conf."""
-        std_clf = [Pipe('clf', SVC(kernel='linear'),
-                        parameters={'C': np.logspace(-2.0, 1.0, 10)})]
+        test_size : float
+            Example: 0.3
+            As opposed to a test FILE, one can also provide a test proportion,
+            after which a certain amount of instances will be held out from the
+            training data to test on.
 
-        if not classifiers:
-            classifiers = std_clf
-        if not conf.get('classifiers'):
-            conf['classifiers'] = std_clf
+        scoring: string
 
+        detailed_train: bool
+
+        cv: int
+
+        proportions: int
+
+        """
+        self.__dict__.update(kwargs)
+        self.__dict__['cv'] = self.__dict__.get('cv', 5)
+        self.res = {}
         self.scores = {}
-        self.met = conf.get('scoring', scoring)
-        self.conf = conf if conf else classifiers
+
+    def _run_proportions(self, sets, exp):
+
+        """Repeats run and proportionally increases the amount of data."""
+        X, Xi, y, yi = sets
+        self.res['prop'] = {}
+
+        for i in range(1, exp.batches):
+            prop = (1 / exp.batches) * (exp.batches - i)
+            exp.log.slice((1 - prop, ))
+
+            Xp, _, yp, _ = train_test_split(X, y, train_size=prop, stratify=y)
+            clff = self.grid_search(Xp, yp, self.scoring, exp.seed).fit(Xp, yp)
+
+            tres = cross_val_predict(clff, Xp, yp, cv=5, n_jobs=-1)
+
+            # FIXME: this is going to break with any other metric
+            tscore = metrics.f1_score(yp, tres, average=self.average)
+            score = metrics.f1_score(yi, clff.predict(Xi), average=self.average)
+
+            print("\n Result: {0}".format(score))
+            self.res['prop'].update(
+                {1 - prop: {'train': tscore, 'test': score}})
 
     def best_model(self):
         """Choose best parameters of trained classifiers."""
+        # FIXME: I think this can be deprecated
         score_sum, highest_score = {}, 0
-        for scores, estim in self.scores.values():
-            best = sorted(scores, key=itemgetter(1), reverse=True)[0]
-            score = best.mean_validation_score
+        for score, estim in self.scores.values():
             score_sum[score] = estim
             if score > highest_score:
                 highest_score = score
@@ -137,11 +146,11 @@ class Optimizer(object):
 
         return highest_score, score_sum[highest_score]
 
-    def choose_classifier(self, X, y, seed):
+    def grid_search(self, pln, X, y, seed):
         """Choose a classifier based on settings."""
         clfs, pipes = [], []
 
-        for pipe in self.conf['pipeline']:
+        for pipe in pln:
             pipe.check(seed)
             if pipe.idf == 'clf':
                 clfs.append(pipe)
@@ -160,16 +169,70 @@ class Optimizer(object):
             grid = GridSearchCV(
                 pipeline.Pipeline([(pipe.idf, pipe.skobj) for pipe in pipes] +
                                   [('clf', clf.skobj)]),
-                scoring=self.met, param_grid=grid,
+                scoring=self.scoring, param_grid=grid,
                 n_jobs=-1 if not hasattr(pipe.skobj, 'n_jobs') else 1)
 
             print("\n Starting Grid Search...")
             grid.fit(X, y)
             print(" done!")
 
-            self.scores[clf] = (grid.grid_scores_, grid.best_estimator_)
+            self.scores[clf] = (grid.best_score_, grid.best_estimator_)
 
         score, clf = self.best_model()
         self.scores['best'] = score
 
         return clf
+
+    def evaluate(self, exp):
+        """Split data, fit, transfrom features, tf*idf, svd, report."""
+        t1 = time()
+
+        exp.seed = 42
+        exp.nj = -1
+        exp.test_size = 0.3 if not hasattr(exp, 'test_size') else exp.test_size
+        np.random.RandomState(exp.seed)
+
+        # report features
+        if hasattr(exp.pln[0], 'features'):
+            exp.log.head(exp.pln.features, exp.name, exp.seed)
+
+        # stream data to features
+        X, y = exp.vec.fit_transform(exp.data)
+
+        # if no test data, split
+        if not hasattr(self, 'test_data'):
+            X, Xi, y, yi = train_test_split(
+                X, y, test_size=exp.test_size, stratify=y)
+        else:
+            Xi, yi = exp.vec.transform(self.test_data)
+
+        av = self.average
+        # grid search and fit best model choice
+        exp.pln = self.grid_search(exp.pln, X, y, exp.seed)
+        print("\n Training model...")
+        exp.pln.fit(X, y)
+        print(" done!")
+
+        labs = exp.vec.encoder.classes_
+        exp.log.data('sparse', 'train', X)
+
+        # if user wants to report more than best score, do another CV on train
+        # if hasattr(self, 'detailed_train'):
+        sco = cross_val_predict(exp.pln, X, y, cv=self.cv, n_jobs=exp.nj)
+        self.res['train'] = exp.log.report('train', y, sco, av, labs)
+
+        exp.log.data('sparse', 'test', Xi, dump=True)
+        res = exp.pln.predict(Xi)
+        self.res['test'] = exp.log.report('test', yi, res, av, labs)
+
+        if hasattr(self, 'proportions'):
+            self._run_proportions((X, Xi, y, yi), exp)
+
+        print("\n # ------------------------------------------ \n")
+        t2 = time()
+        dur = round(t2 - t1, 1)
+        self.res['dur'] = dur
+        print("\n Experiment took {0} seconds".format(dur))
+
+        exp.store()
+        print("\n" + '-' * 10, "\n")

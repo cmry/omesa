@@ -2,6 +2,7 @@
 """
 
 from collections import OrderedDict
+from sklearn import metrics
 
 
 class _Logger(object):
@@ -33,9 +34,9 @@ class _Logger(object):
         the loop has been completed.
     """
 
-    def __init__(self, file_name):
+    def __init__(self, exp):
         """Set log dict. Empty buffer."""
-        self.file_name = file_name + '.log'
+        self.file_name = exp.name + '.log'
         self.log = {
             'head':
                 "\n---- Omesa ---- \n\n Config: \n" +
@@ -77,7 +78,7 @@ class _Logger(object):
         if dump:
             self.dump(dtype)
 
-    def report(self, tt, yi, res, av, metrics, labs=None):
+    def report(self, tt, yi, res, av, labs=None):
         self.post('cr_' + tt, (
             metrics.classification_report(yi, res, target_names=labs), ))
         return {'y': yi, 'res': res,

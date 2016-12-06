@@ -64,7 +64,7 @@ class Featurizer(object):
     utils.parse.extract_tags or http://ilk.uvt.nl/parse/.
     """
 
-    def __init__(self, features, preprocessor=False, parser=False):
+    def __init__(self, features, preprocessor=None, parser=None):
         """Initialize the wrapper and set the provided features to a var."""
         self.helpers = features
         self.preprocessor = preprocessor
@@ -159,10 +159,10 @@ class Ngrams(object):
         if self.level == 'char':
             needle = list(raw)
         elif self.level == 'text':
-            needle = raw.split()
+            needle = raw.split(' ')
         elif self.level == 'token' or self.level == 'pos':
             # FIXME: parses are not handled well
-            needle = parse[self.row] if parse else raw.split()
+            needle = parse[self.row] if parse else raw.split(' ')
             if self.level == 'pos' and not parse:
                 raise EnvironmentError("There's no POS annotation.")
 
@@ -207,7 +207,7 @@ class WordEmbeddings(object):
     def transform(self, raw, parse=None):
         """Convert sentences to tokens to vectors."""
         # FIXME: reach does an extra split if just a string is provided
-        return self.r.transform(raw.split())
+        return self.r.transform(raw.split(' '))
 
 
 class FuncWords(object):

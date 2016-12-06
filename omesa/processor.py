@@ -27,7 +27,7 @@ class SimpleCleaner(object):
         text = text.lower().replace('|', ' ')  # ask.fm specific
         text = ' '.join([re.sub('[^a-zA-Z0-9-_*?!]', ' ', word) if not
                          any([emo in word for emo in self.emoticons]) else
-                         ' ' + word for word in text.split()])
+                         ' ' + word for word in text.split(' ')])
         text = re.sub(r'\s{2,}', ' ', text)
         return text
 

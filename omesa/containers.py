@@ -52,12 +52,12 @@ class Pipeline(object):
             assert name
 
         self.vec = exp.vec if exp else None
-        self.cnf = exp.vec.conf if exp else None
-        self.clf = exp.clf if exp else None
-        self.res = exp.res if exp else None
+        self.cnf = exp.__dict__ if exp else None
+        self.clf = exp.pln if exp else None
+        self.res = exp.eva.res if exp else None
 
-        self.hook = self.vec.conf['name'] if not name else name
-        self.storage = self.vec.conf['save'] if not store else store
+        self.hook = exp.name if not name else name
+        self.storage = exp.save if not store else store
 
         if 'db' in self.storage:
             self.db = Database()
@@ -66,6 +66,9 @@ class Pipeline(object):
         """Split data entries and leave empty if not present."""
         did = n + '_data'
         row = self.cnf.get(did)
+
+        if n == 'lime':
+            row = self.cnf['eva'].__dict__.get('lime_docs')
 
         if not row:
             val = [[]] * 3
@@ -92,13 +95,14 @@ class Pipeline(object):
     def _calc_lime(self, tab):
         """Calculate lime information based on converted data entries."""
         from .tools import lime_eval as le
-        labs = self.vec.encoder.classes_
-        lime = le.LimeEval(self.clf, self.vec, labs)
+        lime = le.LimeEval(classifier=self.clf, vectorizer=self.vec,
+                           n_classes=len(self.vec.encoder.classes_))
         exps = lime.load_omesa(tab['lime_data_repr'])
         lime_list = []
         for exp in exps:
             expl, prb, cln = lime.unwind(exp)
-            lime_list.append({'expl': expl, 'prb': prb, 'cln': cln})
+            lime_list.append({'expl': expl, 'prb': prb, 'cln':
+                [self.vec.encoder.inverse_transform(int(c)) for c in cln]})
         tab.update({'lime_data_comp': lime_list})
         return tab
 

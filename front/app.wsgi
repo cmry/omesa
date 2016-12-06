@@ -165,11 +165,9 @@ def experiment(name):
     labs = exp.vec.encoder.classes_
 
     if tab.get('lime_data_comp'):
-        lev = le.LimeEval(class_names=labs)
-        print("COMP")
+        lev = le.LimeEval(n_classes=len(labs))
     else:
         lev = le.LimeEval(exp.clf, exp.vec, labs)
-        print("NO COMP")
     lime = lev.to_web(sr.decode(json.dumps(dict(tab))))
     # FIXME: also apply these to LIME
     cols = cl.scales['3']['qual']['Set2']
@@ -193,7 +191,7 @@ def experiment(name):
 def main():
     """Main call to app."""
     bottle.debug(True)
-    bottle.run(app=bottle.app(), host='0.0.0.0', port=6666,
+    bottle.run(app=bottle.app(), host='localhost', port=4242,
                quiet=False, reloader=True)
 
 if __name__ == '__main__':

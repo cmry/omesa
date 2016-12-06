@@ -5,7 +5,8 @@ import csv
 import plotly.offline as py
 import plotly.graph_objs as go
 
-from lime.lime_text import ScikitClassifier, LimeTextExplainer
+from sklearn.pipeline import make_pipeline
+from lime.lime_text import LimeTextExplainer
 
 
 class LimeEval(object):
@@ -62,13 +63,16 @@ class LimeEval(object):
     Package from: https://github.com/marcotcr/lime.
     """
 
-    def __init__(self, classifier=None, vectorizer=None, class_names=None,
-                 docs=None):
+    def __init__(self, classifier=None, vectorizer=None, n_classes=None, docs=None):
         """Start lime classifier, set label and empty doc placeholder."""
-        self.c = ScikitClassifier(classifier, vectorizer)
-        self.names = class_names
-        self.docs = [] if not docs else docs
-        self.multi = 3 if len(class_names) > 2 else None
+        self.pipeline = make_pipeline(vectorizer, classifier)
+        self.documents = [] if not docs else docs
+        self.n_classes = n_classes
+
+        # NOTE: given that Python uses a lot of these symbolic links, we might
+        # heavily reduce the size and time required for serializing objects if
+        # we hash them first, store the hashes, and remember their position.
+        # After, we can just refer back and copy this info to extract again.
 
     def explain(self, docs):
         """Generate LIME Explanations for list of docs.
@@ -87,13 +91,15 @@ class LimeEval(object):
             For each input document, an Explanation class object on which for
             example the .to_list, to_notebook etc functions can be called on.
         """
-        explainer = LimeTextExplainer(class_names=self.names)
-        exps = []
+        explainer = LimeTextExplainer()
+        experiments = []
+
         for doc in docs:  # NOTE: this might have messed up in a generator
-            exp = explainer.explain_instance(doc, self.c.predict_proba,
-                                             top_labels=self.multi)
-            exps.append(exp)
-        return exps
+            experiment = explainer.explain_instance(
+                doc, self.pipeline.predict_proba, top_labels=self.n_classes)
+            experiments.append(experiment)
+
+        return experiments
 
     def load_omesa(self, lime_repr):
         """Special LIME loader for Omesa pipelines.
@@ -117,20 +123,22 @@ class LimeEval(object):
         """
         if isinstance(lime_repr, dict):
             reader = csv.reader(open(lime_repr['path']), quotechar='"')
-            ti = lime_repr['idx'][0]
+            text_index = lime_repr['idx'][0]
+
             for i, row in enumerate(reader):
                 if lime_repr.get('no_header') and not i:
-                    self.docs.append(row[ti])
+                    self.documents.append(row[text_index])
                 elif i:
-                    self.docs.append(row[ti])
+                    self.documents.append(row[text_index])
                 if i == 5:
                     break
         else:
-            self.docs = lime_repr
-        return self.explain(self.docs)
+            self.documents = lime_repr
+
+        return self.explain(self.documents)
 
     @staticmethod
-    def graph_to_file(exps, loc):
+    def graph_to_file(explanations, file_dir):
         """Dump LIME experiments with .to_html.
 
         This is the native way of graphing using LIME, and uses d3.js. The
@@ -141,101 +149,142 @@ class LimeEval(object):
 
         Parameters
         ----------
-        exps : list of classes
+        explanations : list of classes
             An Explanation class for each document.
 
-        loc : str
+        file_dir : str
             The location where to save. If this is used in bottle, should be
             specifically set to `None` to save it to ./static.
 
         Returns
         -------
-        f_names : list of strings
+        file_names : list of strings
             List of pointers to the file locations where the graphs have been
             stored.
         """
-        f_names = []
-        for i, exp in enumerate(exps):
-            if not loc:
-                loc = '/tmp/plot/'
-            with open(loc + 'lime_' + str(i) + '.html', 'w') as f:
-                html_str = exp.as_html()
+        file_names = []
+
+        for i, explanation in enumerate(explanations):
+            if not file_dir:
+                file_dir = '/tmp/plot/'
+
+            with open(file_dir + 'lime_' + str(i) + '.html', 'w') as f:
+                html_str = explanation.as_html()
                 f.write(html_str)
-                f_names.append(f.name[1:])
-        return f_names
+                file_names.append(f.name[1:])
+
+        return file_names
 
     @staticmethod
     def save_graph(data, layout):
         """Quick binder to dump plotly data and layout."""
         fig = go.Figure(data=data, layout=layout)
+
         return py.plot(fig, output_type='div', auto_open=False,
                        show_link=False, include_plotlyjs=False)
 
-    def prob_graph(self, i, prob, cln, cols):
+    def prob_graph(self, i, probabilities, class_names, colors):
         """Output LIME class probability graph. Works with 'graphs' method."""
-        data = [go.Bar(x=list(prob), y=cln,
-                       marker=dict(color=cols),
-                       orientation='h')]
+        data = [go.Bar(
+                    x=probabilities,
+                    y=class_names,
+                    marker=dict(color=colors),
+                    orientation='h'
+                )]
         layout = go.Layout(margin=go.Margin(l=100, r=0, b=0, t=0, pad=0))
+
         return self.save_graph(data, layout)
 
-    def weight_graph(self, i, expl, cols):
+    def weight_graph(self, i, explanations, colors):
         """Output LIME weight graph. Works with 'graphs' method."""
         # FIXME: colours are binary only
-        data = [go.Bar(x=[float(val) for word, val in expl],
-                       y=[word for word, val in expl],
-                       marker=dict(color=[cols[0] if val < 0 else cols[1]
-                                          for word, val in expl]),
-                       orientation='h')]
+        zero_color = 'rgb(128, 128, 128)' if len(colors) > 2 else colors[-1]
+        data = [go.Bar(
+                    x=[float(weight) for word, weight in explanations],
+                    y=[word for word, weight in explanations],
+                    marker=dict(color=[
+                        zero_color if val < 0 else colors[0]
+                                       for word, val in explanations]),
+                    orientation='h'
+                )]
         layout = go.Layout(margin=go.Margin(l=100, r=0, b=0, t=0, pad=0))
+
         return self.save_graph(data, layout)
 
-    def tag_text(self, i, expl, cols):
+    def tag_text(self, i, explanations, colors):
         """Highlight LIME top-word in text. Works with 'graphs' method."""
         # FIXME: replace special chars with space and replace on token
-        repl = [(word, ('__LIMENEG__' if val < 0 else '__LIMEPOS__') +
-                 word + '</span></b>') for word, val in expl]
-        doc = str(self.docs[i]).replace('"', '')
-        for y in repl:
-            doc = doc.replace(*y)
-        # these are split up in tokens so that f.e. '1' doesn't screw it up
-        doc = doc.replace(
-            '__LIMENEG__', '<b><span style="color:{0}">'.format(cols[0]))
-        doc = doc.replace(
-            '__LIMEPOS__', '<b><span style="color:{0}">'.format(cols[1]))
-        return doc
+        zero_color = 'rgb(128, 128, 128)' if len(colors) > 2 else colors[-1]
+        replacements = {word: ('<b><span style="color:{0}">'.format(
+                                zero_color if val < 0 else colors[0]) + word +
+                              '</span></b>') for word, val in explanations}
 
-    def unwind(self, exp, comp=False):
+        new_doc = str(self.documents[i]).replace('"', '').split(' ')
+        for idx, word in enumerate(new_doc):
+            if word in replacements:
+                new_doc[idx] = replacements[word]
+
+        return ' '.join(new_doc)
+
+    def unwind(self, experiment, pre_computed=False):
         """Unwind LIME experiment in its results."""
-        if not comp:
-            expl = exp.as_list()
-            prb = exp.predict_proba
-            cln = exp.class_names
-        else:
-            expl, prb, cln = exp['expl'], exp['prb'], exp['cln']
-        return expl, prb, cln
+        if not pre_computed:
+            proba = experiment.predict_proba
+            class_names = experiment.class_names
+            class_names, proba = \
+                zip(*[(c, p) for (p, c) in
+                      sorted(zip(proba, class_names), reverse=True)])
 
-    def graphs(self, exps, comp=False):
+            explanations = experiment.as_list(label=int(class_names[0]))
+
+        else:
+            explanations, proba, class_names = \
+                experiment['expl'], experiment['prb'], experiment['cln']
+
+        return explanations, proba, class_names
+
+    def graphs(self, explanations, pre_computed=False):
         """Convert exps list to graph locations and annotated text."""
         import colorlover as cl
-        order = []
-        for i, exp in enumerate(exps):
-            expl, prb, cln = self.unwind(exp, comp)
-            try:
-                ncol = cl.scales[str(len(cln))]['qual']['Set2']
-            except KeyError:
-                ncol = cl.scales[str(len(cln) + 1)]['qual']['Set2']
-            cols = cl.to_rgb(ncol)
-            order.append([self.prob_graph(i, prb, cln, cols),
-                          self.weight_graph(i, expl, cols),
-                          self.tag_text(i, expl, cols)])
+        order, color_order = [], {}
+
+        for i, explanation in enumerate(explanations):
+            explanation, probabilities, class_names = \
+                self.unwind(explanation, pre_computed)
+
+            if not color_order:
+                try:
+                    n_colors = cl.scales[str(len(class_names))]['qual']['Set2']
+                except KeyError:
+                    corrected_n = len(class_names) + 1
+                    n_colors = cl.scales[str(corrected_n)]['qual']['Set2']
+
+                lime_colors = cl.to_rgb(n_colors)
+                color_order = {name: color for color, name in
+                               zip(lime_colors, class_names)}
+
+            colors = [color_order[name] for name in class_names]
+            order.append([
+                self.prob_graph(i, probabilities, class_names, colors),
+                self.weight_graph(i, explanation, colors),
+                self.tag_text(i, explanation, colors)])
+
         return order
 
-    def to_web(self, tab):
-        xps = tab.get('lime_data_comp')
-        if not xps:
-            xps = self.load_omesa(tab['lime_data_repr'])
+    def to_web(self, table_data):
+        """Dump table information to a web-compatible format."""
+        lime_experiments = table_data.get('lime_data_comp')
+
+        if not lime_experiments:
+            lime_experiments = self.load_omesa(table_data['lime_data_repr'])
         else:
-            self.docs = tab.get('lime_data')
-        return [x for x in self.graphs(xps, comp=isinstance(xps[0], dict))] \
-            if xps else ["Model not probability-based."]
+            # FIXME: this doesn't work anymore?
+            self.documents = table_data.get('lime_data')
+
+        if lime_experiments:
+            return [graph for graph in
+                    self.graphs(lime_experiments,
+                            pre_computed=isinstance(lime_experiments[0], dict))
+                ]
+        else:
+            return [["Model not probability-based."]]

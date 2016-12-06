@@ -52,20 +52,20 @@
                         <h3 class="box-title">LIME Evaluation {{i}}</h3>
                       </div>
                       <div class="box-body">
-                        %for i, fl in enumerate(graphs):
-                        %if i != 2:
-                          <div class="col-xs-6">
-                            {{!fl.replace('style="height: 100%; width: 100%;"', 'style="height: 200px; width: 100%;"')}}
-                          </div>
-                        %else:
+                      %for i, fl in enumerate(graphs):
+                      %if i != 2:
+                        <div class="col-xs-6">
+                          {{!fl.replace('style="height: 100%; width: 100%;"', 'style="height: 200px; width: 100%;"')}}
                         </div>
-                        <div class="box-body">
-                            <pre>
+                      %else:
+                      </div>
+                      <div class="box-body">
+                        <pre>
 {{!fl}}
-                            </pre>
-                        </div>
-                        %end
-                        %end
+                        </pre>
+                      </div>
+                      %end
+                      %end
                     </div>
                     %end
                   </div>
