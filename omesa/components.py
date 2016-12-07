@@ -58,7 +58,7 @@ class Vectorizer(object):
             p.join()
             del p
         else:
-            D, y = zip(map(self.featurizer.transform, data))
+            D, y = zip(*map(self.featurizer.transform, data))
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
