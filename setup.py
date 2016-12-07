@@ -5,7 +5,7 @@ from setuptools import find_packages
 
 
 setup(name='omesa',
-      version='0.4.0.alpha',
+      version='0.4.1.alpha',
       description='A framework for reproducible machine learning research',
       author='Chris Emmery',
       author_email='cmry@protonmail.com',

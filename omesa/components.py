@@ -39,22 +39,26 @@ class Vectorizer(object):
     parser: Parser class.
     """
 
-    def __init__(self, features, preprocessor=None, parser=None):
+    def __init__(self, features, preprocessor=None, parser=None, n_jobs=None):
         """Start pipeline modules."""
         self.featurizer = Featurizer(features, preprocessor, parser)
         self.hasher = DictVectorizer()
         self.encoder = LabelEncoder()
+        self.n_jobs = n_jobs
 
     def _vectorize(self, data, func):
         """Send the data through all applicable steps to vectorize."""
         if isinstance(data, list) and hasattr(data[0], 'source'):
             data = _chain(data)
 
-        p = Pool(processes=None)
-        D, y = zip(*p.map(self.featurizer.transform, data))
-        p.close()
-        p.join()
-        del p
+        if self.n_jobs != 1:
+            p = Pool(processes=self.n_jobs)
+            D, y = zip(*p.map(self.featurizer.transform, data))
+            p.close()
+            p.join()
+            del p
+        else:
+            D, y = zip(map(self.featurizer.transform, data))
 
         # NOTE: these _can't_ be put in p.map because `fit` overwrites in iter
         X = getattr(self.hasher, func)(D)
