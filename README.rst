@@ -22,27 +22,35 @@ Omesa
 .. _scikit-learn: http://scikit-learn.org/stable/
 .. _readthedocs: http://omesa.readthedocs.org/
 
-A small framework for reproducible Text Mining research that largely builds
-on top of scikit-learn_. Its goal is to make common research procedures fully
-automated, optimized, and well recorded. To this end it features:
+A small framework for easily deployable, reproducible machine learning research that largely builds
+on top of scikit-learn's_ API. Its goal is to make common research procedures templated, optimized,
+and well recorded. To this end it features:
 
-- Exhaustive search over best features, pipeline options, to classifier optimization.
 - Flexible wrappers to plug in your tools and features of choice.
-- Completely sparse pipeline through hashing - from data to feature space.
-- Record of all settings and fitted parts of the entire experiment, promoting reproducibility.
+- Sparse and multi-threaded pipeline through hashing and pooling - from data to feature space.
+- Storage of all settings and fitted parts of the entire experiment, promoting reproducibility.
 - Dump an easily deployable version of the final model for plug-and-play demos.
+- Visual overview in an web-environment for comparison and intepretation of experiments.
 
 Read the documentation at readthedocs_.
-
-.. image:: http://www.cmry.nl/dump/shed.png
-    :alt: Pipeline
 
 Important Note
 ''''''''''''''
 
-This repository is currently in alpha development, so don't expect any stable
-functionality until this part is removed. The `dev` branch will usually have the
-latest (not always stable) version.
+This repository is currently in alpha development, and is therefore not stable.
+
+Why use Omesa?
+''''''''''''''
+
+Omesa can be used in various scenarios:
+
+- As an end-to-end template-to-results framework.
+- As several fast classes to aid your machine learning workflow.
+- As a storage and overview for your experiments.
+
+As such, you can vary between restricted options and little code, and many options (thus more code)
+that require some restricted storage format. Either way, Omesa aids in structuring and comparing
+experiments.
 
 Front-end Preview
 '''''''''''''''''''
@@ -50,11 +58,8 @@ Front-end Preview
 .. _dev: https://github.com/cmry/omesa/tree/dev
 .. _lime: https://github.com/marcotcr/lime
 
-In 'front' a web front-end is being developed that uses a standalone
-database for storing models. This provides visualization and comparison of
-model performance. Some extra dependencies are introduced, such as ``bottle``,
-``blitzdb``, ``plotly`` and lime_. Currently only the 'Results' section works,
-preview below:
+The front-end provides visualization and comparison of model performance. Currently only the
+'Results' section works, preview below:
 
 .. image:: http://www.cmry.nl/dump/omesa.png
     :alt: Front
@@ -62,7 +67,7 @@ preview below:
 .. image:: http://www.cmry.nl/dump/omesa_prop.png
     :alt: Front Prop
 
-If you want to take a peek, install all above dependencies, do the following:
+To test, do the following:
 
 .. code-block:: shell
 
@@ -111,21 +116,26 @@ other articles. To run the experiment, the following configuration is used:
 
 .. code-block:: python
 
-    from omesa.experiment import Experiment
-    from omesa.featurizer import Ngrams
-    from omesa.containers import CSV
-    from sklearn.naive_bayes import MultinomialNB
+        from omesa.experiment import Experiment
+        from omesa.featurizer import Ngrams
+        from omesa.containers import Pipe
+        from omesa.components import Vectorizer, Evaluator
+        from sklearn.naive_bayes import MultinomialNB
 
     Experiment(
         project="unit_tests",
-        name="gram_experiment",
-        train_data=CSV("n_gram.csv", data="gram", label="label"),
-        lime_data=CSV("n_gram.csv", data="gram", label="label"),
-        features=[Ngrams(level='char', n_list=[3])],
-        classifiers=[
-            {'clf': MultinomialNB()}
+        name="20_news_grams",
+        data=[CSV("n_gram.csv", data="intro", label="label")],
+        pipeline=[
+            Vectorizer(
+                features=[
+                    Ngrams(level='char', n_list=[3])
+                ]),
+            Pipe('clf', MultinomialNB()),
+            Evaluator(scoring='f1', average='micro',
+                      lime_docs=CSV("n_gram.csv", data="intro", label="label")),
         ],
-        "save": ("log")
+        save=("model", "db")
     )
 
 This will cross validate performance on the ``.csv``, selecting text
