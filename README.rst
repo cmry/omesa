@@ -20,7 +20,7 @@ Omesa
 .. _readthedocs: http://omesa.readthedocs.org/
 
 A small framework for easily deployable, reproducible machine learning research that largely builds
-on top of scikit-learn's_ API. Its goal is to make common research procedures templated, optimized,
+on top the scikit-learn_ API. Its goal is to make common research procedures templated, optimized,
 and well recorded. To this end it features:
 
 - Flexible wrappers to plug in your tools and features of choice.
