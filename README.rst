@@ -13,9 +13,6 @@ Omesa
     :target: https://landscape.io/github/cmry/omesa/master
     :alt: Landscape
 
-.. image:: https://img.shields.io/badge/license-GPLv3-blue.svg
-    :alt: GPLv3
-
 .. image:: https://img.shields.io/badge/python-3.5-blue.svg
     :alt: Python 3.4
 
