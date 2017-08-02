@@ -117,9 +117,9 @@ class Ngrams(object):
 
     Examples
     --------
-    Token-level uni and bigrams with a maximum of 2000 feats per n:
+    Token-level uni and bigrams:
 
-    >>> ng = Ngrams(level='token', n_list=[1, 2], max_feats=2000)
+    >>> ng = Ngrams(level='token', n_list=[1, 2])
     >>> ng.transform('this is text')
     ... {'this': 1, 'is': 1, 'text': 1, 'this is': 1, 'is text': 1}
 
