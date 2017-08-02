@@ -115,9 +115,6 @@ class Ngrams(object):
         Amount of grams that have to be extracted, can be multiple. Say that
         uni and bigrams have to be extracted, n_list has to be [1, 2].
 
-    max_feats : integers
-        Limits how many features will be generated.
-
     Examples
     --------
     Token-level uni and bigrams with a maximum of 2000 feats per n:
