@@ -212,7 +212,7 @@ class CSV(object):
 
     Parameters
     ----------
-    text : integer or string
+    data : integer or string
         Index integer of the .csv where the text is located. If string is
         provided instead, will look for its index in the header.
 
