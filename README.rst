@@ -58,10 +58,10 @@ Front-end Preview
 The front-end provides visualization and comparison of model performance. Currently only the
 'Results' section works, preview below:
 
-.. image:: http://www.cmry.nl/dump/omesa.png
+.. image:: https://onyx.uvt.nl/toku/static/omesa.png
     :alt: Front
 
-.. image:: http://www.cmry.nl/dump/omesa_prop.png
+.. image:: https://onyx.uvt.nl/toku/static/omesa_prop.png
     :alt: Front Prop
 
 To test, do the following:
